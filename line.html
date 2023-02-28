@@ -1,0 +1,363 @@
+<!doctype html>
+<html>
+<head>
+    <!--Step 2-->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <title>ElectroSpindle Dashboard</title>
+
+    <link rel="stylesheet" href="./styles.css"></link>
+    <script>
+        function getData(){
+            console.log("ok")
+        }
+    </script>
+</head>
+
+<body>
+<h3>ElectroSpindle: Dashboard</h3>
+<p id ="spindle">Spindle ID: </p> 
+Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <input type ="submit" id ="submit">
+<select id="selectButton" ></select>  
+<!--Step 2-->
+<svg width="500" height="400"></svg>
+<!-- Initialize a select button -->
+
+<script>
+        // Step 1
+   
+        var allGroup = ["Tamb", "Tba", "Time"]
+        d3.select("#selectButton")
+          .selectAll('myOptions')
+             .data(allGroup)
+          .enter()
+            .append('option')
+          .text(function (d) { return d; }) // text showed in the menu
+          .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
+          var svg = d3.select("svg"),
+            margin = 200,
+            width = svg.attr("width") - margin, //300
+            height = svg.attr("height") - margin //200
+
+        var g = svg.append("g")
+            .attr("transform", "translate(" + 100 + "," + 100 + ")");
+        
+
+        //new request based on the id
+
+        d3.select("#submit").on("click", function(d){
+            
+            
+            spindle_id = document.getElementById('request').value
+            document.getElementById("spindle").innerHTML = "Spindle ID: " + spindle_id
+            d3.json("http://arca.diag.uniroma1.it:8082/rodaggi/spindles/" + spindle_id +"/raw_data?limit=100", function(data) {
+            
+            
+            localStorage.setItem("storageData", JSON.stringify(data));
+
+
+        var dropDown = document.getElementById("selectButton");
+        dropDown.selectedIndex = 0;        
+        
+        var datasetTamb = [];
+    
+        var min = 100000
+        var max = 0
+
+        for(let i = 0; i < 99; i++){
+            if(data.data.Tamb[i] < min){
+                min = data.data.Tamb[i]
+            }
+            if(data.data.Tamb[i] > max){
+                max = data.data.Tamb[i]
+            }
+            datasetTamb.push([i+1, data.data.Tamb[i]]);
+        }
+        console.log(datasetTamb)
+    
+        //
+        var selectedOption = d3.select(this).property("value")
+        d3.selectAll("circle").remove();
+        d3.selectAll("path").remove();
+        d3.selectAll("text").remove();
+            
+        
+
+        // Step 3
+        
+
+        // Step 4 
+        var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+            yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+            
+        
+
+        // Step 5
+        // Title
+        svg.append('text')
+        .attr('x', width/2 + 100)
+        .attr('y', 100)
+        .attr('text-anchor', 'middle')
+        .style('font-family', 'Helvetica')
+        .style('font-size', 20)
+        .text('Tamb Chart');
+        
+        // X label
+        svg.append('text')
+        .attr('x', width/2 + 100)
+        .attr('y', height - 15 + 150)
+        .attr('text-anchor', 'middle')
+        .style('font-family', 'Helvetica')
+        .style('font-size', 12)
+        .text('Rodaggio');
+        
+        // Y label
+        svg.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+        .style('font-family', 'Helvetica')
+        .style('font-size', 12)
+        .text('Tamb');
+
+        // Step 6
+        g.append("g")
+         .attr("transform", "translate(0," + height + ")")
+         .call(d3.axisBottom(xScale));
+        
+        g.append("g")
+         .call(d3.axisLeft(yScale));
+        
+        // Step 7
+        svg.append('g')
+        .selectAll("dot")
+        .data(datasetTamb)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) { return xScale(d[0]); } )
+        .attr("cy", function (d) { return yScale(d[1]); } )
+        .attr("r", 3)
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .style("fill", "#CC0000");
+
+        // Step 8        
+        var line = d3.line()
+        .x(function(d) { return xScale(d[0]); }) 
+        .y(function(d) { return yScale(d[1]); }) 
+        .curve(d3.curveMonotoneX)
+        
+        svg.append("path")
+        .datum(datasetTamb) 
+        .attr("class", "line") 
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "#CC0000")
+        .style("stroke-width", "2");
+        })
+    
+
+        // When the button is changed, run the updateChart function
+        d3.select("#selectButton").on("change", function(d) {
+            console.log("changed")
+            var data = JSON.parse(localStorage.getItem("storageData"));
+            // recover the option that has been chosen
+            var selectedOption = d3.select(this).property("value")
+            d3.selectAll("circle").remove();
+            d3.selectAll("path").remove();
+            d3.selectAll("text").remove();
+            
+            resetText(selectedOption);     
+            
+            // run the updateChart function with this selected option
+            update(selectedOption, data)
+        })
+
+        function createAxes(selectedOption){
+
+            g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale));
+        
+            g.append("g")
+            .call(d3.axisLeft(yScale));
+        }
+
+        function resetText(selectedOption){
+
+            svg.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 20)
+            .text(selectedOption + ' chart');
+        
+            // X label
+            svg.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', height - 15 + 150)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text('Rodaggio');
+        
+            // Y label
+            svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text(selectedOption);
+            }
+
+            function update(selectedGroup, data) {
+
+                console.log(selectedGroup)
+
+            if(selectedGroup == "Time"){
+
+                var datasetTime = [];
+                var min = 100000
+                var max = 0
+
+    for(let i = 0; i < 99; i++){
+        if(data.data.time[i] < min){
+        min = data.data.time[i]
+        }
+        if(data.data.time[i] > max){
+        max = data.data.time[i]
+        }    
+    datasetTime.push([i+1, data.data.time[i]]);
+    //rescale axes
+    }
+    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+    createAxes();
+    svg.append('g')
+        .selectAll("dot")
+        .data(datasetTime)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) { return xScale(d[0]); } )
+        .attr("cy", function (d) { return yScale(d[1]); } )
+        .attr("r", 3)
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .style("fill", "#CC0000");
+
+        var line = d3.line()
+        .x(function(d) { return xScale(d[0]); }) 
+        .y(function(d) { return yScale(d[1]); }) 
+        .curve(d3.curveMonotoneX)
+        svg.append("path")
+        .datum(datasetTime) 
+        .attr("class", "line") 
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "#CC0000")
+        .style("stroke-width", "2");    
+        
+}
+else if (selectedGroup == "Tba"){
+
+
+    var datasetTba = [];
+    var min = 100000
+    var max = 0
+
+    for(let i = 0; i < 99; i++){
+        if(data.data.Tba[i] < min){
+        min = data.data.Tba[i]
+         }
+        if(data.data.Tba[i] > max){
+        max = data.data.Tba[i]
+        }
+    datasetTba.push([i+1, data.data.Tba[i]]);
+    
+}
+//rescale axes
+    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+    createAxes();
+        svg.append('g')
+        .selectAll("dot")
+        .data(datasetTba)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) { return xScale(d[0]); } )
+        .attr("cy", function (d) { return yScale(d[1]); } )
+        .attr("r", 3)
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .style("fill", "#CC0000");
+
+        var line = d3.line()
+        .x(function(d) { return xScale(d[0]); }) 
+        .y(function(d) { return yScale(d[1]); }) 
+        .curve(d3.curveMonotoneX)
+        svg.append("path")
+        .datum(datasetTba) 
+        .attr("class", "line") 
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "#CC0000")
+        .style("stroke-width", "2");
+
+        }       
+
+else if (selectedGroup == "Tamb"){
+
+    var datasetTamb = [];
+    var min = 100000
+    var max = 0
+
+for(let i = 0; i < 99; i++){
+        if(data.data.Tamb[i] < min){
+        min = data.data.Tamb[i]
+         }
+        if(data.data.Tamb[i] > max){
+        max = data.data.Tamb[i]
+        }
+    datasetTamb.push([i+1, data.data.Tamb[i]]);
+    
+}
+
+//rescale axes
+    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+    createAxes();
+        svg.append('g')
+        .selectAll("dot")
+        .data(datasetTamb)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) { return xScale(d[0]); } )
+        .attr("cy", function (d) { return yScale(d[1]); } )
+        .attr("r", 3)
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .style("fill", "#CC0000");
+
+        line = d3.line()
+        .x(function(d) { return xScale(d[0]); }) 
+        .y(function(d) { return yScale(d[1]); }) 
+        .curve(d3.curveMonotoneX)
+        svg.append("path")
+        .datum(datasetTamb) 
+        .attr("class", "line") 
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "#CC0000")
+        .style("stroke-width", "2");
+
+        }
+
+}
+})
+
+       
+
+        
+</script>
+</body>
+</html>
