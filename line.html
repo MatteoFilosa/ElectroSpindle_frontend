@@ -5,81 +5,232 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <title>ElectroSpindle Dashboard</title>
 
-    <link rel="stylesheet" href="./styles.css"></link>
+    <link rel="stylesheet" href="./style.css"></link>
     <script>
-        function getData(){
-            console.log("ok")
-        }
+        var colors = [
+            '#F44336',
+            '#EF5350',
+            '#FCE4EC',
+            '#F8BBD0',
+            '#F48FB1',
+            '#F06292',
+            '#EC407A',
+            '#E91E63',
+            '#D81B60',
+            '#C2185B',
+            '#AD1457',
+            '#880E4F',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF80AB',
+            '#FF4081',
+            '#F50057']
+        
+    
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </head>
 
 <body>
 <h3>ElectroSpindle: Dashboard</h3>
 <p id ="spindle">Spindle ID: </p> 
-Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <input type ="submit" id ="submit">
-<select id="selectButton" ></select>  
+Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id ="submit" class = "button-green"> Search</button>
+<select id="selectMenu" ></select>  
 <!--Step 2-->
 <svg width="500" height="400"></svg>
+
 <!-- Initialize a select button -->
+<button id = "clear" onclick="clearSvg()" class = "button-blue">Clear</button>
+<input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici
+<div id ="selectedValues"></div>
+
 
 <script>
         // Step 1
-   
+        
+        var colorSelector = 0
         var allGroup = ["Tamb", "Tba", "Time"]
-        d3.select("#selectButton")
-          .selectAll('myOptions')
-             .data(allGroup)
-          .enter()
-            .append('option')
-          .text(function (d) { return d; }) // text showed in the menu
-          .attr("value", function (d) { return d; }) // corresponding value returned by the button
+        d3.select("#selectMenu")
+        .selectAll('myOptions')
+        .data(allGroup)
+        .enter()
+        .append('option')
+        .text(function (d) { return d; }) // text showed in the menu
+        .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
-          var svg = d3.select("svg"),
+        var svg = d3.select("svg"),
             margin = 200,
             width = svg.attr("width") - margin, //300
             height = svg.attr("height") - margin //200
 
         var g = svg.append("g")
-            .attr("transform", "translate(" + 100 + "," + 100 + ")");
+        .attr("transform", "translate(" + 100 + "," + 100 + ")");
+
+
+
+        function checkElements(){
+
+            if(document.getElementById("sovrapponi").checked == true){
+
+                
+
+                var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
+                var tmpDot = "#dot" + selectedOption 
+                var tmpPath = "#path" + selectedOption
+                
+                if ((d3.selectAll(tmpDot) != null) && (d3.selectAll(tmpPath)!=null)){
+                    console.log("ok")
+                    document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement()" checked>' + selectedOption + "</checkbox>"
+                        
+                }
+                
+
+            }
+            else{
+                colorSelector = 0
+                document.getElementById("selectedValues").innerHTML = ""
+                clearSvg();
+            }
+
+
+        }
+
+
+
+        function modifyElement(checkboxOption){
+            console.log(checkboxOption)
+            
+            var data = JSON.parse(localStorage.getItem("storageData"));
+            //var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
+            if(checkboxOption == "Time") checkboxOption = "time"
+
+            if (document.getElementById(checkboxOption).checked == true){
+
+                colorSelector += 1
+                var dataset = [];
+                var min = 100000
+                var max = 0
+                console.log(eval('data.data.' + checkboxOption + "[0]")) //eval serve perché se facessi data.data.selectedGroup[0] direttamente da errore.
+                
         
+    for(let i = 0; i < 99; i++){
+        if(eval('data.data.' + checkboxOption + "["+ i +"]") < min){
+        min = eval('data.data.' + checkboxOption + "["+ i +"]")
+        }
+        if(eval('data.data.' + checkboxOption + "["+ i +"]") > max){
+        max = eval('data.data.' + checkboxOption + "["+ i +"]")
+        }    
+    dataset.push([i+1, eval('data.data.' + checkboxOption + "["+ i +"]")]);
+    //rescale axes
+    }
+    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+    svg.append('g')
+        .selectAll("dot")
+        .data(dataset)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) { return xScale(d[0]); } )
+        .attr("cy", function (d) { return yScale(d[1]); } )
+        .attr("r", 3)
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .style("fill", colors[colorSelector])
+        .attr("id", function(d,i){ return "dot" + checkboxOption});
+
+        var line = d3.line()
+        .x(function(d) { return xScale(d[0]); }) 
+        .y(function(d) { return yScale(d[1]); }) 
+        .curve(d3.curveMonotoneX)
+        svg.append("path")
+        .datum(dataset) 
+        .attr("class", "line") 
+        .attr("transform", "translate(" + 100 + "," + 100 + ")")
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", colors[colorSelector])
+        .style("stroke-width", "2")
+        .attr("id", function(d,i){ return "path" + checkboxOption});    
+                
+
+            }
+            else if (document.getElementById(checkboxOption).checked == false){
+                
+                var toRemoveDot = "#dot" + checkboxOption 
+                var toRemovePath = "#path" + checkboxOption
+                console.log(toRemoveDot, toRemovePath) 
+                d3.selectAll(toRemoveDot).remove()
+                d3.selectAll(toRemovePath).remove()
+            }
+            
+        }
+
+       
+        function clearSvg(){
+                document.getElementById("selectedValues").innerHTML = ""
+                document.getElementById("sovrapponi").checked = false
+                colorSelector = 0
+                var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                yScale = d3.scaleLinear().domain([0, 100]).range([height, 0]);
+                
+                d3.selectAll("circle").remove();
+                d3.selectAll("path").remove();
+                d3.selectAll("text").remove();
+                g.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScale));
+        
+                g.append("g")
+                .call(d3.axisLeft(yScale));
+
+                var dropDown = document.getElementById("selectMenu");
+                dropDown.selectedIndex = 0; 
+                
+                }
 
         //new request based on the id
 
         d3.select("#submit").on("click", function(d){
             
-            
+            document.getElementById("selectedValues").innerHTML = ""
             spindle_id = document.getElementById('request').value
             document.getElementById("spindle").innerHTML = "Spindle ID: " + spindle_id
             d3.json("http://arca.diag.uniroma1.it:8082/rodaggi/spindles/" + spindle_id +"/raw_data?limit=100", function(data) {
-            
+            console.log(data.data)
             
             localStorage.setItem("storageData", JSON.stringify(data));
 
-
-        var dropDown = document.getElementById("selectButton");
-        dropDown.selectedIndex = 0;        
+            console.log(data.data)
+            var dropDown = document.getElementById("selectMenu");
+            dropDown.selectedIndex = 0;        
         
-        var datasetTamb = [];
+            var datasetTamb = [];
     
-        var min = 100000
-        var max = 0
+            var min = 100000
+            var max = 0
 
-        for(let i = 0; i < 99; i++){
-            if(data.data.Tamb[i] < min){
-                min = data.data.Tamb[i]
+            for(let i = 0; i < 99; i++){
+                if(data.data.Tamb[i] < min){
+                    min = data.data.Tamb[i]
+                }
+                if(data.data.Tamb[i] > max){
+                    max = data.data.Tamb[i]
+                }
+                datasetTamb.push([i+1, data.data.Tamb[i]]);
             }
-            if(data.data.Tamb[i] > max){
-                max = data.data.Tamb[i]
-            }
-            datasetTamb.push([i+1, data.data.Tamb[i]]);
-        }
-        console.log(datasetTamb)
+            console.log(datasetTamb)
     
         //
-        var selectedOption = d3.select(this).property("value")
-        d3.selectAll("circle").remove();
-        d3.selectAll("path").remove();
-        d3.selectAll("text").remove();
+            var selectedOption = d3.select(this).property("value")
+            d3.selectAll("circle").remove();
+            d3.selectAll("path").remove();
+            d3.selectAll("text").remove();
             
         
 
@@ -87,89 +238,114 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <input type
         
 
         // Step 4 
-        var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-            yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+            var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
             
         
 
-        // Step 5
-        // Title
-        svg.append('text')
-        .attr('x', width/2 + 100)
-        .attr('y', 100)
-        .attr('text-anchor', 'middle')
-        .style('font-family', 'Helvetica')
-        .style('font-size', 20)
-        .text('Tamb Chart');
+            // Step 5
+            // Title
+            svg.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 20)
+            .text('Tamb Chart');
         
-        // X label
-        svg.append('text')
-        .attr('x', width/2 + 100)
-        .attr('y', height - 15 + 150)
-        .attr('text-anchor', 'middle')
-        .style('font-family', 'Helvetica')
-        .style('font-size', 12)
-        .text('Rodaggio');
+            // X label
+            svg.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', height - 15 + 150)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text('Time');
         
-        // Y label
-        svg.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('transform', 'translate(60,' + height + ')rotate(-90)')
-        .style('font-family', 'Helvetica')
-        .style('font-size', 12)
-        .text('Tamb');
+            // Y label
+            svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text('Tamb');
 
-        // Step 6
-        g.append("g")
-         .attr("transform", "translate(0," + height + ")")
-         .call(d3.axisBottom(xScale));
+            // Step 6
+            g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale));
         
-        g.append("g")
-         .call(d3.axisLeft(yScale));
+            g.append("g")
+            .call(d3.axisLeft(yScale));
         
-        // Step 7
-        svg.append('g')
-        .selectAll("dot")
-        .data(datasetTamb)
-        .enter()
-        .append("circle")
-        .attr("cx", function (d) { return xScale(d[0]); } )
-        .attr("cy", function (d) { return yScale(d[1]); } )
-        .attr("r", 3)
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .style("fill", "#CC0000");
+            // Step 7
+            svg.append('g')
+            .selectAll("dot")
+            .data(datasetTamb)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return xScale(d[0]); } )
+            .attr("cy", function (d) { return yScale(d[1]); } )
+            .attr("r", 3)
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .style("fill", "#CC0000");
 
-        // Step 8        
-        var line = d3.line()
-        .x(function(d) { return xScale(d[0]); }) 
-        .y(function(d) { return yScale(d[1]); }) 
-        .curve(d3.curveMonotoneX)
+            // Step 8        
+            var line = d3.line()
+            .x(function(d) { return xScale(d[0]); }) 
+            .y(function(d) { return yScale(d[1]); }) 
+            .curve(d3.curveMonotoneX)
         
-        svg.append("path")
-        .datum(datasetTamb) 
-        .attr("class", "line") 
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .attr("d", line)
-        .style("fill", "none")
-        .style("stroke", "#CC0000")
-        .style("stroke-width", "2");
-        })
+            svg.append("path")
+            .datum(datasetTamb) 
+            .attr("class", "line") 
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .attr("d", line)
+            .style("fill", "none")
+            .style("stroke", "#CC0000")
+            .style("stroke-width", "2");
+            })
     
+           
+       
+        d3.select("#selectMenu").on("change", function(d) {
 
-        // When the button is changed, run the updateChart function
-        d3.select("#selectButton").on("change", function(d) {
+            
+            
+            
+            var checkBox = document.getElementById("sovrapponi");
             console.log("changed")
             var data = JSON.parse(localStorage.getItem("storageData"));
             // recover the option that has been chosen
             var selectedOption = d3.select(this).property("value")
-            d3.selectAll("circle").remove();
-            d3.selectAll("path").remove();
-            d3.selectAll("text").remove();
+            localStorage.setItem("selectedOption", JSON.stringify(selectedOption));
+          
+
+            if (checkBox.checked == false){
+
+                d3.selectAll("circle").remove();
+                d3.selectAll("path").remove();
+                d3.selectAll("text").remove();
+                colour = "#CC0000"
+                update(selectedOption, data, colour);
+                resetText(selectedOption);
+
+            }
+
+            else{
+
+                // run the updateChart function with this selected option
+                update(selectedOption, data, colors[colorSelector]);
+                colorSelector += 1;
+                if (selectedOption == "Time") selectedOption = "time"
+
+                if(document.getElementById(selectedOption) == null) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement(' + this.id + ')" checked>' + selectedOption + "</checkbox>"
+                
+            }
             
-            resetText(selectedOption);     
+                 
             
-            // run the updateChart function with this selected option
-            update(selectedOption, data)
+            
         })
 
         function createAxes(selectedOption){
@@ -199,7 +375,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <input type
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 12)
-            .text('Rodaggio');
+            .text('Time');
         
             // Y label
             svg.append('text')
@@ -210,24 +386,29 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <input type
             .text(selectedOption);
             }
 
-            function update(selectedGroup, data) {
+              
 
+      
+
+        function update(selectedGroup, data, colour) {
+            
+            if(selectedGroup == "Time") selectedGroup = "time"
                 console.log(selectedGroup)
 
-            if(selectedGroup == "Time"){
-
-                var datasetTime = [];
+                var dataset = [];
                 var min = 100000
                 var max = 0
-
+                console.log(eval('data.data.' + selectedGroup + "[0]")) //eval serve perché se facessi data.data.selectedGroup[0] direttamente da errore.
+                
+        
     for(let i = 0; i < 99; i++){
-        if(data.data.time[i] < min){
-        min = data.data.time[i]
+        if(eval('data.data.' + selectedGroup + "["+ i +"]") < min){
+        min = eval('data.data.' + selectedGroup + "["+ i +"]")
         }
-        if(data.data.time[i] > max){
-        max = data.data.time[i]
+        if(eval('data.data.' + selectedGroup + "["+ i +"]") > max){
+        max = eval('data.data.' + selectedGroup + "["+ i +"]")
         }    
-    datasetTime.push([i+1, data.data.time[i]]);
+    dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
     //rescale axes
     }
     xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
@@ -235,122 +416,31 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <input type
     createAxes();
     svg.append('g')
         .selectAll("dot")
-        .data(datasetTime)
+        .data(dataset)
         .enter()
         .append("circle")
         .attr("cx", function (d) { return xScale(d[0]); } )
         .attr("cy", function (d) { return yScale(d[1]); } )
         .attr("r", 3)
         .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .style("fill", "#CC0000");
+        .style("fill", colour)
+        .attr("id", function(d,i){ return "dot" + selectedGroup});
 
         var line = d3.line()
         .x(function(d) { return xScale(d[0]); }) 
         .y(function(d) { return yScale(d[1]); }) 
         .curve(d3.curveMonotoneX)
         svg.append("path")
-        .datum(datasetTime) 
+        .datum(dataset) 
         .attr("class", "line") 
         .attr("transform", "translate(" + 100 + "," + 100 + ")")
         .attr("d", line)
         .style("fill", "none")
-        .style("stroke", "#CC0000")
-        .style("stroke-width", "2");    
+        .style("stroke", colour)
+        .style("stroke-width", "2")
+        .attr("id", function(d,i){ return "path" + selectedGroup});    
         
-}
-else if (selectedGroup == "Tba"){
 
-
-    var datasetTba = [];
-    var min = 100000
-    var max = 0
-
-    for(let i = 0; i < 99; i++){
-        if(data.data.Tba[i] < min){
-        min = data.data.Tba[i]
-         }
-        if(data.data.Tba[i] > max){
-        max = data.data.Tba[i]
-        }
-    datasetTba.push([i+1, data.data.Tba[i]]);
-    
-}
-//rescale axes
-    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-    createAxes();
-        svg.append('g')
-        .selectAll("dot")
-        .data(datasetTba)
-        .enter()
-        .append("circle")
-        .attr("cx", function (d) { return xScale(d[0]); } )
-        .attr("cy", function (d) { return yScale(d[1]); } )
-        .attr("r", 3)
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .style("fill", "#CC0000");
-
-        var line = d3.line()
-        .x(function(d) { return xScale(d[0]); }) 
-        .y(function(d) { return yScale(d[1]); }) 
-        .curve(d3.curveMonotoneX)
-        svg.append("path")
-        .datum(datasetTba) 
-        .attr("class", "line") 
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .attr("d", line)
-        .style("fill", "none")
-        .style("stroke", "#CC0000")
-        .style("stroke-width", "2");
-
-        }       
-
-else if (selectedGroup == "Tamb"){
-
-    var datasetTamb = [];
-    var min = 100000
-    var max = 0
-
-for(let i = 0; i < 99; i++){
-        if(data.data.Tamb[i] < min){
-        min = data.data.Tamb[i]
-         }
-        if(data.data.Tamb[i] > max){
-        max = data.data.Tamb[i]
-        }
-    datasetTamb.push([i+1, data.data.Tamb[i]]);
-    
-}
-
-//rescale axes
-    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-    createAxes();
-        svg.append('g')
-        .selectAll("dot")
-        .data(datasetTamb)
-        .enter()
-        .append("circle")
-        .attr("cx", function (d) { return xScale(d[0]); } )
-        .attr("cy", function (d) { return yScale(d[1]); } )
-        .attr("r", 3)
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .style("fill", "#CC0000");
-
-        line = d3.line()
-        .x(function(d) { return xScale(d[0]); }) 
-        .y(function(d) { return yScale(d[1]); }) 
-        .curve(d3.curveMonotoneX)
-        svg.append("path")
-        .datum(datasetTamb) 
-        .attr("class", "line") 
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .attr("d", line)
-        .style("fill", "none")
-        .style("stroke", "#CC0000")
-        .style("stroke-width", "2");
-
-        }
 
 }
 })
