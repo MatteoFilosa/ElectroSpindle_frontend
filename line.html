@@ -8,30 +8,9 @@
     <link rel="stylesheet" href="./style.css"></link>
     <script>
         var colors = [
-            '#F44336',
-            '#EF5350',
-            '#FCE4EC',
-            '#F8BBD0',
-            '#F48FB1',
-            '#F06292',
-            '#EC407A',
-            '#E91E63',
-            '#D81B60',
-            '#C2185B',
-            '#AD1457',
-            '#880E4F',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF80AB',
-            '#FF4081',
-            '#F50057']
+  '#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed',
+  '#ff69b4','#ba55d3','#cd5c5c','#ffa500','#40e0d0'
+];
         
     
     </script>
@@ -56,7 +35,10 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         // Step 1
         
         var colorSelector = 0
-        var allGroup = ["Tamb", "Tba", "Time"]
+        var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
+        "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
+        "S2", "S3", "S4", "S5", "SN", "Slot", "Speed_S3_BUS", "Speed_Sync", "Stazione", "Step", "TH", "TR", "Tdut1", "Tdut2",
+        "Tdut3", "VibANT_Sync", "Vib_EM", "error_mask", "linea", "not used"]
         d3.select("#selectMenu")
         .selectAll('myOptions')
         .data(allGroup)
@@ -78,16 +60,15 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         function checkElements(){
 
             if(document.getElementById("sovrapponi").checked == true){
-
                 
-
                 var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
+                if (selectedOption == "Time") selectedOption = "time"
                 var tmpDot = "#dot" + selectedOption 
                 var tmpPath = "#path" + selectedOption
                 
                 if ((d3.selectAll(tmpDot) != null) && (d3.selectAll(tmpPath)!=null)){
                     console.log("ok")
-                    document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement()" checked>' + selectedOption + "</checkbox>"
+                    document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
                         
                 }
                 
@@ -104,30 +85,33 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
 
 
 
-        function modifyElement(checkboxOption){
-            console.log(checkboxOption)
+        function modifyElement(selectedOption){ 
             
             var data = JSON.parse(localStorage.getItem("storageData"));
             //var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
-            if(checkboxOption == "Time") checkboxOption = "time"
+            selectedOption = selectedOption.id
+            if(selectedOption == "Time") selectedOption = "time"
+            console.log(selectedOption)
 
-            if (document.getElementById(checkboxOption).checked == true){
+            if (document.getElementById(selectedOption).checked == true){
 
-                colorSelector += 1
+                if(colorSelector + 1 >= colors.length) colorSelector = 0;
+                else colorSelector += 1;
+                
                 var dataset = [];
                 var min = 100000
                 var max = 0
-                console.log(eval('data.data.' + checkboxOption + "[0]")) //eval serve perché se facessi data.data.selectedGroup[0] direttamente da errore.
+                console.log(eval('data.data.' + selectedOption + "[0]")) //eval serve perché se facessi data.data.selectedGroup[0] direttamente da errore.
                 
         
     for(let i = 0; i < 99; i++){
-        if(eval('data.data.' + checkboxOption + "["+ i +"]") < min){
-        min = eval('data.data.' + checkboxOption + "["+ i +"]")
+        if(eval('data.data.' + selectedOption + "["+ i +"]") < min){
+        min = eval('data.data.' + selectedOption + "["+ i +"]")
         }
-        if(eval('data.data.' + checkboxOption + "["+ i +"]") > max){
-        max = eval('data.data.' + checkboxOption + "["+ i +"]")
+        if(eval('data.data.' + selectedOption + "["+ i +"]") > max){
+        max = eval('data.data.' + selectedOption + "["+ i +"]")
         }    
-    dataset.push([i+1, eval('data.data.' + checkboxOption + "["+ i +"]")]);
+    dataset.push([i+1, eval('data.data.' + selectedOption + "["+ i +"]")]);
     //rescale axes
     }
     xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
@@ -142,7 +126,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         .attr("r", 3)
         .attr("transform", "translate(" + 100 + "," + 100 + ")")
         .style("fill", colors[colorSelector])
-        .attr("id", function(d,i){ return "dot" + checkboxOption});
+        .attr("id", function(d,i){ return "dot" + selectedOption});
 
         var line = d3.line()
         .x(function(d) { return xScale(d[0]); }) 
@@ -156,14 +140,14 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         .style("fill", "none")
         .style("stroke", colors[colorSelector])
         .style("stroke-width", "2")
-        .attr("id", function(d,i){ return "path" + checkboxOption});    
+        .attr("id", function(d,i){ return "path" + selectedOption});    
                 
 
             }
-            else if (document.getElementById(checkboxOption).checked == false){
+            else if (document.getElementById(selectedOption).checked == false){
                 
-                var toRemoveDot = "#dot" + checkboxOption 
-                var toRemovePath = "#path" + checkboxOption
+                var toRemoveDot = "#dot" + selectedOption 
+                var toRemovePath = "#path" + selectedOption
                 console.log(toRemoveDot, toRemovePath) 
                 d3.selectAll(toRemoveDot).remove()
                 d3.selectAll(toRemovePath).remove()
@@ -334,12 +318,13 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
 
             else{
 
-                // run the updateChart function with this selected option
+                
                 update(selectedOption, data, colors[colorSelector]);
-                colorSelector += 1;
+                if(colorSelector + 1 >= colors.length) colorSelector = 0;
+                else colorSelector += 1;
                 if (selectedOption == "Time") selectedOption = "time"
 
-                if(document.getElementById(selectedOption) == null) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement(' + this.id + ')" checked>' + selectedOption + "</checkbox>"
+                if(document.getElementById(selectedOption) == null) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption + ')" checked>' + selectedOption + "</checkbox>"
                 
             }
             
@@ -359,6 +344,8 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         }
 
         function resetText(selectedOption){
+
+            
 
             svg.append('text')
             .attr('x', width/2 + 100)
