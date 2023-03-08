@@ -7,10 +7,11 @@
 
     <link rel="stylesheet" href="./style.css"></link>
     <script>
+        //inizializzazione array di colori per i grafici
         var colors = [
   '#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed',
   '#ff69b4','#ba55d3','#cd5c5c','#ffa500','#40e0d0'
-];
+    ];
         
     
     </script>
@@ -32,7 +33,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
 
 
 <script>
-        // Step 1
+        // Step 1: creazione menu a tendina per attributi.
         
         var colorSelector = 0
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
@@ -56,7 +57,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         .attr("transform", "translate(" + 100 + "," + 100 + ")");
 
 
-
+        //funzione che controlla se la spunta sulla checkbox di id "sovrapponi" è messa o no. Se viene tolta, cancella tutte le checkbox che rappresentano i singoli attributi
         function checkElements(){
 
             if(document.getElementById("sovrapponi").checked == true){
@@ -69,9 +70,8 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
                 if ((d3.selectAll(tmpDot) != null) && (d3.selectAll(tmpPath)!=null)){
                     console.log("ok")
                     document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
-                        
+           
                 }
-                
 
             }
             else{
@@ -84,7 +84,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         }
 
 
-
+        //funzione chiamata quando vengono spuntate o meno le checkbox per i singoli attributi (la checkbox su "sovrapponi" è ovviamente spuntata )
         function modifyElement(selectedOption){ 
             
             var data = JSON.parse(localStorage.getItem("storageData"));
@@ -127,7 +127,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         .attr("transform", "translate(" + 100 + "," + 100 + ")")
         .style("fill", colors[colorSelector])
         .attr("id", function(d,i){ return "dot" + selectedOption});
-
+    //creazione path. Ogni grafico è formato da punti (dot) e una linea (path). Ho assegnato a ognuna di queste cose un id in base a quello che rappresentano (i dot e il path di "tba" avranno come id "#dottba" e "pathtba".)
         var line = d3.line()
         .x(function(d) { return xScale(d[0]); }) 
         .y(function(d) { return yScale(d[1]); }) 
@@ -144,6 +144,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
                 
 
             }
+        //si cancella tutto ciò che fa parte del grafico con l'id selezionato
             else if (document.getElementById(selectedOption).checked == false){
                 
                 var toRemoveDot = "#dot" + selectedOption 
@@ -155,6 +156,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
             
         }
 
+        //quando si preme il bottone "Clear":
        
         function clearSvg(){
                 document.getElementById("selectedValues").innerHTML = ""
@@ -182,12 +184,15 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
 
         d3.select("#submit").on("click", function(d){
             
+            //quando faccio una ricerca per id, mi visualizza come primo grafico quello della temperatura ambientale (Tamb).
+
             document.getElementById("selectedValues").innerHTML = ""
             spindle_id = document.getElementById('request').value
             document.getElementById("spindle").innerHTML = "Spindle ID: " + spindle_id
             d3.json("http://arca.diag.uniroma1.it:8082/rodaggi/spindles/" + spindle_id +"/raw_data?limit=100", function(data) {
             console.log(data.data)
             
+            //per ora salvo i dati su localstorage, perché molte funzioni non si vedono tra loro e le variabili, anche se globali, non si vedono tra loro comunque. Che roba
             localStorage.setItem("storageData", JSON.stringify(data));
 
             console.log(data.data)
@@ -208,26 +213,19 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
                 }
                 datasetTamb.push([i+1, data.data.Tamb[i]]);
             }
-            console.log(datasetTamb)
-    
-        //
+            
+  
             var selectedOption = d3.select(this).property("value")
             d3.selectAll("circle").remove();
             d3.selectAll("path").remove();
             d3.selectAll("text").remove();
             
-        
 
-        // Step 3
-        
-
-        // Step 4 
+        // Creazione assi cartesiani. 
             var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
                 yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-            
-        
 
-            // Step 5
+
             // Title
             svg.append('text')
             .attr('x', width/2 + 100)
@@ -291,12 +289,11 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
             })
     
            
+        //funzione che fa un update del grafico in base all' attributo del menu a tendina selezionato. Se la spunta su "sovrapponi" c'è, allora creo delle checkbox per ogni attributo richiesto su un div apposito.
        
         d3.select("#selectMenu").on("change", function(d) {
 
-            
-            
-            
+     
             var checkBox = document.getElementById("sovrapponi");
             console.log("changed")
             var data = JSON.parse(localStorage.getItem("storageData"));
@@ -332,6 +329,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
             
             
         })
+
 
         function createAxes(selectedOption){
 
@@ -376,7 +374,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
               
 
       
-
+        //funzione che fa un update del grafico in base all'ozpione scelta del menu a tendina.
         function update(selectedGroup, data, colour) {
             
             if(selectedGroup == "Time") selectedGroup = "time"
