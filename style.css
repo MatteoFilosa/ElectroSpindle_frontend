@@ -1,5 +1,21 @@
 /* CSS */
+svg {
+  position: absolute;
+  left: 0px;
+  top: 160px;
+}
 
+#svg2 {
+  position: absolute;
+  left: 400px;
+  top: 160px;
+}
+
+#svg3 {
+  position: absolute;
+  left: 800px;
+  top: 160px;
+}
 
   .button-blue {
     background-color: #0095ff;

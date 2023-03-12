@@ -25,7 +25,8 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
 <select id="selectMenu" disabled = true></select>  
 <!--Step 2-->
 <svg width="500" height="400" id ="svg_default"></svg> <!-- cambiare width e height dinamicamente per funzione zoom-->
-
+<svg width="500" height="400" id="svg2"></svg>
+<svg width="500" height="400" id="svg3"></svg>
 <!-- Initialize a select button -->
 <button id = "clear" onclick="clearSvg()" class = "button-blue">Clear</button>
 <input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici
@@ -39,7 +40,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
         if(document.getElementById("sovrapponi").checked == true) 
         if(document.getElementById("separati").checked == true) document.getElementById("sovrapponi").disabled = true
         
-        var colorSelector = 0
+        var colorSelector = 0, graph_counter = 1;
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
         "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
         "S2", "S3", "S4", "S5", "SN", "Slot", "Speed_S3_BUS", "Speed_Sync", "Stazione", "Step", "TH", "TR", "Tdut1", "Tdut2",
@@ -116,7 +117,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
 
 
         //funzione chiamata quando vengono spuntate o meno le checkbox per i singoli attributi (la checkbox su "sovrapponi" è ovviamente spuntata )
-        function modifyElement(selectedOption){ 
+        function modifyElement(selectedOption, svg_number){ 
             
             var data = JSON.parse(localStorage.getItem("storageData"));
             //var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
@@ -319,6 +320,9 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
             .style("fill", "none")
             .style("stroke", "#CC0000")
             .style("stroke-width", "2");
+
+            graph_counter = 2
+
             })
     
            
@@ -337,21 +341,42 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
 
             if (checkBoxSeparati.checked == true){
 
-                d3.selectAll("circle").remove();
-                d3.selectAll("path").remove();
-                d3.selectAll("text").remove();
-                d3.selectAll("g").remove();
-                //d3.selectAll("svg").remove();
                 colour = "#CC0000"
-                newGraph(selectedOption, data, colour);
-                resetText(selectedOption);
-                if(document.getElementById(selectedOption) == null) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption + ')" checked>' + selectedOption + "</checkbox>"
+                    //d3.selectAll("g").remove();
+                    //d3.selectAll("svg").remove();
+                
+                    if(graph_counter == 1){ //update del primo grafico
 
+                        d3.selectAll("circle").remove();
+                        d3.selectAll("path").remove();
+                        d3.selectAll("text").remove();
+                        
+                        resetText(selectedOption);
+                        update(selectedOption, data, colour);
+                        graph_counter += 1;
+
+                    } 
+                    else if(graph_counter == 2){ //update del secondo grafico
+                        newGraph(selectedOption, data, colour, 2);
+                        graph_counter += 1;
+                    } 
+                    else if(graph_counter == 3){ //update del terzo grafico
+                        newGraph(selectedOption, data, colour, 3);
+                        graph_counter += 1;
+                    } 
+
+
+                
+                if(document.getElementById(selectedOption) == null) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption + "," + graph_counter + ')" checked>' + selectedOption + "</checkbox>"
+                
+                
+                
             }
           
 
-            if (checkBoxSovrapponi.checked == false){
-
+            else if (checkBoxSovrapponi.checked == false){ //se sovrapponi non è checkato, cancella tutto per fare spazio al nuovo grafico sullo stesso svg
+                
+                console.log("scanciell")
                 d3.selectAll("circle").remove();
                 d3.selectAll("path").remove();
                 d3.selectAll("text").remove();
@@ -361,7 +386,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
 
             }
 
-            else{
+            else if ((checkBoxSovrapponi.checked == true) || (checkboxSeparati.checked == false)){
 
                 
                 update(selectedOption, data, colors[colorSelector]);
@@ -424,6 +449,8 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
       
         //funzione che fa un update del grafico in base all'ozpione scelta del menu a tendina.
         function update(selectedGroup, data, colour) {
+
+            console.log("update")
             
             if(selectedGroup == "Time") selectedGroup = "time"
                 console.log(selectedGroup)
@@ -479,15 +506,14 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
     
     }
 
-    function newGraph(selectedGroup, data, colour){
-        var cambio = 100
-        console.log("entrato in newgraph")
-        var width = 1000
-        var height = 400
+    function newGraph(selectedGroup, data, colour, svg_number){
+        
+        console.log("entrato in newGraph")
+        
 
-        d3.select("svg")
-        .style("width", width + 'px')
-        .style("height", height + 'px'); //regola l'svg così ci posso appendere altri grafici
+        //d3.select("svg")
+        //.style("width", width + 'px')
+        //.style("height", height + 'px'); //regola l'svg così ci posso appendere altri grafici
 
 
         if(selectedGroup == "Time") selectedGroup = "time"
@@ -512,48 +538,169 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
   
     }    
         
-        var graph_counter = 0
 
-            //da vedere
-            var svg = d3.select("svg"),
-            margin = 400,
-            width = svg.attr("width") - margin, //300
-            height = svg.attr("height") - margin //200
 
-            var g = svg.append("g")
+            //modifica larghezza dell'svg
+            
+            
+            if(svg_number == 2) {
+                var svg2 = d3.select("#svg2"),
+                margin = 200,
+                width = svg.attr("width") - margin, //300
+                height = svg.attr("height") - margin //200
+
+                
+
+            var g = svg2.append("g")
         .attr("transform", "translate(" + 100 + "," + 100 + ")");
 
-            xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-    createAxes();
-    svg.append('g')
-        .selectAll("dot")
-        .data(dataset)
-        .enter()
-        .append("circle")
-        .attr("cx", function (d) { return xScale(d[0]); } )
-        .attr("cy", function (d) { return yScale(d[1]); } )
-        .attr("r", 3)
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .style("fill", colour)
-        .attr("id", function(d,i){ return "dot" + selectedGroup});
+            svg2.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 20)
+            .text(selectedGroup +" Chart");
+        
+            // X label
+            svg2.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', height - 15 + 150)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text("Time");
+        
+            // Y label
+            svg2.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text(selectedGroup);
 
-        var line = d3.line()
-        .x(function(d) { return xScale(d[0]); }) 
-        .y(function(d) { return yScale(d[1]); }) 
-        .curve(d3.curveMonotoneX)
-        svg.append("path")
-        .datum(dataset) 
-        .attr("class", "line") 
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .attr("d", line)
-        .style("fill", "none")
-        .style("stroke", colour)
-        .style("stroke-width", "2")
-        .attr("id", function(d,i){ return "path" + selectedGroup});
+            var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
-            graph_counter += 1
-            cambio += 100
+            g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale));
+        
+            g.append("g")
+            .call(d3.axisLeft(yScale));
+        
+            // Step 7
+            svg2.append('g')
+            .selectAll("dot")
+            .data(dataset)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return xScale(d[0]); } )
+            .attr("cy", function (d) { return yScale(d[1]); } )
+            .attr("r", 3)
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .style("fill", "#CC0000")
+            .attr("id", function(d,i){ return "dot" + selectedGroup + "_svg2"});
+
+            // Step 8        
+            var line = d3.line()
+            .x(function(d) { return xScale(d[0]); }) 
+            .y(function(d) { return yScale(d[1]); }) 
+            .curve(d3.curveMonotoneX)
+        
+            svg2.append("path")
+            .datum(dataset) 
+            .attr("class", "line") 
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .attr("d", line)
+            .style("fill", "none")
+            .style("stroke", "#CC0000")
+            .style("stroke-width", "2")
+            .attr("id", function(d,i){ return "path" + selectedGroup + "_svg2"});
+            }
+
+            else if (svg_number == 3){
+                var svg3 = d3.select("#svg3"),
+                margin = 200,
+                width = svg.attr("width") - margin, //300
+                height = svg.attr("height") - margin //200
+
+                
+
+            var g = svg3.append("g")
+        .attr("transform", "translate(" + 100 + "," + 100 + ")");
+
+            svg3.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 20)
+            .text(selectedGroup +" Chart");
+        
+            // X label
+            svg3.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', height - 15 + 150)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text("Time");
+        
+            // Y label
+            svg3.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text(selectedGroup);
+
+            var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+            g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale));
+        
+            g.append("g")
+            .call(d3.axisLeft(yScale));
+        
+            // Step 7
+            svg3.append('g')
+            .selectAll("dot")
+            .data(dataset)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return xScale(d[0]); } )
+            .attr("cy", function (d) { return yScale(d[1]); } )
+            .attr("r", 3)
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .style("fill", "#CC0000")
+            .attr("id", function(d,i){ return "dot" + selectedGroup + "_svg3"});
+
+            // Step 8        
+            var line = d3.line()
+            .x(function(d) { return xScale(d[0]); }) 
+            .y(function(d) { return yScale(d[1]); }) 
+            .curve(d3.curveMonotoneX)
+        
+            svg3.append("path")
+            .datum(dataset) 
+            .attr("class", "line") 
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .attr("d", line)
+            .style("fill", "none")
+            .style("stroke", "#CC0000")
+            .style("stroke-width", "2")
+            .attr("id", function(d,i){ return "path" + selectedGroup + "_svg3"});
+            }
+
+            
+      
+
+            
+
+    
         
     }
         
