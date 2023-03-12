@@ -111,6 +111,8 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
                 colorSelector = 0
                 document.getElementById("selectedValues").innerHTML = ""
                 clearSvg();
+                graph_counter = 0;
+
             }
             
         }
@@ -339,7 +341,7 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
            
             localStorage.setItem("selectedOption", JSON.stringify(selectedOption));
 
-            if (checkBoxSeparati.checked == true){
+            if (checkBoxSeparati.checked == true){ 
 
                 colour = "#CC0000"
                     //d3.selectAll("g").remove();
@@ -363,11 +365,18 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
                     else if(graph_counter == 3){ //update del terzo grafico
                         newGraph(selectedOption, data, colour, 3);
                         graph_counter += 1;
-                    } 
+                        console.log(graph_counter)
+                    }
+                    
+                    else if(graph_counter == 4){ //update del terzo grafico
+                        alert("Puoi selezionare massimo 3 valori da vedere contemporaneamente!")
+                    }
+
+
 
 
                 
-                if(document.getElementById(selectedOption) == null) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption + "," + graph_counter + ')" checked>' + selectedOption + "</checkbox>"
+                if((document.getElementById(selectedOption) == null) && (graph_counter <= 3) )document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption + "," + graph_counter + ')" checked>' + selectedOption + "</checkbox>"
                 
                 
                 
@@ -617,6 +626,19 @@ Insert Spindle ID<input type = "number" id ="request" maxlength="3"> <button id 
             .style("stroke", "#CC0000")
             .style("stroke-width", "2")
             .attr("id", function(d,i){ return "path" + selectedGroup + "_svg2"});
+
+            d3.select("#svg2")
+            .append("input")
+            .attr("type", "checkbox")
+            .attr("checked", "true")
+            .style("position", "absolute")
+            .style("top", "0")
+            .style("left", "0")
+            .on("change", function(d) {
+                d3.select("#svg2").remove()
+            }
+            )
+
             }
 
             else if (svg_number == 3){
