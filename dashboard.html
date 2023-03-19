@@ -19,9 +19,10 @@
 </head>
 
 <body>
-<h3>ElectroSpindle: Dashboard</h3>
+<h1>ElectroSpindle: Dashboard</h1>
+<Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  
 <p id ="spindle">Spindle ID: </p> 
-Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button id ="submit" class = "button-green"> Cerca</button>
+Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required> <button id ="submit" class = "button-green"> Cerca</button>
 <select id="selectMenu" disabled = true></select>  
 <!--Step 2-->
 <div id = "svg-div">
@@ -50,7 +51,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
         if(document.getElementById("sovrapponi").checked == true) document.getElementById("separati").disabled = true
         if(document.getElementById("separati").checked == true) document.getElementById("sovrapponi").disabled = true
         
-        var colorSelector = 0, graph_counter = 1, token = 0;
+        var colorSelector = 0, graph_counter = 0, token = 0;
         localStorage.setItem("flag", JSON.stringify(1));
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
         "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
@@ -248,7 +249,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             document.getElementById("selectMenu").disabled = false
             document.getElementById("selectedValues").innerHTML = ""
             spindle_id = document.getElementById('request').value
-            if(spindle_id == "") alert("Inserisci l'id!")
+            if(spindle_id == "") alert("Id mancante o scorretto")
             document.getElementById("spindle").innerHTML = "Spindle ID: " + spindle_id
             d3.json("http://arca.diag.uniroma1.it:8082/rodaggi/spindles/" + spindle_id +"/raw_data?limit=100", function(data) {
             console.log(data.data)
@@ -282,6 +283,18 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             d3.selectAll("circle").remove();
             d3.selectAll("path").remove();
             d3.selectAll("text").remove();
+
+            d3.select("#svg2").selectAll("circle").remove();
+            d3.select("#svg2").selectAll("path").remove();
+            d3.select("#svg2").selectAll("text").remove();
+            d3.select("#svg2").selectAll("g").remove();
+
+            d3.select("#svg3").selectAll("circle").remove();
+            d3.select("#svg3").selectAll("path").remove();
+            d3.select("#svg3").selectAll("text").remove();
+            d3.select("#svg3").selectAll("g").remove();
+
+            document
             
 
         // Creazione assi cartesiani. 
@@ -296,7 +309,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 20)
-            .text('Tamb Chart');
+            .text('Grafico Tamb');
         
             // X label
             svg.append('text')
@@ -350,7 +363,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             .style("stroke", "#CC0000")
             .style("stroke-width", "2");
 
-            graph_counter = 2
+            graph_counter = 1
 
             })
     
@@ -394,7 +407,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
                         graph_number = 3
                         newGraph(selectedOption, data, colour, graph_number);
                         graph_counter += 1;
-                        console.log(graph_counter)
+                        
                     }
                     
                     else if(graph_counter == 4){ //update del terzo grafico
@@ -406,7 +419,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
 
                 
                 //if((document.getElementById(selectedOption) == null) && (graph_counter <= 4) )document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption+ ')" checked>' + selectedOption + "</checkbox>"
-                console.log(graph_counter)
+                
                 
                 
             }
@@ -475,7 +488,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 20)
-            .text(selectedOption + ' chart');
+            .text('Grafico ' + selectedOption );
         
             // X label
             svg.append('text')
@@ -603,7 +616,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
                     .attr('text-anchor', 'middle')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 20)
-                    .text("Mixed Chart");
+                    .text("Grafico Misto");
         
             // X label
                 svg.append('text')
@@ -717,7 +730,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 20)
-            .text(selectedGroup +" Chart");
+            .text("Grafico " + selectedGroup);
         
             // X label
             svg2.append('text')
@@ -777,8 +790,8 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
 
 
             g.append("foreignObject")
-        .attr("width", 800)
-        .attr("height", 400)
+        .attr("width", 75)
+        .attr("height", 45)
         .append("xhtml:body")
         .html("<button id ='delete2' class = 'button-red'> Elimina </button>")
         .on("click", function(d, i){
@@ -786,9 +799,10 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             d3.select("#svg2").selectAll("path").remove();
             d3.select("#svg2").selectAll("text").remove();
             d3.select("#svg2").selectAll("g").remove();
-            console.log("delete")
+
             
-            graph_counter = graph_counter - 1
+            graph_counter = 2
+            console.log("Delete 2: " + graph_counter)
             //document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg2"></svg>'
             
         });
@@ -827,7 +841,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 20)
-            .text(selectedGroup +" Chart");
+            .text("Grafico " + selectedGroup);
         
             // X label
             svg3.append('text')
@@ -887,8 +901,8 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
            
 
             g.append("foreignObject")
-        .attr("width", 800)
-        .attr("height", 400)
+        .attr("width", 75)
+        .attr("height", 45)
         .append("xhtml:body")
         .html("<button id ='delete3' class = 'button-red'> Elimina </button>")
         .on("click", function(d, i){
@@ -896,8 +910,9 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3"> <button 
             d3.select("#svg3").selectAll("path").remove();
             d3.select("#svg3").selectAll("text").remove();
             d3.select("#svg3").selectAll("g").remove();
-            console.log("delete 3")
             graph_counter = graph_counter - 1
+
+            console.log("Delete 3: " + graph_counter)
             //document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg3"></svg>'
             
            

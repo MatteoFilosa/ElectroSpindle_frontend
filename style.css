@@ -5,6 +5,21 @@ svg {
   top: 200px;
 }
 
+input[type=number] {
+
+  margin-left: 8px;
+  box-sizing: border-box;
+  border: 2px solid lightseagreen;
+  border-radius: 4px;
+  background-color: rgb(205, 236, 246);
+ 
+}
+
+input[type=checkbox] {
+  background-color: lightblue;
+}
+
+
 #problems-found{
 
   position: absolute;
