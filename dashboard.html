@@ -20,7 +20,7 @@
 
 <body>
 <h1>ElectroSpindle: Dashboard</h1>
-<Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  
+<!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
 <p id ="spindle">Spindle ID: </p> 
 Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required> <button id ="submit" class = "button-green"> Cerca</button>
 <select id="selectMenu" disabled = true></select>  
@@ -30,6 +30,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
     <svg width="500" height="400" id="svg2"></svg>
     <svg width="500" height="400" id="svg3"></svg>
 </div>
+
 <div id = "problems-found">
     <h3>Problemi trovati </h3> 
     <!-- 
@@ -43,6 +44,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
 <input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici
 <input type="checkbox" id ="separati" onchange = "separati()"> Separati 
 <div id ="selectedValues"></div>
+<div id = "coordinates"></div>
 
 
 <script>
@@ -51,7 +53,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
         if(document.getElementById("sovrapponi").checked == true) document.getElementById("separati").disabled = true
         if(document.getElementById("separati").checked == true) document.getElementById("sovrapponi").disabled = true
         
-        var colorSelector = 0, graph_counter = 0, token = 0;
+        var colorSelector = 0, graph_counter = 0, token = 0, warning = 0;
         localStorage.setItem("flag", JSON.stringify(1));
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
         "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
@@ -167,7 +169,12 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
         .attr("r", 3)
         .attr("transform", "translate(" + 100 + "," + 100 + ")")
         .style("fill", colors[colorSelector])
-        .attr("id", function(d,i){ return "dot" + selectedOption});
+        .attr("id", function(d,i){ return "dot" + selectedOption})
+        .on('mouseover', function (d, i) {
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]})
+        .on('mouseout', function (d, i) {
+            document.getElementById("coordinates").innerHTML = ""}) 
+
     //creazione path. Ogni grafico è formato da punti (dot) e una linea (path). Ho assegnato a ognuna di queste cose un id in base a quello che rappresentano (i dot e il path di "tba" avranno come id "#dottba" e "pathtba".)
         var line = d3.line()
         .x(function(d) { return xScale(d[0]); }) 
@@ -346,7 +353,11 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             .attr("cy", function (d) { return yScale(d[1]); } )
             .attr("r", 3)
             .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .style("fill", "#CC0000");
+            .style("fill", "#CC0000")
+            .on('mouseover', function (d, i) {
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]})
+            .on('mouseout', function (d, i) {
+                document.getElementById("coordinates").innerHTML = ""}); 
 
             // Step 8        
             var line = d3.line()
@@ -398,12 +409,12 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                         graph_counter += 1;
 
                     } 
-                    else if(graph_counter == 2){ //update del secondo grafico
+                    else if(graph_counter == 2) { //update del secondo grafico
                         graph_number = 2
                         newGraph(selectedOption, data, colour, graph_number);
                         graph_counter += 1;
                     } 
-                    else if(graph_counter == 3){ //update del terzo grafico
+                    else if((graph_counter == 3) && (warning !=1)){ //update del terzo grafico
                         graph_number = 3
                         newGraph(selectedOption, data, colour, graph_number);
                         graph_counter += 1;
@@ -582,7 +593,15 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                     .attr("r", 3)
                     .attr("transform", "translate(" + 100 + "," + 100 + ")")
                     .style("fill", colour)
-                    .attr("id", function(d,i){ return "dot" + selectedGroup});
+                    .attr("id", function(d,i){ return "dot" + selectedGroup})
+                    .on('mouseover', function (d, i) {
+                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]
+                    //d3.select("#svg_default").select("circle").style("fill", "#AAFF00");
+                    //console.log("aaa")
+                })
+                    
+                    .on('mouseout', function (d, i) {
+                    document.getElementById("coordinates").innerHTML = ""}); 
 
                 var line = d3.line()
                     .x(function(d) { return xScale(d[0]); }) 
@@ -650,7 +669,11 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                     .attr("r", 3)
                     .attr("transform", "translate(" + 100 + "," + 100 + ")")
                     .style("fill", colour)
-                    .attr("id", function(d,i){ return "dot" + selectedGroup});
+                    .attr("id", function(d,i){ return "dot" + selectedGroup})
+                    .on('mouseover', function (d, i) {
+                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedGroup + ": " + d[1]})
+                    .on('mouseout', function (d, i) {
+                    document.getElementById("coordinates").innerHTML = ""}) ;
 
                 var line = d3.line()
                     .x(function(d) { return xScale(d[0]); }) 
@@ -770,7 +793,12 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             .attr("r", 3)
             .attr("transform", "translate(" + 100 + "," + 100 + ")")
             .style("fill", "#CC0000")
-            .attr("id", function(d,i){ return "dot" + selectedGroup + "2"});
+            .attr("id", function(d,i){ return "dot" + selectedGroup + "2"})
+            .on('mouseover', function (d, i) {
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]})
+            .on('mouseout', function (d, i) {
+                document.getElementById("coordinates").innerHTML = ""})    
+            
 
             // Step 8        
             var line = d3.line()
@@ -802,6 +830,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
 
             
             graph_counter = 2
+            warning = 1
             console.log("Delete 2: " + graph_counter)
             //document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg2"></svg>'
             
@@ -881,7 +910,11 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             .attr("r", 3)
             .attr("transform", "translate(" + 100 + "," + 100 + ")")
             .style("fill", "#CC0000")
-            .attr("id", function(d,i){ return "dot" + selectedGroup + "3"});
+            .attr("id", function(d,i){ return "dot" + selectedGroup + "3"})
+            .on('mouseover', function (d, i) {
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]})
+            .on('mouseout', function (d, i) {
+                document.getElementById("coordinates").innerHTML = ""});
 
             // Step 8        
             var line = d3.line()
@@ -911,7 +944,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             d3.select("#svg3").selectAll("text").remove();
             d3.select("#svg3").selectAll("g").remove();
             graph_counter = graph_counter - 1
-
+            warning = 0
             console.log("Delete 3: " + graph_counter)
             //document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg3"></svg>'
             
