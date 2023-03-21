@@ -21,6 +21,7 @@
 <body>
 <h1>ElectroSpindle: Dashboard</h1>
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
+<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>  
 <p id ="spindle">Spindle ID: </p> 
 Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required> <button id ="submit" class = "button-green"> Cerca</button>
 <select id="selectMenu" disabled = true></select>  
@@ -53,7 +54,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
         if(document.getElementById("sovrapponi").checked == true) document.getElementById("separati").disabled = true
         if(document.getElementById("separati").checked == true) document.getElementById("sovrapponi").disabled = true
         
-        var colorSelector = 0, graph_counter = 0, token = 0, warning = 0;
+        var colorSelector = 0, token = 0, free_svg_1 = true, free_svg_2 = true, free_svg_3 = true;
         localStorage.setItem("flag", JSON.stringify(1));
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
         "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
@@ -121,7 +122,9 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                 colorSelector = 0
                 document.getElementById("selectedValues").innerHTML = ""
                 clearSvg();
-                graph_counter = 0;
+                free_svg_1 = 0
+                free_svg_2 = 0
+                free_svg_3 = 0
 
             }
             
@@ -171,9 +174,13 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
         .style("fill", colors[colorSelector])
         .attr("id", function(d,i){ return "dot" + selectedOption})
         .on('mouseover', function (d, i) {
-            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]})
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]
+            d3.select(this).style("fill", "#7CFC00")
+        })
         .on('mouseout', function (d, i) {
-            document.getElementById("coordinates").innerHTML = ""}) 
+            document.getElementById("coordinates").innerHTML = ""
+            d3.select(this).style("fill", colors[colorSelector])
+        }) 
 
     //creazione path. Ogni grafico è formato da punti (dot) e una linea (path). Ho assegnato a ognuna di queste cose un id in base a quello che rappresentano (i dot e il path di "tba" avranno come id "#dottba" e "pathtba".)
         var line = d3.line()
@@ -231,8 +238,11 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                 d3.select("#svg3").selectAll("text").remove();
                 d3.select("#svg3").selectAll("g").remove();
 
-                graph_counter = 0
+                free_svg_1 = true
+                free_svg_2 = true
+                free_svg_3 = true
                 
+
                 g.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(xScale));
@@ -355,9 +365,13 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             .attr("transform", "translate(" + 100 + "," + 100 + ")")
             .style("fill", "#CC0000")
             .on('mouseover', function (d, i) {
-            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]})
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]
+            d3.select(this).style("fill", "#7CFC00")
+        })
             .on('mouseout', function (d, i) {
-                document.getElementById("coordinates").innerHTML = ""}); 
+                document.getElementById("coordinates").innerHTML = ""
+                d3.select(this).style("fill", "#CC0000")
+            }); 
 
             // Step 8        
             var line = d3.line()
@@ -374,7 +388,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             .style("stroke", "#CC0000")
             .style("stroke-width", "2");
 
-            graph_counter = 1
+            free_svg_1 = false
 
             })
     
@@ -398,7 +412,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                     //d3.selectAll("g").remove();
                     //d3.selectAll("svg").remove();
                 
-                    if(graph_counter == 1){ //update del primo grafico
+                    if(free_svg_1 == true){ //update del primo grafico
 
                         d3.selectAll("circle").remove();
                         d3.selectAll("path").remove();
@@ -406,31 +420,28 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                         
                         resetText(selectedOption);
                         update(selectedOption, data, colour);
-                        graph_counter += 1;
+                        free_svg_1 = false
 
                     } 
-                    else if(graph_counter == 2) { //update del secondo grafico
+                    else if(free_svg_2 == true) { //update del secondo grafico
                         graph_number = 2
                         newGraph(selectedOption, data, colour, graph_number);
-                        graph_counter += 1;
+                        console.log("negraph 2")
+                        free_svg_2 = false
                     } 
-                    else if((graph_counter == 3) && (warning !=1)){ //update del terzo grafico
+                    else if((free_svg_3 == true)){ //update del terzo grafico
                         graph_number = 3
                         newGraph(selectedOption, data, colour, graph_number);
-                        graph_counter += 1;
+                        free_svg_3 = false
                         
                     }
                     
-                    else if(graph_counter == 4){ //update del terzo grafico
+                    else if((free_svg_1 == false) && (free_svg_2 == false) && (free_svg_3 == false)){ //update del terzo grafico
                         alert("Puoi selezionare massimo 3 valori da vedere contemporaneamente!")
                     }
 
 
 
-
-                
-                //if((document.getElementById(selectedOption) == null) && (graph_counter <= 4) )document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption+ ')" checked>' + selectedOption + "</checkbox>"
-                
                 
                 
             }
@@ -595,13 +606,15 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                     .style("fill", colour)
                     .attr("id", function(d,i){ return "dot" + selectedGroup})
                     .on('mouseover', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]
-                    //d3.select("#svg_default").select("circle").style("fill", "#AAFF00");
-                    //console.log("aaa")
+                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedGroup + ": " + d[1]
+                    d3.select(this).style("fill", "#7CFC00")
+                  
                 })
                     
                     .on('mouseout', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = ""}); 
+                    document.getElementById("coordinates").innerHTML = ""
+                    d3.select(this).style("fill", colour)
+                }); 
 
                 var line = d3.line()
                     .x(function(d) { return xScale(d[0]); }) 
@@ -671,9 +684,13 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                     .style("fill", colour)
                     .attr("id", function(d,i){ return "dot" + selectedGroup})
                     .on('mouseover', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedGroup + ": " + d[1]})
+                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedGroup + ": " + d[1]
+                    d3.select(this).style("fill", "#7CFC00")
+                    })
                     .on('mouseout', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = ""}) ;
+                    document.getElementById("coordinates").innerHTML = ""
+                    d3.select(this).style("fill", colour)
+                }) ;
 
                 var line = d3.line()
                     .x(function(d) { return xScale(d[0]); }) 
@@ -795,9 +812,13 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             .style("fill", "#CC0000")
             .attr("id", function(d,i){ return "dot" + selectedGroup + "2"})
             .on('mouseover', function (d, i) {
-            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]})
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedGroup + ": " + d[1]
+            d3.select(this).style("fill", "#7CFC00")
+            })
             .on('mouseout', function (d, i) {
-                document.getElementById("coordinates").innerHTML = ""})    
+                document.getElementById("coordinates").innerHTML = ""
+            d3.select(this).style("fill", "#CC0000")
+            })    
             
 
             // Step 8        
@@ -829,9 +850,8 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             d3.select("#svg2").selectAll("g").remove();
 
             
-            graph_counter = 2
-            warning = 1
-            console.log("Delete 2: " + graph_counter)
+            free_svg_2 = true
+            console.log("Delete 2")
             //document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg2"></svg>'
             
         });
@@ -912,9 +932,13 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             .style("fill", "#CC0000")
             .attr("id", function(d,i){ return "dot" + selectedGroup + "3"})
             .on('mouseover', function (d, i) {
-            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]})
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedGroup + ": " + d[1]
+            d3.select(this).style("fill", "#7CFC00")
+        })
             .on('mouseout', function (d, i) {
-                document.getElementById("coordinates").innerHTML = ""});
+                document.getElementById("coordinates").innerHTML = ""
+                d3.select(this).style("fill", "#CC0000")
+            });
 
             // Step 8        
             var line = d3.line()
@@ -943,9 +967,8 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             d3.select("#svg3").selectAll("path").remove();
             d3.select("#svg3").selectAll("text").remove();
             d3.select("#svg3").selectAll("g").remove();
-            graph_counter = graph_counter - 1
-            warning = 0
-            console.log("Delete 3: " + graph_counter)
+            free_svg_3 = true
+            console.log("Delete 3")
             //document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg3"></svg>'
             
            
