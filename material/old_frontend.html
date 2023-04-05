@@ -273,7 +273,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             spindle_id = document.getElementById('request').value
             if(spindle_id == "") alert("Id mancante o scorretto")
             document.getElementById("spindle").innerHTML = "Spindle ID: " + spindle_id
-            d3.json("http://arca.diag.uniroma1.it:8082/rodaggi/spindles/" + spindle_id +"/raw_data?limit=100", function(data) {
+            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + spindle_id +"/raw_data?limit=100", function(data) {
             console.log(data.data)
             
             //per ora salvo i dati su localstorage, perché molte funzioni non si vedono tra loro e le variabili, anche se globali, non si vedono tra loro comunque. Che roba

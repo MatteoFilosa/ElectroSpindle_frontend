@@ -26,6 +26,7 @@
 Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required> <button id ="submit" class = "button-green"> Cerca</button>
 <select id="selectDataInizio"></select>
 <select id="selectDataFine" ></select>
+<a href="old_frontend.html" target="_blank" rel="noopener noreferrer">Visualizzazione singola</a>
 <!--Step 2-->
 <div id = "svg-div">
     <svg width="500" height="400" id ="svg"></svg>
@@ -66,11 +67,9 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
         var g = svg.append("g")
             .attr("transform", "translate(" + 100 + "," + 100 + ")");
 
-        var linesG = svg.append("g")
-		    .attr("id", "linesG");
+
 
         var colorSelector = 0, token = 0, graph_number = 1
-        localStorage.setItem("flag", JSON.stringify(1));
         var dataInizio = ["Data 1"]
         var dataFine = ["Data 2"]
 
@@ -101,7 +100,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
 
 
                 document.getElementById("selectDataInizio").selectedIndex = 0;
-                document.getElementById("selectDataFine").disabled = true;
+                //document.getElementById("selectDataFine").disabled = true;
 
                 d3.select("#svg").selectAll("circle").remove();
                 d3.select("#svg").selectAll("path").remove();
@@ -127,7 +126,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
             if(spindle_id == "") alert("Id mancante o scorretto")
             document.getElementById("spindle").innerHTML = "Spindle ID: " + spindle_id
             
-            d3.json("http://arca.diag.uniroma1.it:8082/rodaggi/spindles/" + spindle_id +"/raw_data?limit=100", function(data) {
+            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + spindle_id +"/raw_data?limit=100", function(data) {
             console.log(data.data)
 
             //per ora salvo i dati su localstorage, perché molte funzioni non si vedono tra loro e le variabili, anche se globali, non si vedono tra loro comunque. Che roba
