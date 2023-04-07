@@ -43,9 +43,19 @@ input[type=checkbox] {
 #problems-found{
 
   position: absolute;
-  left: 600px;
+  left: 1000px;
   top: 0px; 
   height: 200px;
+  width: 500px;
+
+}
+
+#availableSpindles{
+
+  position: absolute;
+  left: 800px;
+  top: 0px; 
+  height: 500px;
   width: 500px;
 
 }
@@ -86,6 +96,74 @@ input[type=checkbox] {
     touch-action: manipulation;
     vertical-align: baseline;
     white-space: nowrap;
+  }
+  
+  .button-blue:hover,
+  .button-blue:focus {
+    background-color: #07c;
+  }
+  
+  .button-blue:focus {
+    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
+  }
+  
+  .button-blue:active {
+    background-color: #0064bd;
+    box-shadow: none;
+  }
+
+  .button-green {
+    background-color: #32CD32;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.15385;
+    margin: 0;
+    outline: none;
+    padding: 8px .8em;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    white-space: nowrap;
+  }
+
+  .button-blue-spindle {
+    background-color: #0095ff;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.15385;
+    margin: 0;
+    outline: none;
+    padding: 8px .8em;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    white-space: nowrap;
+    height: fit-content;
+    width: fit-content;
   }
   
   .button-blue:hover,
