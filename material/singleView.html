@@ -63,13 +63,105 @@
 
 <script>
 
-        function modifyElement(){
+        function modifyElement(datasetTba, datasetTamb){
+
+            var datasetTba = JSON.parse(localStorage.getItem("datasetTba"));
+
             
+            if (document.getElementById("aggregato").checked == true){
+
+                console.log("ok")
+                var width, height                              
+                d3.select("#svg_tamb").selectAll("text").remove();
+                var svg = d3.select("#svg_tamb"),
+                margin = 200,
+                width = svg.attr("width") - margin, //300
+                height = svg.attr("height") - margin //200
+                svg.append('text')
+                    .attr('x', width/2 + 100)
+                    .attr('y', 100)
+                    .attr('text-anchor', 'middle')
+                    .style('font-family', 'Helvetica')
+                    .style('font-size', 20)
+                    .text("Grafico Tamb e Tba");
+        
+            // X label
+                svg.append('text')
+                    .attr('x', width/2 + 100)
+                    .attr('y', height - 15 + 150)
+                    .attr('text-anchor', 'middle')
+                    .style('font-family', 'Helvetica')
+                    .style('font-size', 12)
+                    .text("Time");
+            
+            // Y label
+
+                svg.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+                    .style('font-family', 'Helvetica')
+                    .style('font-size', 12)
+                    .text("Tamb, Tba");
+
+                var min = JSON.parse(localStorage.getItem("min"))
+                var max = JSON.parse(localStorage.getItem("max"))
+
+                for(let i = 0; i < 99; i++){
+                
+                    if(datasetTba[i] < min){
+                        min = datasetTba[i]
+                    }
+                    if(datasetTba[i] > max){
+                        max = datasetTba[i]
+                    }    
+                    
+                }
+        
+
+                xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+                
+
+                svg.append('g')
+                    .selectAll("dot")
+                    .data(datasetTba)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) { return xScale(d[0]); } )
+                    .attr("cy", function (d) { return yScale(d[1]); } )
+                    .attr("r", 3)
+                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                    .style("fill", "#ffa500")
+                    .attr("id", function(d,i){ return "dotTba"})
+                    .on('mouseover', function (d, i) {
+                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , Tba: " + d[1]
+                    d3.select(this).style("fill", "#7CFC00")
+                    })
+                    .on('mouseout', function (d, i) {
+                    document.getElementById("coordinates").innerHTML = ""
+                    d3.select(this).style("fill", "#ffa500")
+                }) ;
+
+                var line = d3.line()
+                    .x(function(d) { return xScale(d[0]); }) 
+                    .y(function(d) { return yScale(d[1]); }) 
+                    .curve(d3.curveMonotoneX)
+
+                svg.append("path")
+                    .datum(datasetTba) 
+                    .attr("class", "line") 
+                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                    .attr("d", line)
+                    .style("fill", "none")
+                    .style("stroke", "#ffa500")
+                    .style("stroke-width", "2")
+                    .attr("id", function(d,i){ return "pathTba"});    
+                
+
+            }
         }
 
 
-
-        var colorSelector = 0
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
         
         document.getElementById("selectedSpindles").innerHTML += "<h3>Spindle selezionato: </h3>"+ id_and_sn[0][1]
@@ -96,7 +188,7 @@
 
             ////DATA TAMB
             
-            localStorage.setItem("storageData", JSON.stringify(data));
+           
 
             var datasetTamb = [];
     
@@ -113,13 +205,11 @@
                 datasetTamb.push([i+1, data.data.Tamb[i]]);
             }
             
+            localStorage.setItem("max", JSON.stringify(max)); //riferito a Tamb
+            localStorage.setItem("min", JSON.stringify(min)); //riferito a Tamb
+            localStorage.setItem("datasetTamb", JSON.stringify(datasetTamb));
+
             
-            var selectedOption = "Tamb"
-            localStorage.setItem("selectedOption", JSON.stringify(selectedOption));
-
-            ;
-
-
         // Creazione assi cartesiani TAMB. 
                 xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
                 yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
@@ -224,10 +314,9 @@
                 }
                 datasetTba.push([i+1, data.data.Tba[i]]);
             }
-            
-            console.log(data, datasetTba)
-            var selectedOption = "Tba"
-            localStorage.setItem("selectedOption", JSON.stringify(selectedOption))
+
+            localStorage.setItem("datasetTba", JSON.stringify(datasetTba));
+
                 
                 // Creazione assi cartesiani TBA. 
                 xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
@@ -349,7 +438,7 @@
             .attr('transform', 'translate(60,' + height + ')rotate(-90)')
             .style('font-family', 'Helvetica')
             .style('font-size', 12)
-            .text(selectedOption);
+            .text("Tba");
             }
 
 
