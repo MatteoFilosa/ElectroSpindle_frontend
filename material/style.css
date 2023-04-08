@@ -5,6 +5,19 @@ svg {
   top: 200px;
 }
 
+#svg_tba {
+  position: absolute;
+  left: 400px;
+  top: 200px;
+}
+
+#coordinates{
+
+  position: absolute;
+  left: 8px;
+  top: 150px;
+}
+
 #legenda {
   clear:both
 }
