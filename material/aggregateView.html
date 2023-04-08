@@ -34,7 +34,7 @@
 
 
 <!-- Initialize a select button -->
-<button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button>
+<!--<button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button>-->
 <!--<input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici-->
 <!--<input type="checkbox" id ="separati" onchange = "separati()"> Separati -->
 
@@ -67,12 +67,12 @@ var colorSelector = 0
     .attr("transform", "translate(" + 100 + "," + 100 + ")");
 
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
-        document.getElementById("selectedSpindles").innerHTML += id_and_sn[0][1]
+        document.getElementById("selectedSpindles").innerHTML += "<h3>Spindle selezionati: </h3>"+ id_and_sn[0][1]
         for(let i = 1; i < id_and_sn.length; i++){
 
             document.getElementById("selectedSpindles").innerHTML += " , " + id_and_sn[i][1]
 
-            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[i][0] +"/raw_data?limit=100'", function(data) {
+            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[i][0] +"/raw_data?limit=100", function(data) {
         
                 //quando faccio una ricerca per id, mi visualizza come primo grafico quello della temperatura ambientale (Tamb).
             document.getElementById("selectMenu").disabled = false

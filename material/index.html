@@ -54,9 +54,9 @@ Modello <select id="modello"></select>
 <script>
         
 
-        function redirectView(mode){
+        function redirectView(){
+            
             var selected_sn = []
-            console.log("okok")
             var id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"));
             console.log(id_and_sn)
             for(i = 0; i <145; i++){
@@ -68,8 +68,14 @@ Modello <select id="modello"></select>
             }
             localStorage.setItem("selectedSpindles", JSON.stringify(selected_sn))
 
-            if(mode == 0) window.open('aggregateView.html', '_blank');
-            if(mode == 1) window.open('separateView.html', '_blank');
+            if(selected_sn.length == 0){
+
+                alert("Seleziona almeno uno spindle per continuare!")
+                return;
+            } 
+            else if(selected_sn.length == 1) window.open('singleView.html', '_blank');
+            else if (selected_sn.length > 1) window.open('aggregateView.html', '_blank');
+            
         }
 
         function sortFunction(a, b) {
@@ -110,8 +116,8 @@ Modello <select id="modello"></select>
                 
                 
             }
-            document.getElementById("availableSpindles").innerHTML += "<button id = 'aggregato' class = 'button-blue' onClick='redirectView(0)'>Visualizzazione Aggregata</button>" + "  "
-            document.getElementById("availableSpindles").innerHTML += "<button id = 'separato' class = 'button-blue' onClick='redirectView(1)'>Visualizzazione Separata</button>"
+            document.getElementById("availableSpindles").innerHTML += "<button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>" 
+            
             localStorage.setItem("id_and_sn", JSON.stringify(id_and_sn))
             datasetDataInizio.sort(sortFunction)
             datasetDataFine.sort(sortFunction)
@@ -178,8 +184,8 @@ Modello <select id="modello"></select>
                 
             }
 
-            document.getElementById("availableSpindles").innerHTML += "<button id = 'aggregato' class = 'button-blue' onClick='redirectView(0)'>Visualizzazione Aggregata</button>" + "  "
-            document.getElementById("availableSpindles").innerHTML += "<button id = 'separato' class = 'button-blue' onClick='redirectView(1)'>Visualizzazione Separata</button>"
+            document.getElementById("availableSpindles").innerHTML += "<button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>" + "  "
+            
 
             console.log(id_to_save, sn_to_save)
           
@@ -189,8 +195,28 @@ Modello <select id="modello"></select>
 
         d3.select("#submit").on("click", function(d){
 
-            //TODO
-
+            var id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"));
+            var written = document.getElementById("request").value
+            
+            document.getElementById("availableSpindles").innerHTML = "<h3>Spindle disponibili</h3>"
+    
+            for(i = 0; i <145; i++){
+                var tmp = id_and_sn[i][1]
+                
+                const found = tmp.match(written);
+                if(found != null){
+                var tmp = found["input"]
+                console.log(tmp)
+                var tmp2 = document.getElementById(tmp)
+                console.log(tmp2)
+                
+                
+                if(tmp!=null) document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' id = '"+ tmp +"'>"+ tmp
+            }
+            }
+            
+            document.getElementById("availableSpindles").innerHTML += "<button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>" + "  "
+            
             })
     
            
