@@ -35,7 +35,7 @@
   <svg width="500" height="400" id ="svg_tamb"></svg> <!-- cambiare width e height dinamicamente per funzione zoom-->
   <svg width="500" height="400" id ="svg_tba"></svg>
 </div>
-<div id="my_dataviz"></div>
+
 <div id = "problems-found">
 
 
@@ -171,7 +171,7 @@
             .attr("id", function(d,i){ return "pathTamb"});
 
         svg_tamb.append('text')
-            .attr('x', width/2 + 100)
+            .attr('x', width/2 + 90)
             .attr('y', 100)
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
@@ -498,7 +498,7 @@
 
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
         
-        document.getElementById("selectedSpindles").innerHTML += "<h3>Spindle selezionato: </h3>"+ id_and_sn[0][1]
+        document.getElementById("selectedSpindles").innerHTML += "Spindle selezionato: "+ id_and_sn[0][1]
             
 
             d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?limit=100", function(data) {
@@ -731,105 +731,6 @@
 
             
                   });
-        
-        //funzione che fa un update del grafico in base all' attributo del menu a tendina selezionato. Se la spunta su "sovrapponi" c'è, allora creo delle checkbox per ogni attributo richiesto su un div apposito.
-
-
-        function createAxes(selectedOption){
-
-            g.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(xScale));
-
-            g.append("g")
-            .call(d3.axisLeft(yScale));
-        }
-
-        function resetText(selectedOption){
-
-
-
-            svg.append('text')
-            .attr('x', width/2 + 100)
-            .attr('y', 100)
-            .attr('text-anchor', 'middle')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 20)
-            .text('Grafico ' + selectedOption );
-
-            // X label
-            svg.append('text')
-            .attr('x', width/2 + 100)
-            .attr('y', height - 15 + 150)
-            .attr('text-anchor', 'middle')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 12)
-            .text('Time');
-
-            // Y label
-            svg.append('text')
-            .attr('text-anchor', 'middle')
-            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 12)
-            .text("Tba");
-            }
-
-
-
-
-        //funzione che fa un update del grafico in base all'ozpione scelta del menu a tendina.
-        function update(selectedGroup, data, colour) {
-
-
-        //         var dataset = [];
-        //         var min = 100000
-        //         var max = 0
-        //         console.log(eval('data.data.' + selectedGroup + "[0]")) //eval serve perché se facessi data.data.selectedGroup[0] direttamente da errore.
-
-        //     if(document.getElementById("sovrapponi").checked == false){
-        // console.log("issue")
-        //         for(let i = 0; i < 99; i++){
-
-        //                 if(eval('data.data.' + selectedGroup + "["+ i +"]") < min){
-        //                     min = eval('data.data.' + selectedGroup + "["+ i +"]")
-        //                 }
-        //                 if(eval('data.data.' + selectedGroup + "["+ i +"]") > max){
-        //                     max = eval('data.data.' + selectedGroup + "["+ i +"]")
-        //                 }
-        //             dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
-        //             }
-        //         }
-
-        //     else{
-        //         console.log("issue")
-        //         for(let i = 0; i < 99; i++){
-
-        //             if(token == 1){ //ho generato almeno un grafico
-
-        //             min = JSON.parse(localStorage.getItem("min"));
-        //             max = JSON.parse(localStorage.getItem("max"));
-
-        //             }
-
-
-        //             if(eval('data.data.' + selectedGroup + "["+ i +"]") < min){
-        //                 min = eval('data.data.' + selectedGroup + "["+ i +"]")
-        //             }
-        //             if(eval('data.data.' + selectedGroup + "["+ i +"]") > max){
-        //                 max = eval('data.data.' + selectedGroup + "["+ i +"]")
-        //             }
-        //         dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
-        //         localStorage.setItem("min", JSON.stringify(min))
-        //         localStorage.setItem("max", JSON.stringify(max))
-        //         token = 1
-        //         }
-
-
-
-            }
-
-       
 
 </script>
 </body>
