@@ -10,7 +10,7 @@
     //inizializzazione array di colori per i grafici
         var colors = [
   '#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed',
-  '#ff69b4','#ba55d3','#cd5c5c','#ffa500','#40e0d0'
+  '#ff69b4','#ba55d3','#cd5c5c','#cc5500','#40e0d0'
     ];
 
 
@@ -65,64 +65,368 @@
 
         function modifyElement(datasetTba, datasetTamb){
 
-            var datasetTba = JSON.parse(localStorage.getItem("datasetTba"));
+            var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
+
 
             
             if (document.getElementById("aggregato").checked == true){
 
-                console.log("ok")
-                var width, height                              
-                d3.select("#svg_tamb").selectAll("text").remove();
-                var svg = d3.select("#svg_tamb"),
-                margin = 200,
-                width = svg.attr("width") - margin, //300
-                height = svg.attr("height") - margin //200
-                svg.append('text')
+                d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?limit=100", function(data) {
+        
+       
+  
+   
+    d3.select("#svg_tba").remove()
+    d3.select("#svg_tamb").remove()
+    document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_tamb'></svg>"
+    document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_tba'></svg>"
+
+    var svg_tamb = d3.select("#svg_tamb"),
+    margin = 200,
+    width = svg_tamb.attr("width") - margin, //300
+    height = svg_tamb.attr("height") - margin //200
+
+    var g = svg_tamb.append("g")
+    .attr("transform", "translate(" + 100 + "," + 100 + ")");
+
+    ////DATA TAMB
+ 
+    var datasetTamb = [];
+
+    var min = 100000
+    var max = 0
+
+    for(let i = 0; i < 99; i++){
+        if(data.data.Tamb[i] < min){
+            min = data.data.Tamb[i]
+        }
+        if(data.data.Tamb[i] > max){
+            max = data.data.Tamb[i]
+        }
+        datasetTamb.push([i+1, data.data.Tamb[i]]);
+    }
+
+    var datasetTba = [];
+
+    for(let i = 0; i < 99; i++){
+        if(data.data.Tba[i] < min){
+            min = data.data.Tba[i]
+        }
+        if(data.data.Tba[i] > max){
+            max = data.data.Tba[i]
+        }
+        datasetTba.push([i+1, data.data.Tba[i]]);
+    }
+    
+
+// Creazione assi cartesiani scalandro tra max tba e tamb. 
+        xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+        yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+        var g = svg_tamb.append("g")
+        .attr("transform", "translate(" + 100 + "," + 100 + ")");
+        
+        g.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(xScale));
+
+        g.append("g")
+        .call(d3.axisLeft(yScale));
+
+        svg_tamb.append('g')
+            .selectAll("dot")
+            .data(datasetTamb)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return xScale(d[0]); } )
+            .attr("cy", function (d) { return yScale(d[1]); } )
+            .attr("r", 3)
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .style("fill", "#CC0000")
+            .attr("id", function(d,i){ return "dotTamb"})
+            .on('mouseover', function (d, i) {
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + "Tamb" + ": " + d[1]
+            d3.select(this).style("fill", "#7CFC00")
+          
+        })
+            
+            .on('mouseout', function (d, i) {
+            document.getElementById("coordinates").innerHTML = ""
+            d3.select(this).style("fill", "#CC0000")
+        }); 
+
+        var line = d3.line()
+            .x(function(d) { return xScale(d[0]); }) 
+            .y(function(d) { return yScale(d[1]); }) 
+            .curve(d3.curveMonotoneX)
+
+        svg_tamb.append("path")
+            .datum(datasetTamb) 
+            .attr("class", "line") 
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .attr("d", line)
+            .style("fill", "none")
+            .style("stroke", "#CC0000")
+            .style("stroke-width", "2")
+            .attr("id", function(d,i){ return "pathTamb"});
+
+        svg_tamb.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 20)
+            .text('Grafico Tamb e Tba');
+
+        // X label
+        svg_tamb.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', height - 15 + 150)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text('Time');
+
+        // Y label
+
+        svg_tamb.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+            .attr('font-weight', 'bold')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .style('fill', '#CC0000')
+            .text('Tamb');
+
+        var new_height = 170
+        svg_tamb.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(60,' + new_height + ')rotate(-90)')
+            .attr('font-weight', 'bold')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .style('fill', '#cc5500')
+            .text(', Tba');
+
+        
+
+        svg_tamb.append('g')
+            .selectAll("dot")
+            .data(datasetTba)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return xScale(d[0]); } )
+            .attr("cy", function (d) { return yScale(d[1]); } )
+            .attr("r", 3)
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .style("fill", "#cc5500")
+            .attr("id", function(d,i){ return "dotTba"})
+            .on('mouseover', function (d, i) {
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + "Tba" + ": " + d[1]
+            d3.select(this).style("fill", "#7CFC00")
+          
+        })
+            
+            .on('mouseout', function (d, i) {
+            document.getElementById("coordinates").innerHTML = ""
+            d3.select(this).style("fill", "#cc5500")
+        }); 
+
+        var line = d3.line()
+            .x(function(d) { return xScale(d[0]); }) 
+            .y(function(d) { return yScale(d[1]); }) 
+            .curve(d3.curveMonotoneX)
+
+        svg_tamb.append("path")
+            .datum(datasetTba) 
+            .attr("class", "line") 
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .attr("d", line)
+            .style("fill", "none")
+            .style("stroke", "#cc5500")
+            .style("stroke-width", "2")
+            .attr("id", function(d,i){ return "pathTba"});
+
+          });    
+                
+
+        }
+
+    else if (document.getElementById("aggregato").checked == false){
+
+        d3.select("#svg_tamb").remove()
+        document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_tamb'></svg>"
+        var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
+        
+        
+            
+
+            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?limit=100", function(data) {
+        
+                //quando faccio una ricerca per id, mi visualizza come primo grafico quello della temperatura ambientale (Tamb).
+            
+            //document.getElementById("selectedValues").innerHTML = ""
+            //per ora salvo i dati su localstorage, perché molte funzioni non si vedono tra loro e le variabili, anche se globali, non si vedono tra loro comunque. Che roba
+          
+            ////SVG TAMB/////
+            var svg_tamb = d3.select("#svg_tamb"),
+            margin = 200,
+            width = svg_tamb.attr("width") - margin, //300
+            height = svg_tamb.attr("height") - margin //200
+
+            var g = svg_tamb.append("g")
+            .attr("transform", "translate(" + 100 + "," + 100 + ")");
+
+
+            
+
+            ////DATA TAMB
+            
+           
+
+            var datasetTamb = [];
+    
+            var min = 100000
+            var max = 0
+
+            for(let i = 0; i < 99; i++){
+                if(data.data.Tamb[i] < min){
+                    min = data.data.Tamb[i]
+                }
+                if(data.data.Tamb[i] > max){
+                    max = data.data.Tamb[i]
+                }
+                datasetTamb.push([i+1, data.data.Tamb[i]]);
+            }
+            
+            localStorage.setItem("max", JSON.stringify(max)); //riferito a Tamb
+            localStorage.setItem("min", JSON.stringify(min)); //riferito a Tamb
+            localStorage.setItem("datasetTamb", JSON.stringify(datasetTamb));
+
+            
+        // Creazione assi cartesiani TAMB. 
+                xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+                var g = svg_tamb.append("g")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")");
+                
+                g.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScale));
+        
+                g.append("g")
+                .call(d3.axisLeft(yScale));
+
+                svg_tamb.append('g')
+                    .selectAll("dot")
+                    .data(datasetTamb)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) { return xScale(d[0]); } )
+                    .attr("cy", function (d) { return yScale(d[1]); } )
+                    .attr("r", 3)
+                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                    .style("fill", "#CC0000")
+                    .attr("id", function(d,i){ return "dotTamb"})
+                    .on('mouseover', function (d, i) {
+                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + "Tamb" + ": " + d[1]
+                    d3.select(this).style("fill", "#7CFC00")
+                  
+                })
+                    
+                    .on('mouseout', function (d, i) {
+                    document.getElementById("coordinates").innerHTML = ""
+                    d3.select(this).style("fill", "#CC0000")
+                }); 
+
+                var line = d3.line()
+                    .x(function(d) { return xScale(d[0]); }) 
+                    .y(function(d) { return yScale(d[1]); }) 
+                    .curve(d3.curveMonotoneX)
+
+                svg_tamb.append("path")
+                    .datum(datasetTamb) 
+                    .attr("class", "line") 
+                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                    .attr("d", line)
+                    .style("fill", "none")
+                    .style("stroke", "#CC0000")
+                    .style("stroke-width", "2")
+                    .attr("id", function(d,i){ return "pathTamb"});
+
+                svg_tamb.append('text')
                     .attr('x', width/2 + 100)
                     .attr('y', 100)
                     .attr('text-anchor', 'middle')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 20)
-                    .text("Grafico Tamb e Tba");
+                    .text('Grafico Tamb');
         
-            // X label
-                svg.append('text')
+                // X label
+                svg_tamb.append('text')
                     .attr('x', width/2 + 100)
                     .attr('y', height - 15 + 150)
                     .attr('text-anchor', 'middle')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 12)
-                    .text("Time");
-            
-            // Y label
-
-                svg.append('text')
+                    .text('Time');
+        
+                // Y label
+                svg_tamb.append('text')
                     .attr('text-anchor', 'middle')
                     .attr('transform', 'translate(60,' + height + ')rotate(-90)')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 12)
-                    .text("Tamb, Tba");
+                    .text('Tamb');
 
-                var min = JSON.parse(localStorage.getItem("min"))
-                var max = JSON.parse(localStorage.getItem("max"))
+                ////SVG TBA/////
 
-                for(let i = 0; i < 99; i++){
-                
-                    if(datasetTba[i] < min){
-                        min = datasetTba[i]
-                    }
-                    if(datasetTba[i] > max){
-                        max = datasetTba[i]
-                    }    
-                    
+                var svg_tba = d3.select("#svg_tba"),
+                margin = 200,
+                width = svg_tba.attr("width") - margin, //300
+                height = svg_tba.attr("height") - margin //200
+
+                var g = svg_tba.append("g")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")");
+
+                //DATA TBA
+
+            localStorage.setItem("storageData", JSON.stringify(data));
+
+            var datasetTba = [];
+    
+            var min = 100000
+            var max = 0
+
+            for(let i = 0; i < 99; i++){
+                if(data.data.Tba[i] < min){
+                    min = data.data.Tba[i]
                 }
-        
+                if(data.data.Tba[i] > max){
+                    max = data.data.Tba[i]
+                }
+                datasetTba.push([i+1, data.data.Tba[i]]);
+            }
 
+            localStorage.setItem("datasetTba", JSON.stringify(datasetTba));
+
+                
+                // Creazione assi cartesiani TBA. 
                 xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
                 yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-                
 
-                svg.append('g')
+                var g = svg_tba.append("g")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")");
+                
+                g.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScale));
+        
+                g.append("g")
+                .call(d3.axisLeft(yScale));
+
+                svg_tba.append('g')
                     .selectAll("dot")
                     .data(datasetTba)
                     .enter()
@@ -131,35 +435,65 @@
                     .attr("cy", function (d) { return yScale(d[1]); } )
                     .attr("r", 3)
                     .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                    .style("fill", "#ffa500")
+                    .style("fill", "#CC0000")
                     .attr("id", function(d,i){ return "dotTba"})
                     .on('mouseover', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , Tba: " + d[1]
+                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + "Tba" + ": " + d[1]
                     d3.select(this).style("fill", "#7CFC00")
-                    })
+                  
+                })
+                    
                     .on('mouseout', function (d, i) {
                     document.getElementById("coordinates").innerHTML = ""
-                    d3.select(this).style("fill", "#ffa500")
-                }) ;
+                    d3.select(this).style("fill", "#CC0000")
+                }); 
 
                 var line = d3.line()
                     .x(function(d) { return xScale(d[0]); }) 
                     .y(function(d) { return yScale(d[1]); }) 
                     .curve(d3.curveMonotoneX)
 
-                svg.append("path")
+                svg_tba.append("path")
                     .datum(datasetTba) 
                     .attr("class", "line") 
                     .attr("transform", "translate(" + 100 + "," + 100 + ")")
                     .attr("d", line)
                     .style("fill", "none")
-                    .style("stroke", "#ffa500")
+                    .style("stroke", "#CC0000")
                     .style("stroke-width", "2")
-                    .attr("id", function(d,i){ return "pathTba"});    
-                
+                    .attr("id", function(d,i){ return "pathTba"});
 
-            }
-        }
+                svg_tba.append('text')
+                    .attr('x', width/2 + 100)
+                    .attr('y', 100)
+                    .attr('text-anchor', 'middle')
+                    .style('font-family', 'Helvetica')
+                    .style('font-size', 20)
+                    .text('Grafico Tba');
+        
+                // X label
+                svg_tba.append('text')
+                    .attr('x', width/2 + 100)
+                    .attr('y', height - 15 + 150)
+                    .attr('text-anchor', 'middle')
+                    .style('font-family', 'Helvetica')
+                    .style('font-size', 12)
+                    .text('Time');
+        
+                // Y label
+                svg_tba.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+                    .style('font-family', 'Helvetica')
+                    .style('font-size', 12)
+                    .text('Tba');
+    
+
+            
+                  });
+
+    }
+    }
 
 
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
