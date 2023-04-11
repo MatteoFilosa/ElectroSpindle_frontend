@@ -27,7 +27,7 @@
 <!--<input type = "checkbox" id ="tamb" class = "checkbox" onchange ="modifyElement('tamb')" checked> Tamb
 <input type = "checkbox" id ="tba" class = "checkbox" onchange ="modifyElement('tba')" checked> Tba -->
 
-  
+<select id="selectMenu"></select>
 
 
 <!--Step 2-->
@@ -62,6 +62,17 @@
 <div id = "coordinates"></div>
 
 <script>
+        var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
+        "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
+        "S2", "S3", "S4", "S5", "SN", "Slot", "Speed_S3_BUS", "Speed_Sync", "Stazione", "Step", "TH", "TR", "Tdut1", "Tdut2",
+        "Tdut3", "VibANT_Sync", "Vib_EM", "error_mask", "linea", "not used"]
+        d3.select("#selectMenu")
+        .selectAll('myOptions')
+        .data(allGroup)
+        .enter()
+        .append('option')
+        .text(function (d) { return d; }) // text showed in the menu
+        .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
         function modifyElement(datasetTba, datasetTamb){
 
