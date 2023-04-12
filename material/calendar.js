@@ -44,7 +44,7 @@ generateCalendar = (month, year) => {
             var day_choose = i - first_day.getDay() + 1
             day.setAttribute("id", "calendar-day" + day_choose)
             day.innerHTML = i - first_day.getDay() + 1
-            day.setAttribute("onclick", "setDateStart(" + day_choose + ") ")
+            day.setAttribute("onclick", "setDate(" + day_choose + ") ")
             day.innerHTML += `<span></span>
                             <span></span>
                             <span></span>
@@ -98,37 +98,57 @@ let curr_year = {value: currDate.getFullYear()}
 generateCalendar(curr_month.value, curr_year.value)
 
 
-function setDateStart(day){
+function setDate(day){
 
-    if (flag == 0){
 
-        document.getElementById("day-start").innerHTML = "Data inizio: "
-        document.getElementById("day-start").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML
-        document.getElementById("calendar-day" + day).style.backgroundColor = "grey"
-        localStorage.setItem("day-start", JSON.stringify(day))
-        localStorage.setItem("month-start", JSON.stringify(document.getElementById("month-picker").innerHTML))
-        localStorage.setItem("year-start", JSON.stringify(document.getElementById("year").innerHTML))
-        
+    if(document.getElementById("day-start").innerHTML.length <15){
+        if (flag == 0){
 
-    }
+            document.getElementById("day-start").innerHTML = "Data inizio: "
+            document.getElementById("day-start").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML + "<button class = 'btn-blue' id = 'cambia_data_inizio' onclick = 'cambia_data_inizio(" + day + ")'> Cambia </button>"
+            document.getElementById("calendar-day" + day).style.backgroundColor = "grey"
+            localStorage.setItem("day-start", JSON.stringify(day))
+            localStorage.setItem("month-start", JSON.stringify(document.getElementById("month-picker").innerHTML))
+            localStorage.setItem("year-start", JSON.stringify(document.getElementById("year").innerHTML))
+            
     
+        }
+    }
 
-    if(flag == 1){
+    
+    
+    if(document.getElementById("day-end").innerHTML.length <15){
 
-        document.getElementById("day-end").innerHTML = "Data fine: "
-        document.getElementById("day-end").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML
-        document.getElementById("calendar-day" + day).style.backgroundColor = "grey"
-        flag = 0
-        localStorage.setItem("day-end", JSON.stringify(day))
-        localStorage.setItem("month-end", JSON.stringify(document.getElementById("month-picker").innerHTML))
-        localStorage.setItem("year-end", JSON.stringify(document.getElementById("year").innerHTML))
+        if(flag == 1){
+
+            document.getElementById("day-end").innerHTML = "Data fine: "
+            document.getElementById("day-end").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML + "<button class = 'btn-blue' id = 'cambia_data_fine' onclick = 'cambia_data_fine(" + day + ")'> Cambia </button>"
+            document.getElementById("calendar-day" + day).style.backgroundColor = "grey"
+            flag = 0
+            localStorage.setItem("day-end", JSON.stringify(day))
+            localStorage.setItem("month-end", JSON.stringify(document.getElementById("month-picker").innerHTML))
+            localStorage.setItem("year-end", JSON.stringify(document.getElementById("year").innerHTML))
 
     }
 
     flag = 1
     console.log(flag)
-    
+    }
    
+}
+
+function cambia_data_inizio(day){
+    document.getElementById("calendar-day" + day).style.backgroundColor = ""
+    document.getElementById("day-start").innerHTML = "Data inizio: "
+    flag = 0
+}
+
+function cambia_data_fine(day){
+
+    document.getElementById("calendar-day" + day).style.backgroundColor = ""
+    document.getElementById("day-end").innerHTML = "Data inizio: "
+    flag = 1
+
 }
 
 document.querySelector('#prev-year').onclick = () => {
