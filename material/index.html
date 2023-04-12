@@ -5,6 +5,8 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <title>ElectroSpindle Dashboard</title>
 
+    <link rel="stylesheet" href="calendar.css">
+
     <link rel="stylesheet" href="./style.css"></link>
     <script>
         //inizializzazione array di colori per i grafici
@@ -20,6 +22,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </head>
 <style>
+
+ul {list-style-type: none;}
+body {font-family: Verdana, sans-serif;}
+
+
+
     /* CSS */
 text.shadow {
   stroke: black;
@@ -553,6 +561,7 @@ input[type=checkbox] {
     box-shadow: none;
   }
 
+  
 
 </style>
 
@@ -561,25 +570,65 @@ input[type=checkbox] {
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
 <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>  
  
-Inserisci SN Spindle<input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <button class = "button-green" id = "submit">Filtra</button>
+Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <button class = "button-green" id = "submit">Filtra</button>
 
  
-<!--Step 2-->
-<div id = "svg-div">
-    <svg width="500" height="400" id ="svg_default"></svg> <!-- cambiare width e height dinamicamente per funzione zoom-->
+
+
+<div class="calendar" id = "calendar-original" >
+  <div class="calendar-header">
+      <span class="month-picker" id="month-picker">February</span>
+      <div class="year-picker">
+          <span class="year-change" id="prev-year">
+              <pre><</pre>
+          </span>
+          <span id="year">2021</span>
+          <span class="year-change" id="next-year">
+              <pre>></pre>
+          </span>
+      </div>
+  </div>
+  <div class="calendar-body" id = "calendar-body">
+      <div class="calendar-week-day">
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+      </div>
+      <div class="calendar-days"></div>
+  </div>
+  <div class="calendar-footer">
+      <div class="toggle">
+
+      </div>
+  </div>
+  <div class="month-list" id = "month-list"></div>
 </div>
 
 
+<div id="dstCalendar">
+ 
+</div>
 
+
+<script src="calendar.js"></script>
+
+Modello <select id="modello"></select>
 <!-- Initialize a select button -->
 <!--<button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button> -->
 <!--<input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici-->
 <!--<input type="checkbox" id ="separati" onchange = "separati()"> Separati -->
 
-Da <select id="selectDataInizio" ></select>
-A <select id="selectDataFine" ></select>
+Rodaggi disponibili dal 10/01/2022 al 21/09/2022 <br> <br> <br> <br>
 
-Modello <select id="modello"></select>
+<div id = "day-start">  </div>
+<div id = "day-end">  </div>
+<button class = "button-green" id = "submitData">Filtra</button>
+
+
 
 <div id = "coordinates"></div>
 <!--<a href="aggregateView.html" target="_blank" rel="noopener noreferrer">Visualizzazione aggregata</a>
@@ -589,7 +638,22 @@ Modello <select id="modello"></select>
 
 </div>
 
+
+
 <script>
+
+/*
+    var s = document.getElementById("calendar-original"),
+        d = document.getElementById("dstCalendar");
+
+        var clone = s.cloneNode(true);
+        clone.removeAttribute("id");
+        clone.add
+        d.appendChild(clone);
+        */
+
+        
+
         
 
         function redirectView(){
@@ -665,21 +729,7 @@ Modello <select id="modello"></select>
 
 
         console.log(datasetDataInizio, datasetDataFine)
-        d3.select("#selectDataInizio")
-        .selectAll('myOptions')
-        .data(datasetDataInizio)
-        .enter()
-        .append('option')
-        .text(function (d) { return d; }) // text showed in the menu
-        .attr("value", function (d) { return d; }) // corresponding value returned by the button
-
-        d3.select("#selectDataFine")
-        .selectAll('myOptions')
-        .data(datasetDataFine)
-        .enter()
-        .append('option')
-        .text(function (d) { return d; }) // text showed in the menu
-        .attr("value", function (d) { return d; }) // corresponding value returned by the button
+        
 
         })
         //per ora un solo modello
@@ -694,14 +744,58 @@ Modello <select id="modello"></select>
         .attr("value", function (d) { return d; }) // corresponding value returned by the button
     
 
+        
+        
     
-        d3.select("#selectDataFine").on("change", function(d){
+        d3.select("#submitData").on("click", function(d){
+
+          var data_inizio = JSON.parse(localStorage.getItem("day-start"))
+          var data_fine = JSON.parse(localStorage.getItem("day-end"))
+
+          var mese_inizio = JSON.parse(localStorage.getItem("month-start"))
+          var mese_fine = JSON.parse(localStorage.getItem("month-end"))
+
+          if(mese_inizio == "January") mese_inizio = "01"
+          if(mese_inizio == "February") mese_inizio = "02"
+          if(mese_inizio == "March") mese_inizio = "03"
+          if(mese_inizio == "April") mese_inizio = "04"
+          if(mese_inizio == "May") mese_inizio = "05"
+          if(mese_inizio == "June") mese_inizio = "06"
+          if(mese_inizio == "July") mese_inizio = "07"
+          if(mese_inizio == "August") mese_inizio = "08"
+          if(mese_inizio == "September") mese_inizio = "09"
+          if(mese_inizio == "October") mese_inizio = "10"
+          if(mese_inizio == "November") mese_inizio = "11"
+          if(mese_inizio == "December") mese_inizio = "12"
+
+          if(mese_fine == "January") mese_fine = "01"
+          if(mese_fine == "February") mese_fine = "02"
+          if(mese_fine == "March") mese_fine = "03"
+          if(mese_fine == "April") mese_fine = "04"
+          if(mese_fine == "May") mese_fine = "05"
+          if(mese_fine == "June") mese_fine = "06"
+          if(mese_fine == "July") mese_fine = "07"
+          if(mese_fine == "August") mese_fine = "08"
+          if(mese_fine == "September") mese_fine = "09"
+          if(mese_fine == "October") mese_fine = "10"
+          if(mese_fine == "November") mese_fine = "11"
+          if(mese_fine == "December") mese_fine = "12"
+
+
+          var anno_inizio = JSON.parse(localStorage.getItem("year-start"))
+          var anno_fine = JSON.parse(localStorage.getItem("year-end"))
+
+          data_inizio = anno_inizio + "." + mese_inizio + "." + data_inizio
+          data_fine = anno_fine + "." + mese_fine + "." + data_fine
+
+          console.log(data_inizio, data_fine)
+
+          
+
 
             d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin?model=H6161H2188&start=0&limit=-1", function(data){
                 
                 var spindle_sn = document.getElementById('request').value
-                var data_inizio = document.getElementById('selectDataInizio').value
-                var data_fine = document.getElementById('selectDataFine').value
                 var id_to_save = []
                 var sn_to_save = []
                 var to_write = ""
@@ -710,7 +804,7 @@ Modello <select id="modello"></select>
             for(let i = 0; i< 145; i++){
 
                 
-
+              console.log(data.breakin_data[i].date)
                 if((data.breakin_data[i].date >= data_inizio) && (data.breakin_data[i].date <= data_fine)) {
 
                     id_to_save.push(data.breakin_data[i].sequence_id)
