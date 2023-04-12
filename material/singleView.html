@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="./style.css"></link>
     <script>
     //inizializzazione array di colori per i grafici
-        var colors = [
-  '#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed',
-  '#ff69b4','#ba55d3','#cd5c5c','#cc5500','#40e0d0'
+        var colors = [ '#CC0000',
+  '#ff8c00','#bf0000','#800000','#400000','#9400d3',
+  '#000000','#ba55d3','#cd5c5c','#cc5500','#40e0d0'
     ];
 
 
@@ -349,6 +349,7 @@ input[type=checkbox] {
 
 }
 
+
 #histogram {
   position: absolute;
   left: 600px;
@@ -558,9 +559,7 @@ input[type=checkbox] {
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
 <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>
 <div id ="selectedSpindles"></div>
-<input type = "checkbox" id ="aggregato" class = "checkbox" > Aggregato
-<!--<input type = "checkbox" id ="tamb" class = "checkbox" onchange ="modifyElement('tamb')" checked> Tamb
-<input type = "checkbox" id ="tba" class = "checkbox" onchange ="modifyElement('tba')" checked> Tba -->
+<input type = "checkbox" id ="aggregato" class = "checkbox" onclick="aggregateHelper()" > Aggregato
 
 <select id="selectMenu"></select>
 <div id = "selectedValues"></div>
@@ -598,6 +597,14 @@ input[type=checkbox] {
 <button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button>
 
 <script>
+
+      function getDarkColor() {
+          var color = '#';
+          for (var i = 0; i < 6; i++) {
+              color += Math.floor(Math.random() * 10);
+          }
+          return color;
+      }
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
         "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
         "S2", "S3", "S4", "S5", "SN", "Slot", "Speed_S3_BUS", "Speed_Sync", "Stazione", "Step", "TH", "TR", "Tdut1", "Tdut2",
@@ -610,77 +617,45 @@ input[type=checkbox] {
         .text(function (d) { return d; }) // text showed in the menu
         .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
-        var coordinates = - 400, graph_number = 1, colorSelector = 0
+        var coordinates = - 400, graph_number = 1, colorSelector = 0, selectedValues = []
 
-        function modifyElement(selectedOption){ 
+        var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
+        d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?limit=100", function(data) {
+
+          localStorage.setItem("storageData", JSON.stringify(data));
+        })
+
+        function aggregateHelper(){
+
+          document.getElementById("aggregato").disabled = true
+          document.getElementById("selectMenu").disabled = true
+          
+          var data = JSON.parse(localStorage.getItem("storageData"));
+          newGraph("", data, "#CC0000", graph_number, coordinates, 1)
+
+
+        }
+
+        function modifyElement(selectedOption, flag){ 
             
+        
+          if (flag != 1) selectedOption = selectedOption.id
             var data = JSON.parse(localStorage.getItem("storageData"));
             //var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
-            selectedOption = selectedOption.id
-            if(selectedOption == "Time") selectedOption = "time"
             
+            console.log(selectedOption)
+            if(selectedOption == "Time") selectedOption = "time"
+
+   
             if (document.getElementById(selectedOption).checked == true){
 
-                if(colorSelector + 1 >= colors.length) colorSelector = 0;
-                else colorSelector += 1;
-                
-                var dataset = [];
-                var min = 100000
-                var max = 0
-                console.log(eval('data.data.' + selectedOption + "[0]")) //eval serve perché se facessi data.data.selectedGroup[0] direttamente da errore.
-                
-        
-    for(let i = 0; i < 99; i++){
-        if(eval('data.data.' + selectedOption + "["+ i +"]") < min){
-        min = eval('data.data.' + selectedOption + "["+ i +"]")
-        }
-        if(eval('data.data.' + selectedOption + "["+ i +"]") > max){
-        max = eval('data.data.' + selectedOption + "["+ i +"]")
-        }    
-    dataset.push([i+1, eval('data.data.' + selectedOption + "["+ i +"]")]);
-    //rescale axes
-    }
-    var width = 500, height = 400
-    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+                var toAddDot = "#dot" + selectedOption
+                var toAddPath = "#path" + selectedOption
+                console.log("Deleted: " + toAddDot + ", " + toAddPath) 
+                d3.select("#svg_default").selectAll(toAddDot).attr("visibility", "visible");
+                d3.select("#svg_default").selectAll(toAddPath).attr("visibility", "visible");
 
-    var svg = d3.select("#svg_default")
-
-    svg.append('g')
-        .selectAll("dot")
-        .data(dataset)
-        .enter()
-        .append("circle")
-        .attr("cx", function (d) { return xScale(d[0]); } )
-        .attr("cy", function (d) { return yScale(d[1]); } )
-        .attr("r", 3)
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .style("fill", colors[colorSelector])
-        .attr("id", function(d,i){ return "dot" + selectedOption})
-        .on('mouseover', function (d, i) {
-            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]
-            d3.select(this).style("fill", "#7CFC00")
-        })
-        .on('mouseout', function (d, i) {
-            document.getElementById("coordinates").innerHTML = ""
-            d3.select(this).style("fill", colors[colorSelector])
-        }) 
-
-    //creazione path. Ogni grafico è formato da punti (dot) e una linea (path). Ho assegnato a ognuna di queste cose un id in base a quello che rappresentano (i dot e il path di "tba" avranno come id "#dottba" e "pathtba".)
-        var line = d3.line()
-        .x(function(d) { return xScale(d[0]); }) 
-        .y(function(d) { return yScale(d[1]); }) 
-        .curve(d3.curveMonotoneX)
-        svg.append("path")
-        .datum(dataset) 
-        .attr("class", "line") 
-        .attr("transform", "translate(" + 100 + "," + 100 + ")")
-        .attr("d", line)
-        .style("fill", "none")
-        .style("stroke", colors[colorSelector])
-        .style("stroke-width", "2")
-        .attr("id", function(d,i){ return "path" + selectedOption});    
-                
+               
 
             }
         //si cancella tutto ciò che fa parte del grafico con l'id selezionato
@@ -689,8 +664,14 @@ input[type=checkbox] {
                 var toRemoveDot = "#dot" + selectedOption
                 var toRemovePath = "#path" + selectedOption
                 console.log("Deleted: " + toRemoveDot + ", " + toRemovePath) 
-                d3.selectAll(toRemoveDot).remove()
-                d3.selectAll(toRemovePath).remove()
+                d3.selectAll(toRemoveDot).attr("visibility", "hidden");
+                d3.selectAll(toRemovePath).attr("visibility", "hidden");
+                
+
+                // da rivedere per colore
+                if(colorSelector != -1) --colorSelector
+                else colorSelector = 0
+                
             }
             
         }
@@ -702,12 +683,8 @@ input[type=checkbox] {
                 document.getElementById("aggregato").checked = false
                 document.getElementById("selectMenu").selectedIndex = 0; 
 
-                d3.select("#svg_default").selectAll("circle").remove();
-                d3.select("#svg_default").selectAll("path").remove();
-                d3.select("#svg_default").selectAll("text").remove();
-                //document.getElementById("svg_default").remove();
-                d3.select("#svg_default").selectAll("g").remove();
-                
+                d3.select("#svg_default").attr("visibility", "hidden");
+
                 for (let i = 2; i <= 100; i ++){
 
                     console.log("#svg" + i)
@@ -718,46 +695,204 @@ input[type=checkbox] {
                     //document.getElementById("svg" + i).remove();
                     
                 }
-
-                    
+   
                 
                 coordinates = - 400
                 console.log(coordinates)
+                localStorage.removeItem("selectedValues");
                 }
 
-        function newGraph(selectedGroup, data, colour, svg_number, coordinates, aggregato){
 
-          if(aggregato == 1) coordinates = 0
-          if(aggregato == 1) document.getElementById("selectedValues").style.visibility = "visible"
-          if(aggregato == 1) svg_number = "_default"
-          
-        
+    function newGraph(selectedGroup, data, colour, svg_number, coordinates, aggregato){
 
-
-        if(selectedGroup == "Time") selectedGroup = "time"
+      // codice iniziale
+      
+      if(selectedGroup == "Time") selectedGroup = "time"
 
                 var dataset = [];
                 var min = 100000
                 var max = 0
-                console.log(eval('data.data.' + selectedGroup + "[0]")) //eval serve perché se facessi data.data.selectedGroup[0] direttamente da errore.
-                
-        
-        for(let i = 0; i < 99; i++){
 
-            xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-            yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-                if(eval('data.data.' + selectedGroup + "["+ i +"]") < min){
-                    min = eval('data.data.' + selectedGroup + "["+ i +"]")
-                }
-                if(eval('data.data.' + selectedGroup + "["+ i +"]") > max){
-                    max = eval('data.data.' + selectedGroup + "["+ i +"]")
-                }    
-            dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
-  
-    }    
+          if(aggregato == 1){ // Caso AGGREGATO
+
+            ///Variabili 
+
+            coordinates = 0, colorSelector = 0
+            document.getElementById("selectedValues").style.visibility = "visible"
+            svg_number = "_default"
+            d3.select("#svg_default").attr("visibility", "visible");
+
+            ///Nascosti altri grafici OK
+            for (let i = 2; i <= 100; i ++){
+            d3.select("#svg" + i).attr("visibility", "hidden");
+            }
+            
+            ///Scala per grafici OK
+
+            var min = 100000
+            var max = 0
+            var data = JSON.parse(localStorage.getItem("storageData"))
+            console.log(data)
+            var valori = JSON.parse(localStorage.getItem("selectedValues")) //data.data
+
+            for(let j= 0; j < valori.length; j++){
+
+              var selectedGroup = valori[j]
+
+              for(let i = 0; i < 99; i++){
     
             
-            document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg' + svg_number +'"></svg>'
+              console.log('data.data.' + selectedGroup + "["+ i +"]")
+              if(eval('data.data.' + selectedGroup + "["+ i +"]") < min){
+                  min = eval('data.data.' + selectedGroup + "["+ i +"]")
+                  console.log(eval('data.data.' + selectedGroup + "["+ i +"]"))
+              }
+              if(eval('data.data.' + selectedGroup + "["+ i +"]") > max){
+                max = eval('data.data.' + selectedGroup + "["+ i +"]")
+              }    
+              dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
+
+            } 
+
+              xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+              yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+            }
+
+
+            ///Creazione grafici FOR (NON OK). 
+            ///Per ogni attributo che mi serve, pusho la roba che mi serve nel dataset, aggiorno colore e il div con + selectedgroup
+
+          ///VARIABILI
+
+        var valori = JSON.parse(localStorage.getItem("selectedValues"))
+        document.getElementById("svg-div").innerHTML += "<svg width='1000' height='800' id ='svg_default'></svg>"
+        var new_svg = d3.select("#svg_default")
+        var g = new_svg.append("g")
+        .attr("transform", "translate(" + 100 + "," + 100 + ")");
+        var width = 500, height = 400
+
+        ///SETTING DEL TESTO
+
+          new_svg.selectAll('text').remove()
+
+          new_svg.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', 100)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 20)
+            .text("Grafico Misto");
+        
+            // X label
+            new_svg.append('text')
+            .attr('x', width/2 + 100)
+            .attr('y', height - 15 + 150)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text("Time");
+        
+            // Y label
+            new_svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+            .style('font-family', 'Helvetica')
+            .style('font-size', 12)
+            .text("Valori misti");
+
+            var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+
+            g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale));
+        
+            g.append("g")
+            .call(d3.axisLeft(yScale));
+
+            //IMPORTANTE CREAZIONE DOT E PATH
+        for(let j = 0; j < valori.length; j++){
+          var dataset = []
+          for(let i = 0; i < 99; i++){
+        
+
+            console.log(valori.length)
+
+            
+            var selectedGroup = valori[j]
+            
+            dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
+
+
+          }
+          console.log(dataset)
+        new_svg.append('g')
+            .selectAll("dot")
+            .data(dataset)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return xScale(d[0]); } )
+            .attr("cy", function (d) { return yScale(d[1]); } )
+            .attr("r", 3)
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .style("fill", colors[colorSelector])
+            .attr("id", function(d,i){ return "dot" + valori[j]})
+            .on('mouseover', function (d, i) {
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + valori[j] + ": " + d[1]
+            d3.select(this).style("fill", "#7CFC00")
+        })
+            .on('mouseout', function (d, i) {
+                document.getElementById("coordinates").innerHTML = ""
+                d3.select(this).style("fill", colors[colorSelector])
+            });
+     
+            var line = d3.line()
+            .x(function(d) { return xScale(d[0]); }) 
+            .y(function(d) { return yScale(d[1]); }) 
+            .curve(d3.curveMonotoneX)
+        
+            new_svg.append("path")
+            .datum(dataset) 
+            .attr("class", "line") 
+            .attr("transform", "translate(" + 100 + "," + 100 + ")")
+            .attr("d", line)
+            .style("fill", "none")
+            .style("stroke", colors[colorSelector])
+            .style("stroke-width", "2")
+            .attr("id", function(d,i){ return "path" + valori[j]});
+
+            if (colorSelector < colors.length) colorSelector += 1
+            else colorSelector = 0
+          
+        }
+        
+          }
+          
+        else if (aggregato == 0){ //Caso NON aggregato
+
+         
+
+          //scala per grafico
+
+          for(let i = 0; i < 99; i++){
+
+          xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+          yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+            if(eval('data.data.' + selectedGroup + "["+ i +"]") < min){
+                min = eval('data.data.' + selectedGroup + "["+ i +"]")
+            }
+            if(eval('data.data.' + selectedGroup + "["+ i +"]") > max){
+              max = eval('data.data.' + selectedGroup + "["+ i +"]")
+            }    
+          dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
+
+          }
+
+          //Creazione grafico
+
+          document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg' + svg_number +'"></svg>'
             var svg_to_select = "#svg" + svg_number
             console.log(svg_to_select)
             var new_svg = d3.select(svg_to_select),
@@ -777,8 +912,8 @@ input[type=checkbox] {
             var g = new_svg.append("g")
         .attr("transform", "translate(" + 100 + "," + 100 + ")");
 
-        //TODO RESETTARE TESTO SE AGGREGATO == 1
-        new_svg.append('text')
+
+          new_svg.append('text')
             .attr('x', width/2 + 100)
             .attr('y', 100)
             .attr('text-anchor', 'middle')
@@ -850,30 +985,32 @@ input[type=checkbox] {
             .style("stroke-width", "2")
             .attr("id", function(d,i){ return "path" + selectedGroup});
 
+        }
+
+        
+            // codice finale
             if (aggregato == 0) document.getElementById("selectedValues").style.visibility = "hidden"
-            document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedGroup +'" onchange = "modifyElement('+ selectedGroup +')" checked>' + selectedGroup + "</checkbox>"
+            if (aggregato != 1) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedGroup +'" onchange = "modifyElement('+ selectedGroup +')" checked>' + selectedGroup + "</checkbox>"
+            selectedValues.push(selectedGroup)
+            localStorage.setItem("selectedValues", JSON.stringify(selectedValues))
 
 
         }
 
-        d3.select("#selectMenu").on("change", function(d) {
+  d3.select("#selectMenu").on("change", function(d) {
 
-            
+      //document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
+      //document.getElementById("selectedOption").style.visibility = "hidden"
       var checkBoxAggregato = document.getElementById("aggregato");
       var data = JSON.parse(localStorage.getItem("storageData"));
       // recover the option that has been chosen
       var selectedOption = d3.select(this).property("value")
+      console.log(selectedOption)
 
       localStorage.setItem("selectedOption", JSON.stringify(selectedOption));
 
-
-
-
-
-
     if (checkBoxAggregato.checked == false){ //se Aggregato non è checkato, cancella tutto per fare spazio al nuovo grafico sullo stesso svg
 
-      console.log("ddad")
     colour = "#CC0000"
     graph_number += 1
     console.log(graph_number)
@@ -883,454 +1020,21 @@ input[type=checkbox] {
 
 }
 
-if (checkBoxAggregato.checked == true){ 
+else if (checkBoxAggregato.checked == true){ 
 
-  newGraph(selectedOption, data, colour, graph_number, coordinates, 1)
-
-    
+  document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
+  console.log(selectedOption)
+  localStorage.setItem("selectedOption", JSON.stringify(selectedOption))
+  modifyElement(selectedOption, 1)
+ 
     
 }
 
 
-
-
-
-     
-
-
 })
 
-        function modifyElementNew(datasetTba, datasetTamb){
-
-            var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
-
-
-            
-            if (document.getElementById("aggregato").checked == true){
-
-                d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?limit=100", function(data) {
-        
-       
-  
-   
-    d3.select("#svg_tba").remove()
-    d3.select("#svg_tamb").remove()
-    document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_tamb'></svg>"
-    document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_tba'></svg>"
-
-    var svg_tamb = d3.select("#svg_tamb"),
-    margin = 200,
-    width = svg_tamb.attr("width") - margin, //300
-    height = svg_tamb.attr("height") - margin //200
-
-    var g = svg_tamb.append("g")
-    .attr("transform", "translate(" + 100 + "," + 100 + ")");
-
-    ////DATA TAMB
- 
-    var datasetTamb = [];
-
-    var min = 100000
-    var max = 0
-
-    for(let i = 0; i < 99; i++){
-        if(data.data.Tamb[i] < min){
-            min = data.data.Tamb[i]
-        }
-        if(data.data.Tamb[i] > max){
-            max = data.data.Tamb[i]
-        }
-        datasetTamb.push([i+1, data.data.Tamb[i]]);
-    }
-
-    var datasetTba = [];
-
-    for(let i = 0; i < 99; i++){
-        if(data.data.Tba[i] < min){
-            min = data.data.Tba[i]
-        }
-        if(data.data.Tba[i] > max){
-            max = data.data.Tba[i]
-        }
-        datasetTba.push([i+1, data.data.Tba[i]]);
-    }
-    
-
-// Creazione assi cartesiani scalandro tra max tba e tamb. 
-        xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-        yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-
-        var g = svg_tamb.append("g")
-        .attr("transform", "translate(" + 100 + "," + 100 + ")");
-        
-        g.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xScale));
-
-        g.append("g")
-        .call(d3.axisLeft(yScale));
-
-        svg_tamb.append('g')
-            .selectAll("dot")
-            .data(datasetTamb)
-            .enter()
-            .append("circle")
-            .attr("cx", function (d) { return xScale(d[0]); } )
-            .attr("cy", function (d) { return yScale(d[1]); } )
-            .attr("r", 3)
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .style("fill", "#CC0000")
-            .attr("id", function(d,i){ return "dotTamb"})
-            .on('mouseover', function (d, i) {
-            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + "Tamb" + ": " + d[1]
-            d3.select(this).style("fill", "#7CFC00")
-          
-        })
-            
-            .on('mouseout', function (d, i) {
-            document.getElementById("coordinates").innerHTML = ""
-            d3.select(this).style("fill", "#CC0000")
-        }); 
-
-        var line = d3.line()
-            .x(function(d) { return xScale(d[0]); }) 
-            .y(function(d) { return yScale(d[1]); }) 
-            .curve(d3.curveMonotoneX)
-
-        svg_tamb.append("path")
-            .datum(datasetTamb) 
-            .attr("class", "line") 
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .attr("d", line)
-            .style("fill", "none")
-            .style("stroke", "#CC0000")
-            .style("stroke-width", "2")
-            .attr("id", function(d,i){ return "pathTamb"});
-
-        svg_tamb.append('text')
-            .attr('x', width/2 + 90)
-            .attr('y', 100)
-            .attr('text-anchor', 'middle')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 20)
-            .text('Grafico Tamb e Tba');
-
-        // X label
-        svg_tamb.append('text')
-            .attr('x', width/2 + 100)
-            .attr('y', height - 15 + 150)
-            .attr('text-anchor', 'middle')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 12)
-            .text('Time');
-
-        // Y label
-
-        svg_tamb.append('text')
-            .attr('text-anchor', 'middle')
-            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
-            .attr('font-weight', 'bold')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 12)
-            .style('fill', '#CC0000')
-            .text('Tamb');
-
-        var new_height = 170
-        svg_tamb.append('text')
-            .attr('text-anchor', 'middle')
-            .attr('transform', 'translate(60,' + new_height + ')rotate(-90)')
-            .attr('font-weight', 'bold')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 12)
-            .style('fill', '#cc5500')
-            .text(', Tba');
-
         
 
-        svg_tamb.append('g')
-            .selectAll("dot")
-            .data(datasetTba)
-            .enter()
-            .append("circle")
-            .attr("cx", function (d) { return xScale(d[0]); } )
-            .attr("cy", function (d) { return yScale(d[1]); } )
-            .attr("r", 3)
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .style("fill", "#cc5500")
-            .attr("id", function(d,i){ return "dotTba"})
-            .on('mouseover', function (d, i) {
-            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + "Tba" + ": " + d[1]
-            d3.select(this).style("fill", "#7CFC00")
-          
-        })
-            
-            .on('mouseout', function (d, i) {
-            document.getElementById("coordinates").innerHTML = ""
-            d3.select(this).style("fill", "#cc5500")
-        }); 
-
-        var line = d3.line()
-            .x(function(d) { return xScale(d[0]); }) 
-            .y(function(d) { return yScale(d[1]); }) 
-            .curve(d3.curveMonotoneX)
-
-        svg_tamb.append("path")
-            .datum(datasetTba) 
-            .attr("class", "line") 
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .attr("d", line)
-            .style("fill", "none")
-            .style("stroke", "#cc5500")
-            .style("stroke-width", "2")
-            .attr("id", function(d,i){ return "pathTba"});
-
-          });    
-                
-
-        }
-
-    else if (document.getElementById("aggregato").checked == false){
-
-        d3.select("#svg_tamb").remove()
-        document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_tamb'></svg>"
-        var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
-        
-        
-            
-
-            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?limit=100", function(data) {
-        
-                //quando faccio una ricerca per id, mi visualizza come primo grafico quello della temperatura ambientale (Tamb).
-            
-            //document.getElementById("selectedValues").innerHTML = ""
-            //per ora salvo i dati su localstorage, perché molte funzioni non si vedono tra loro e le variabili, anche se globali, non si vedono tra loro comunque. Che roba
-          
-            ////SVG TAMB/////
-            var svg_tamb = d3.select("#svg_tamb"),
-            margin = 200,
-            width = svg_tamb.attr("width") - margin, //300
-            height = svg_tamb.attr("height") - margin //200
-
-            var g = svg_tamb.append("g")
-            .attr("transform", "translate(" + 100 + "," + 100 + ")");
-
-
-            
-
-            ////DATA TAMB
-            
-           
-
-            var datasetTamb = [];
-    
-            var min = 100000
-            var max = 0
-
-            for(let i = 0; i < 99; i++){
-                if(data.data.Tamb[i] < min){
-                    min = data.data.Tamb[i]
-                }
-                if(data.data.Tamb[i] > max){
-                    max = data.data.Tamb[i]
-                }
-                datasetTamb.push([i+1, data.data.Tamb[i]]);
-            }
-            
-            localStorage.setItem("max", JSON.stringify(max)); //riferito a Tamb
-            localStorage.setItem("min", JSON.stringify(min)); //riferito a Tamb
-            localStorage.setItem("datasetTamb", JSON.stringify(datasetTamb));
-
-            
-        // Creazione assi cartesiani TAMB. 
-                xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-
-                var g = svg_tamb.append("g")
-                .attr("transform", "translate(" + 100 + "," + 100 + ")");
-                
-                g.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(xScale));
-        
-                g.append("g")
-                .call(d3.axisLeft(yScale));
-
-                svg_tamb.append('g')
-                    .selectAll("dot")
-                    .data(datasetTamb)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", function (d) { return xScale(d[0]); } )
-                    .attr("cy", function (d) { return yScale(d[1]); } )
-                    .attr("r", 3)
-                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                    .style("fill", "#CC0000")
-                    .attr("id", function(d,i){ return "dotTamb"})
-                    .on('mouseover', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + "Tamb" + ": " + d[1]
-                    d3.select(this).style("fill", "#7CFC00")
-                  
-                })
-                    
-                    .on('mouseout', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = ""
-                    d3.select(this).style("fill", "#CC0000")
-                }); 
-
-                var line = d3.line()
-                    .x(function(d) { return xScale(d[0]); }) 
-                    .y(function(d) { return yScale(d[1]); }) 
-                    .curve(d3.curveMonotoneX)
-
-                svg_tamb.append("path")
-                    .datum(datasetTamb) 
-                    .attr("class", "line") 
-                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                    .attr("d", line)
-                    .style("fill", "none")
-                    .style("stroke", "#CC0000")
-                    .style("stroke-width", "2")
-                    .attr("id", function(d,i){ return "pathTamb"});
-
-                svg_tamb.append('text')
-                    .attr('x', width/2 + 100)
-                    .attr('y', 100)
-                    .attr('text-anchor', 'middle')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 20)
-                    .text('Grafico Tamb');
-        
-                // X label
-                svg_tamb.append('text')
-                    .attr('x', width/2 + 100)
-                    .attr('y', height - 15 + 150)
-                    .attr('text-anchor', 'middle')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 12)
-                    .text('Time');
-        
-                // Y label
-                svg_tamb.append('text')
-                    .attr('text-anchor', 'middle')
-                    .attr('transform', 'translate(60,' + height + ')rotate(-90)')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 12)
-                    .text('Tamb');
-
-                ////SVG TBA/////
-
-                var svg_tba = d3.select("#svg_tba"),
-                margin = 200,
-                width = svg_tba.attr("width") - margin, //300
-                height = svg_tba.attr("height") - margin //200
-
-                var g = svg_tba.append("g")
-                .attr("transform", "translate(" + 100 + "," + 100 + ")");
-
-                //DATA TBA
-
-            localStorage.setItem("storageData", JSON.stringify(data));
-
-            var datasetTba = [];
-    
-            var min = 100000
-            var max = 0
-
-            for(let i = 0; i < 99; i++){
-                if(data.data.Tba[i] < min){
-                    min = data.data.Tba[i]
-                }
-                if(data.data.Tba[i] > max){
-                    max = data.data.Tba[i]
-                }
-                datasetTba.push([i+1, data.data.Tba[i]]);
-            }
-
-            localStorage.setItem("datasetTba", JSON.stringify(datasetTba));
-
-                
-                // Creazione assi cartesiani TBA. 
-                xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-
-                var g = svg_tba.append("g")
-                .attr("transform", "translate(" + 100 + "," + 100 + ")");
-                
-                g.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(xScale));
-        
-                g.append("g")
-                .call(d3.axisLeft(yScale));
-
-                svg_tba.append('g')
-                    .selectAll("dot")
-                    .data(datasetTba)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", function (d) { return xScale(d[0]); } )
-                    .attr("cy", function (d) { return yScale(d[1]); } )
-                    .attr("r", 3)
-                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                    .style("fill", "#CC0000")
-                    .attr("id", function(d,i){ return "dotTba"})
-                    .on('mouseover', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + "Tba" + ": " + d[1]
-                    d3.select(this).style("fill", "#7CFC00")
-                  
-                })
-                    
-                    .on('mouseout', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = ""
-                    d3.select(this).style("fill", "#CC0000")
-                }); 
-
-                var line = d3.line()
-                    .x(function(d) { return xScale(d[0]); }) 
-                    .y(function(d) { return yScale(d[1]); }) 
-                    .curve(d3.curveMonotoneX)
-
-                svg_tba.append("path")
-                    .datum(datasetTba) 
-                    .attr("class", "line") 
-                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                    .attr("d", line)
-                    .style("fill", "none")
-                    .style("stroke", "#CC0000")
-                    .style("stroke-width", "2")
-                    .attr("id", function(d,i){ return "pathTba"});
-
-                svg_tba.append('text')
-                    .attr('x', width/2 + 100)
-                    .attr('y', 100)
-                    .attr('text-anchor', 'middle')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 20)
-                    .text('Grafico Tba');
-        
-                // X label
-                svg_tba.append('text')
-                    .attr('x', width/2 + 100)
-                    .attr('y', height - 15 + 150)
-                    .attr('text-anchor', 'middle')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 12)
-                    .text('Time');
-        
-                // Y label
-                svg_tba.append('text')
-                    .attr('text-anchor', 'middle')
-                    .attr('transform', 'translate(60,' + height + ')rotate(-90)')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 12)
-                    .text('Tba');
-    
-
-            
-                  });
-
-    }
-    }
 
 
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
