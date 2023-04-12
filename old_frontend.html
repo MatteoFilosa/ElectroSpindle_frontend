@@ -388,8 +388,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
 
             })
     
-           
-        //funzione che fa un update del grafico in base all' attributo del menu a tendina selezionato. Se la spunta su "sovrapponi" c'è, allora creo delle checkbox per ogni attributo richiesto su un div apposito.
+           //funzione che  del grafico in base all' attributo del menu a tendina selezionato. Se la spunta su "sovrapponi" c'è, allora creo delle checkbox per ogni attributo richiesto su un div apposito.
        
         d3.select("#selectMenu").on("change", function(d) {
 
@@ -408,7 +407,7 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
                     //d3.selectAll("g").remove();
                     //d3.selectAll("svg").remove();
                 
-                    if(free_svg_1 == true){ //update del primo grafico
+                    if(free_svg_1 == true){ 
 
                         console.log("free_svg_1")
                         d3.selectAll("circle").remove();
@@ -519,10 +518,10 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
               
 
       
-        //funzione che fa un update del grafico in base all'ozpione scelta del menu a tendina.
+       
         function update(selectedGroup, data, colour) {
 
-            console.log("update")
+            
             
             
             if(selectedGroup == "Time") selectedGroup = "time"
