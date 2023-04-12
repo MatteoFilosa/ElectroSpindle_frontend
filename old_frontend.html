@@ -521,7 +521,9 @@ Inserisci ID Spindle<input type = "number" id ="request" maxlength="3" required>
        
         function update(selectedGroup, data, colour) {
 
-            
+            //var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
+        
+        document.getElementById("selectedSpindles").innerHTML += "Spindle selezionato: "+ id_and_sn[0][1]
             
             
             if(selectedGroup == "Time") selectedGroup = "time"
