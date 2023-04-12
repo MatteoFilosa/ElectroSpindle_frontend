@@ -110,7 +110,7 @@ function setDate(day){
             localStorage.setItem("day-start", JSON.stringify(day))
             localStorage.setItem("month-start", JSON.stringify(document.getElementById("month-picker").innerHTML))
             localStorage.setItem("year-start", JSON.stringify(document.getElementById("year").innerHTML))
-            
+            if(document.getElementById("cambia_data_fine")!= null) document.getElementById("cambia_data_fine").disabled = false
     
         }
     }
@@ -128,6 +128,7 @@ function setDate(day){
             localStorage.setItem("day-end", JSON.stringify(day))
             localStorage.setItem("month-end", JSON.stringify(document.getElementById("month-picker").innerHTML))
             localStorage.setItem("year-end", JSON.stringify(document.getElementById("year").innerHTML))
+            if(document.getElementById("cambia_data_inizio")!= null) document.getElementById("cambia_data_inizio").disabled = false
 
     }
 
@@ -141,6 +142,7 @@ function cambia_data_inizio(day){
     document.getElementById("calendar-day" + day).style.backgroundColor = ""
     document.getElementById("day-start").innerHTML = "Data inizio: "
     flag = 0
+    document.getElementById("cambia_data_fine").disabled = true
 }
 
 function cambia_data_fine(day){
@@ -148,6 +150,7 @@ function cambia_data_fine(day){
     document.getElementById("calendar-day" + day).style.backgroundColor = ""
     document.getElementById("day-end").innerHTML = "Data inizio: "
     flag = 1
+    document.getElementById("cambia_data_inizio").disabled = true
 
 }
 

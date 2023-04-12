@@ -19,6 +19,12 @@
     --font-family: cursive;
 }
 
+#availableSpindles{
+    display: block;
+    font-weight: 700;
+    font-size: 12px;
+    transform: scale(1.2);
+}
 
 .light {
     --bg-body: var(--light-body);
