@@ -4,6 +4,7 @@
     <!---Step 2-->
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <title>ElectroSpindle Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
 
     <link rel="stylesheet" href="calendar.css">
 
@@ -566,6 +567,7 @@ input[type=checkbox] {
 <h1>ElectroSpindle: Dashboard</h1>
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
 <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>  
+  Modello <select id="modello"></select>
  
 Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <button class = "button-green" id = "submit">Filtra</button>
 
@@ -611,7 +613,7 @@ Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required 
 
 <script src="calendar.js"></script>
 
-Modello <select id="modello"></select>
+
 <!-- Initialize a select button -->
 <!--<button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button> -->
 <!--<input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici-->
