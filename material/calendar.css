@@ -19,12 +19,7 @@
     --font-family: cursive;
 }
 
-#availableSpindles{
-    display: block;
-    font-weight: 600;
-    font-size: 12px;
-    transform: scale(1.2);
-}
+
 
 .light {
     --bg-body: var(--light-body);
@@ -53,8 +48,9 @@
     padding: 20px;
     position: relative;
     margin-left: 100px;
+    
     overflow: hidden;
-    transform: scale(0.9);
+    transform: scale(0.7);
 }
 
 .light .calendar {

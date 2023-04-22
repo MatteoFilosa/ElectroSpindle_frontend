@@ -104,13 +104,13 @@ function setDate(day){
     if(document.getElementById("day-start").innerHTML.length <15){
         if (flag == 0){
 
-            document.getElementById("day-start").innerHTML = "Data inizio: "
-            document.getElementById("day-start").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML + "<button class = 'btn-blue' id = 'cambia_data_inizio' onclick = 'cambia_data_inizio(" + day + ")'> Cambia </button>"
-            document.getElementById("calendar-day" + day).style.backgroundColor = "grey"
+            //document.getElementById("day-start").innerHTML = "Data inizio: "
+            document.getElementById("day-start").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML
             localStorage.setItem("day-start", JSON.stringify(day))
             localStorage.setItem("month-start", JSON.stringify(document.getElementById("month-picker").innerHTML))
             localStorage.setItem("year-start", JSON.stringify(document.getElementById("year").innerHTML))
-            if(document.getElementById("cambia_data_fine")!= null) document.getElementById("cambia_data_fine").disabled = false
+            //if(document.getElementById("cambia_data_fine")!= null) document.getElementById("cambia_data_fine").disabled = false
+            document.getElementById("calendar-original").hidden = true
     
         }
     }
@@ -121,14 +121,15 @@ function setDate(day){
 
         if(flag == 1){
 
-            document.getElementById("day-end").innerHTML = "Data fine: "
-            document.getElementById("day-end").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML + "<button class = 'btn-blue' id = 'cambia_data_fine' onclick = 'cambia_data_fine(" + day + ")'> Cambia </button>"
+            //document.getElementById("day-end").innerHTML = "Data fine: "
+            document.getElementById("day-end").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML
             document.getElementById("calendar-day" + day).style.backgroundColor = "grey"
             flag = 0
             localStorage.setItem("day-end", JSON.stringify(day))
             localStorage.setItem("month-end", JSON.stringify(document.getElementById("month-picker").innerHTML))
             localStorage.setItem("year-end", JSON.stringify(document.getElementById("year").innerHTML))
-            if(document.getElementById("cambia_data_inizio")!= null) document.getElementById("cambia_data_inizio").disabled = false
+            document.getElementById("calendar-original").hidden = true
+            //if(document.getElementById("cambia_data_inizio")!= null) document.getElementById("cambia_data_inizio").disabled = false
 
     }
 
@@ -140,7 +141,7 @@ function setDate(day){
 
 function cambia_data_inizio(day){
     document.getElementById("calendar-day" + day).style.backgroundColor = ""
-    document.getElementById("day-start").innerHTML = "Data inizio: "
+    //document.getElementById("day-start").innerHTML = "Data inizio: "
     flag = 0
     document.getElementById("cambia_data_fine").disabled = true
 }
@@ -148,7 +149,7 @@ function cambia_data_inizio(day){
 function cambia_data_fine(day){
 
     document.getElementById("calendar-day" + day).style.backgroundColor = ""
-    document.getElementById("day-end").innerHTML = "Data inizio: "
+    //document.getElementById("day-end").innerHTML = "Data inizio: "
     flag = 1
     document.getElementById("cambia_data_inizio").disabled = true
 

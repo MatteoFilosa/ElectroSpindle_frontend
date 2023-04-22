@@ -1,7 +1,14 @@
 <!doctype html>
 <html>
 <head>
-    <!---Step 2-->
+  
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <title>ElectroSpindle Dashboard</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
@@ -355,11 +362,24 @@ input[type=checkbox] {
 
   position: absolute;
   left: 750px;
-  top: 100px; 
-  height: 500px;
-  width: 500px;
-
+  top: 200px; 
+  width: 650px;
+  display: block;
   
+  justify-content: space-between;
+  font-size: 12px;
+  transform: scale(1.2);
+  font-weight: 400;
+  border-radius: 25px;
+  background-color: lightgrey;
+  padding-left: 2.5px;
+  padding-top: 20px;
+  padding-right: 2.5px;
+
+}
+
+.checkbox-spindles{
+  margin-left: 10px;
 }
 
 
@@ -559,11 +579,50 @@ input[type=checkbox] {
     box-shadow: none;
   }
 
+  h3{
+    position:absolute;
+    left: 950px;
+    top: 120px;
+  }
+  #cerca{
+    position: absolute;
+    left: 1050px;
+    top: 500px;
+
+  }
+
+  .button-wrapper{
+    margin-left:100px;
+  }
+
+  #day-start{
+
+    display: inline-block;
+
+  }
+
+  #day-end{
+
+display: inline-block;
+
+}
+
+
+
+
+.hide {
+  visibility: hidden;
+  transition: all 1s ease-out;
+  opacity: 0;  
+}
   
 
 </style>
 
 <body>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <h1>ElectroSpindle: Dashboard</h1>
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
 <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>  
@@ -572,7 +631,35 @@ input[type=checkbox] {
 Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <button class = "button-green" id = "submit">Filtra</button>
 
 
-<div class="calendar" id = "calendar-original" >
+
+
+
+<!-- Initialize a select button -->
+<!--<button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button> -->
+<!--<input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici-->
+<!--<input type="checkbox" id ="separati" onchange = "separati()"> Separati -->
+<br> <br>
+Rodaggi disponibili dal 10/01/2022 al 21/09/2022
+
+<br> <br>
+
+<div class = "button-wrapper">
+  <h4>Seleziona data</h4>
+  <button class = "button-green" onclick = "displayCalendar(0)">Da</button>
+
+  <div id = "day-start">  </div>
+
+  <br>
+  <br>
+<button class = "button-green" onclick = "displayCalendar(1)">A</button>
+
+
+<div id = "day-end">  </div>
+
+</div>
+
+
+<div class="calendar" id = "calendar-original" hidden="true">
   <div class="calendar-header">
       <span class="month-picker" id="month-picker">February</span>
       <div class="year-picker">
@@ -614,27 +701,18 @@ Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required 
 <script src="calendar.js"></script>
 
 
-<!-- Initialize a select button -->
-<!--<button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button> -->
-<!--<input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici-->
-<!--<input type="checkbox" id ="separati" onchange = "separati()"> Separati -->
-
-Rodaggi disponibili dal 10/01/2022 al 21/09/2022 <br> <br> <br> <br>
-
-<div id = "day-start">  </div>
-<div id = "day-end">  </div>
-<button class = "button-green" id = "submitData">Filtra per data</button>
-
 
 
 <div id = "coordinates"></div>
 <!--<a href="aggregateView.html" target="_blank" rel="noopener noreferrer">Visualizzazione aggregata</a>
 <a href="separateView.html" target="_blank" rel="noopener noreferrer">Visualizzazione separata</a> -->
-<div id = "availableSpindles">  
-    <h3>Spindle disponibili</h3> <br>
+<h3>Spindle disponibili</h3> <br>
+<div id = "availableSpindles" style = "overflow-y: scroll; height:250px;">  
+    
 
 </div>
 
+<button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>
 
 
 <script>
@@ -651,7 +729,17 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022 <br> <br> <br> <br>
 
         
 
-        
+        function displayCalendar(direction){
+
+
+
+          var calendar = document.getElementById("calendar-original")
+          calendar.hidden = false;
+          if(direction == 0) calendar.style = "margin-left: 20px;"
+          else calendar.style = "margin-left: 100px;"
+
+
+        }
 
         function redirectView(){
             
@@ -711,11 +799,11 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022 <br> <br> <br> <br>
                 tmp_sn = data.breakin_data[i]["serial number"]
                 id_and_sn.push([tmp_id, tmp_sn])
                 var to_write = data.breakin_data[i]["serial number"]
-                document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' id = '"+ to_write +"'>"+ to_write 
+                document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' class = 'checkbox-spindles' + id = '"+ to_write +"'>"+ "&nbsp" + to_write 
                 
                 
             }
-            document.getElementById("availableSpindles").innerHTML += "<button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>" 
+             
             
             localStorage.setItem("id_and_sn", JSON.stringify(id_and_sn))
             datasetDataInizio.sort(sortFunction)
@@ -788,15 +876,13 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022 <br> <br> <br> <br>
           console.log(data_inizio, data_fine)
 
           
-
-
             d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin?model=H6161H2188&start=0&limit=-1", function(data){
                 
                 var spindle_sn = document.getElementById('request').value
                 var id_to_save = []
                 var sn_to_save = []
                 var to_write = ""
-                document.getElementById("availableSpindles").innerHTML = "<h3>Spindle disponibili</h3>"
+                document.getElementById("availableSpindles").innerHTML = ""
 
             for(let i = 0; i< 145; i++){
 
@@ -813,9 +899,8 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022 <br> <br> <br> <br>
                 
             }
 
-            document.getElementById("availableSpindles").innerHTML += "<button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>" + "  "
             
-
+            
             console.log(id_to_save, sn_to_save)
           
             })
@@ -824,10 +909,12 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022 <br> <br> <br> <br>
 
         d3.select("#submit").on("click", function(d){
 
+            // gestire anche filtro calendario
+
             var id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"));
             var written = document.getElementById("request").value
             
-            document.getElementById("availableSpindles").innerHTML = "<h3>Spindle disponibili</h3>"
+            document.getElementById("availableSpindles").innerHTML = ""
     
             for(i = 0; i <145; i++){
                 var tmp = id_and_sn[i][1]
@@ -844,7 +931,7 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022 <br> <br> <br> <br>
             }
             }
             
-            document.getElementById("availableSpindles").innerHTML += "<button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>" + "  "
+            
             
             })
     
