@@ -362,7 +362,7 @@ input[type=checkbox] {
 
   position: absolute;
   left: 750px;
-  top: 200px; 
+  top: 100px; 
   width: 650px;
   display: block;
   
@@ -380,6 +380,30 @@ input[type=checkbox] {
 
 .checkbox-spindles{
   margin-left: 10px;
+}
+
+#selectedSpindles{
+
+position: absolute;
+left: 750px;
+top: 470px; 
+width: 650px;
+display: block;
+
+justify-content: space-between;
+font-size: 12px;
+transform: scale(1.2);
+font-weight: 400;
+border-radius: 25px;
+background-color: lightgrey;
+padding-left: 2.5px;
+padding-top: 20px;
+padding-right: 2.5px;
+
+}
+
+.checkbox-spindles{
+margin-left: 10px;
 }
 
 
@@ -582,12 +606,12 @@ input[type=checkbox] {
   h3{
     position:absolute;
     left: 950px;
-    top: 120px;
+    top: 20px;
   }
   #cerca{
     position: absolute;
     left: 1050px;
-    top: 500px;
+    top: 650px;
 
   }
 
@@ -628,7 +652,7 @@ display: inline-block;
 <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>  
   Modello <select id="modello"></select>
  
-Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <button class = "button-green" id = "submit">Filtra</button>
+Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <!--<button class = "button-green" id = "submit">Filtra</button>-->
 
 
 
@@ -707,15 +731,25 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
 <!--<a href="aggregateView.html" target="_blank" rel="noopener noreferrer">Visualizzazione aggregata</a>
 <a href="separateView.html" target="_blank" rel="noopener noreferrer">Visualizzazione separata</a> -->
 <h3>Spindle disponibili</h3> <br>
-<div id = "availableSpindles" style = "overflow-y: scroll; height:250px;">  
-    
+<div id = "availableSpindles" style = "overflow-y: scroll; height:250px;">  </div>
 
-</div>
+<h3 style = "top: 400px;">Spindle selezionati</h3> <br>
+<div id = "selectedSpindles" style = "overflow-y: scroll; height:150px;"></div>
 
 <button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>
 
 
 <script>
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+function saveSpindle(id){
+
+  document.getElementById("selectedSpindles").innerHTML += "<input type = 'checkbox' class = 'checkbox-spindles' + id = '"+ id +"' checked = 'true'>"+ "&nbsp" + id
+
+}
 
 /*
     var s = document.getElementById("calendar-original"),
@@ -734,12 +768,26 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
 
 
           var calendar = document.getElementById("calendar-original")
+          var dayStart = document.getElementById("day-start")
+          var dayEnd = document.getElementById("day-end")
           calendar.hidden = false;
-          if(direction == 0) calendar.style = "margin-left: 20px;"
-          else calendar.style = "margin-left: 100px;"
+          //Migliorare popup
+          //if(direction == 0) calendar.style = "margin-left: 20px;"
+          //else calendar.style = "margin-left: 100px;"
+          if(direction == 0){
+            if (dayStart.innerHTML.length >= 10){
+              console.log("e allora!")
+              dayStart.innerHTML = "Seleziona data"
+          }
+        }
+        else {
 
+          if (dayEnd.innerHTML.length >= 10){
+              dayEnd.innerHTML = "Seleziona data"
+          }
 
         }
+      }
 
         function redirectView(){
             
@@ -799,7 +847,7 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
                 tmp_sn = data.breakin_data[i]["serial number"]
                 id_and_sn.push([tmp_id, tmp_sn])
                 var to_write = data.breakin_data[i]["serial number"]
-                document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' class = 'checkbox-spindles' + id = '"+ to_write +"'>"+ "&nbsp" + to_write 
+                document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' class = 'checkbox-spindles' + id = '"+ to_write +"' + onclick = saveSpindle("+ to_write +")>"+ "&nbsp" + to_write 
                 
                 
             }
@@ -832,9 +880,13 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
         
         
     
-        d3.select("#submitData").on("click", function(d){
+        d3.select("#calendar-original").on("click", function(d){
 
-          var data_inizio = JSON.parse(localStorage.getItem("day-start"))
+          console.log("click")
+
+          if(document.getElementById("day-end").innerHTML.length > 10){
+
+            var data_inizio = JSON.parse(localStorage.getItem("day-start"))
           var data_fine = JSON.parse(localStorage.getItem("day-end"))
 
           var mese_inizio = JSON.parse(localStorage.getItem("month-start"))
@@ -893,7 +945,7 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
                     id_to_save.push(data.breakin_data[i].sequence_id)
                     sn_to_save.push(data.breakin_data[i]["serial number"])
                     to_write = data.breakin_data[i]["serial number"]
-                    document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' id = '"+ to_write +"'>"+ to_write 
+                    document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' id = '"+ to_write +"'onclick = saveSpindle("+ to_write +")>"+ to_write 
                    
                 }
                 
@@ -905,9 +957,15 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
           
             })
 
+          }
+
+          
+
         })
 
-        d3.select("#submit").on("click", function(d){
+        d3.select("#request").on("change", function(d){
+
+          sleep(1000).then(() => {
 
             // gestire anche filtro calendario
 
@@ -927,9 +985,13 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
                 console.log(tmp2)
                 
                 
-                if(tmp!=null) document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' id = '"+ tmp +"'>"+ tmp
+                if(tmp!=null) document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ tmp
             }
             }
+    
+            });
+
+            
             
             
             
