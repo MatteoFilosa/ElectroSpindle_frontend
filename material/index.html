@@ -640,6 +640,17 @@ display: inline-block;
   opacity: 0;  
 }
   
+#divselectAll0{
+  position: absolute;
+  left: 700px;
+  top: 50px;
+}
+
+#divselectAll1{
+  position: absolute;
+  left: 700px;
+  top: 428px;
+}
 
 </style>
 
@@ -652,7 +663,7 @@ display: inline-block;
 <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>  
   Modello <select id="modello"></select>
  
-Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <!--<button class = "button-green" id = "submit">Filtra</button>-->
+Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <button class = "button-green" id = "submit" onclick = "resetFilters()">Reset filtri</button>
 
 
 
@@ -730,10 +741,19 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
 <div id = "coordinates"></div>
 <!--<a href="aggregateView.html" target="_blank" rel="noopener noreferrer">Visualizzazione aggregata</a>
 <a href="separateView.html" target="_blank" rel="noopener noreferrer">Visualizzazione separata</a> -->
-<h3>Spindle disponibili</h3> <br>
-<div id = "availableSpindles" style = "overflow-y: scroll; height:250px;">  </div>
+<h3>Spindle disponibili</h3> 
+<!--<input type = "checkbox" onchange = "selectAll()">Seleziona tutto-->
+<div id = "availableSpindles" style = "overflow-y: scroll; height:250px;">  
+
+</div>
 
 <h3 style = "top: 400px;">Spindle selezionati</h3> <br>
+<div id = "divselectAll0">
+  <input type = "checkbox" id="selectAll0" onchange = "selectAll(0)" >Seleziona tutto
+</div>
+<div id ="divselectAll1">
+  <input type = "checkbox" id="selectAll1" onchange = "selectAll(1)" >Seleziona tutto
+</div>
 <div id = "selectedSpindles" style = "overflow-y: scroll; height:150px;"></div>
 
 <button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>
@@ -748,6 +768,77 @@ function sleep (time) {
 function saveSpindle(id){
 
   document.getElementById("selectedSpindles").innerHTML += "<input type = 'checkbox' class = 'checkbox-spindles' + id = '"+ id +"' checked = 'true'>"+ "&nbsp" + id
+  document.getElementById("selectAll1").checked = true
+}
+
+function selectAll(type){
+
+  if(type == 1){
+    var nodes = document.getElementById('selectedSpindles').childNodes;
+    if(document.getElementById("selectAll1").checked == true){
+      
+       for(var i=0; i<nodes.length; i++) {
+        nodes[i].checked = true
+      }
+    }
+    else{
+
+      for(var i=0; i<nodes.length; i++) {
+          nodes[i].checked = false
+        }
+
+    }
+  }
+
+  else{
+    var nodes = document.getElementById('availableSpindles').childNodes;
+    
+    if(document.getElementById("selectAll0").checked == true){
+      
+      for(var i=0; i<nodes.length; i++) {
+       nodes[i].checked = true
+       if(nodes[i].id != undefined) document.getElementById("selectedSpindles").innerHTML += "<input type = 'checkbox' class = 'checkbox-spindles' id = '"+ nodes[i].id +"' checked = 'true'>"+ "&nbsp" + nodes[i].id
+     }
+     document.getElementById("selectAll1").checked = true
+   }
+   else{
+
+     for(var i=0; i<nodes.length; i++) {
+         nodes[i].checked = false
+       }
+
+   }
+  }
+  
+}
+
+function resetFilters(){
+
+  document.getElementById("day-start").innerHTML = ""
+  document.getElementById("day-end").innerHTML = ""
+  document.getElementById("request").value = ""
+
+  d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin?model=H6161H2188&start=0&limit=-1", function(data){
+                
+
+          
+                var to_write = ""
+                document.getElementById("availableSpindles").innerHTML = ""
+
+            for(let i = 0; i< 145; i++){
+
+                    to_write = data.breakin_data[i]["serial number"]
+                    document.getElementById("availableSpindles").innerHTML = document.getElementById("availableSpindles").innerHTML + "<input type = 'checkbox' id = '"+ to_write +"'onclick = saveSpindle("+ to_write +")>"+ to_write 
+ 
+                
+            }
+
+            
+            
+            console.log(id_to_save, sn_to_save)
+          
+            })
+
 
 }
 
