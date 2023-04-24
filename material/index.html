@@ -610,7 +610,15 @@ margin-left: 10px;
   }
   #cerca{
     position: absolute;
-    left: 1050px;
+    left: 1080px;
+    top: 650px;
+
+  }
+
+  #clearSelected{
+
+    position: absolute;
+    left: 1000px;
     top: 650px;
 
   }
@@ -757,9 +765,14 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
 <div id = "selectedSpindles" style = "overflow-y: scroll; height:150px;"></div>
 
 <button id = 'cerca' class = 'button-blue' onClick='redirectView()'>Cerca</button>
+<button id = 'clearSelected' class = 'button-green' onClick='clearSelection()'>Clear</button>
 
 
 <script>
+function clearSelection(){
+  document.getElementById("selectedSpindles").innerHTML = ""
+  
+}
 
 function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
