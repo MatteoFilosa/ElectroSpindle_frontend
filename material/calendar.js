@@ -68,7 +68,7 @@ month_names.forEach((e, index) => {
         curr_month.value = index
         generateCalendar(index, curr_year.value)
         document.getElementById("calendar-body").hidden = false
-        console.log(curr_month.value)
+        //console.log(curr_month.value)
     }
     month_list.appendChild(month)
     
@@ -149,7 +149,7 @@ function setDate(day){
     }
 
     flag = 1
-    console.log(flag)
+    //console.log(flag)
     }
    
 }
