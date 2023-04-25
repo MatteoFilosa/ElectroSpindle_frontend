@@ -898,13 +898,23 @@ function resetFilters(){
             var selected_sn = []
             var id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"));
             console.log(id_and_sn)
+            var nodes = document.getElementById('selectedSpindles').childNodes;
+
+            
             for(i = 0; i <145; i++){
-                var tmp = id_and_sn[i][1]
-                console.log(tmp)
-                if(document.getElementById(tmp)!=null){
-                    if(document.getElementById(tmp).checked) selected_sn.push(id_and_sn[i])
-                }
+
+              var tmp = id_and_sn[i][1]
+
+                for(var j=0; j<nodes.length; j++) {
+                  
+                  if(nodes[j].id != undefined){
+                    if((nodes[j].id == tmp) && (nodes[j].checked == true)) selected_sn.push(id_and_sn[i])
+
+                  }
+                  
+   
             }
+          }
             localStorage.setItem("selectedSpindles", JSON.stringify(selected_sn))
 
             if(selected_sn.length == 0){
