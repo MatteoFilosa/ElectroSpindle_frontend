@@ -50,7 +50,7 @@ generateCalendar = (month, year) => {
                             <span></span>`
             if (i - first_day.getDay() + 1 === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
                 day.classList.add('curr-date')
-                console.log("we")
+                
             }
         }
         calendar_days.appendChild(day)

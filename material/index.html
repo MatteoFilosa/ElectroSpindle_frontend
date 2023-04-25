@@ -1077,7 +1077,7 @@ function resetFilters(){
 
         })
 
-        d3.select("#request").on("change", function(d){
+        d3.select("#request").on("input", function(d){ //"change"
 
           sleep(1000).then(() => {
 
