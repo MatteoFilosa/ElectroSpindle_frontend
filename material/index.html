@@ -479,6 +479,32 @@ margin-left: 10px;
     white-space: nowrap;
   }
 
+  .button-green:disabled {
+    background-color: grey;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.15385;
+    margin: 0;
+    outline: none;
+    padding: 8px .8em;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    white-space: nowrap;
+  }
+
   .button-blue-spindle {
     background-color: #0095ff;
     border: 1px solid transparent;
@@ -688,13 +714,13 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
 
 <div class = "button-wrapper">
   <h4>Seleziona data</h4>
-  <button class = "button-green" onclick = "displayCalendar(0)">Da</button>
+  <button class = "button-green" onclick = "displayCalendar(0)" id = "daButton">Da</button>
 
   <div id = "day-start">  </div>
 
   <br>
   <br>
-<button class = "button-green" onclick = "displayCalendar(1)">A</button>
+<button class = "button-green" onclick = "displayCalendar(1)" id = "aButton" disabled = true >A</button>
 
 
 <div id = "day-end">  </div>
@@ -872,7 +898,7 @@ function resetFilters(){
 
         
 
-        function displayCalendar(direction){
+        function displayCalendar(direction){ // 0 vuol dire che ho cliccato "Da", 1 vuol dire che ho cliccato "A"
 
 
 
@@ -884,15 +910,19 @@ function resetFilters(){
           //if(direction == 0) calendar.style = "margin-left: 20px;"
           //else calendar.style = "margin-left: 100px;"
           if(direction == 0){
+              document.getElementById("daButton").disabled = true
+              document.getElementById("aButton").disabled = false
             if (dayStart.innerHTML.length >= 10){
-              //console.log("e allora!")
+              console.log("e allora!")
               dayStart.innerHTML = "Seleziona data"
+              
           }
         }
         else {
-
+          document.getElementById("daButton").disabled = false
           if (dayEnd.innerHTML.length >= 10){
               dayEnd.innerHTML = "Seleziona data"
+              
           }
 
         }
