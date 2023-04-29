@@ -619,7 +619,7 @@ input[type=checkbox] {
 
           }
 
-          var min = 100000, max = 0, count = 0, media = 0, varianza = 0, varianzaSopra = 0, varianzaSotto = 0, average_tba_array = [], upper_variance_array = [], lower_variance_array = []
+          var min = 100000, max = 0, count = 0, countVarianza = 0, media = 0, varianza = 0, varianzaSopra = 0, varianzaSotto = 0, average_tba_array = [], upper_variance_array = [], lower_variance_array = []
 
           //calcolo robehs
 
@@ -636,40 +636,46 @@ input[type=checkbox] {
 
           }
           media = count/ datasetLastTba.length
-          count = 0
+          var countVarianza = 0
           console.log(media)
 
           for (let i = 0; i < datasetLastTba.length; i++) {
               
               console.log(datasetLastTba[i][1])
-              count += Math.pow((datasetLastTba[i][1] - media), 2)
+              countVarianza += Math.pow((datasetLastTba[i][1] - media), 2)
 
             }
-            console.log(count)
-          varianza = count/datasetLastTba.length
+            
+          varianza = countVarianza/datasetLastTba.length
           varianzaSopra = varianza * 3
           varianzaSotto = varianza / 3
+          console.log(varianzaSopra, varianzaSotto)
 
          
-            for (let i = 0; i <= 2; i++) {
+            for (let i = 0; i <= datasetLastTba.length; i++) {
 
               average_tba_array.push([i, media])
 
             }
 
             
-            for (let i = 0; i <= 2; i++) {
+            for (let i = 0; i <= datasetLastTba.length; i++) {
 
               upper_variance_array.push([i, varianzaSopra])
 
             }
 
             
-            for (let i = 0; i <= 2; i++) {
+            for (let i = 0; i <= datasetLastTba.length; i++) {
 
               lower_variance_array.push([i, varianzaSotto])
 
             }
+
+            if(min > varianzaSotto) min = varianzaSotto - 5
+            if(min < 0) min = 0
+            if(max < varianzaSopra) max = varianzaSopra + 5
+            
         })
 
         
@@ -755,7 +761,7 @@ input[type=checkbox] {
                 .x(function (d) { return xScale(d[0]); })
                 .y(function (d) { return yScale(d[1]); })
                 .curve(d3.curveMonotoneX)
-
+                
 
               new_svg.append("path")
                 .datum(average_tba_array)
@@ -765,6 +771,8 @@ input[type=checkbox] {
                 .style("fill", "none")
                 .style("stroke", "#CC0000")
                 .style("stroke-width", "2")
+
+                
 
               //upper variance line
 
@@ -780,7 +788,7 @@ input[type=checkbox] {
                 .attr("transform", "translate(" + 100 + "," + 100 + ")")
                 .attr("d", upper_variance_line)
                 .style("fill", "none")
-                .style("stroke", "#CC0000")
+                .style("stroke", "#006400")
                 .style("stroke-width", "2")
 
               //lower variance line
@@ -796,10 +804,35 @@ input[type=checkbox] {
                 .attr("transform", "translate(" + 100 + "," + 100 + ")")
                 .attr("d", lower_variance_line)
                 .style("fill", "none")
-                .style("stroke", "#CC0000")
+                .style("stroke", "#ff8c00")
                 .style("stroke-width", "2")
 
+              new_svg.append('text')
+                .attr('x', width / 2 - 50)
+                .attr('y', 50)
+                .attr('text-anchor', 'middle')
+                .style('font-family', 'Helvetica')
+                .style('font-size', 20)
+                .style('fill', "#CC0000" )
+                .text("■ Media")
+                
+              new_svg.append('text')
+                .attr('x', width / 2 + 70)
+                .attr('y', 50)
+                .attr('text-anchor', 'middle')
+                .style('font-family', 'Helvetica')
+                .style('font-size', 20)
+                .style('fill', "#006400")
+                .text("■ Varianza sopra")
 
+              new_svg.append('text')
+                .attr('x', width / 2 + 220)
+                .attr('y', 50)
+                .attr('text-anchor', 'middle')
+                .style('font-family', 'Helvetica')
+                .style('font-size', 20)
+                .style('fill', "#ff8c00")
+                .text("■ Varianza sotto")
                 
                 console.log(average_tba_array, lower_variance_array, upper_variance_array)
               
