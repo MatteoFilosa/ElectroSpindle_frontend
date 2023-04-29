@@ -619,11 +619,12 @@ input[type=checkbox] {
 
           }
 
-          var min = 100000, max = 0, count = 0, media = 0, varianza = 0, varianzaSopra = 0, varianzaSotto = 0
+          var min = 100000, max = 0, count = 0, media = 0, varianza = 0, varianzaSopra = 0, varianzaSotto = 0, average_tba_array = [], upper_variance_array = [], lower_variance_array = []
 
           //calcolo robehs
 
-          sleep(1000).then(() => {
+
+          sleep(1000).then(() => { //devo farlo per forza perché l'api è lenta a prendere i dati
 
           for (let i = 0; i < datasetLastTba.length; i++){
             console.log(datasetLastTba[i][1])
@@ -636,17 +637,42 @@ input[type=checkbox] {
           }
           media = count/ datasetLastTba.length
           count = 0
+          console.log(media)
 
           for (let i = 0; i < datasetLastTba.length; i++) {
               
-
-              count += Math.pow((media - datasetLastTba[i][1]), 2)
+              console.log(datasetLastTba[i][1])
+              count += Math.pow((datasetLastTba[i][1] - media), 2)
 
             }
+            console.log(count)
           varianza = count/datasetLastTba.length
           varianzaSopra = varianza * 3
           varianzaSotto = varianza / 3
+
+         
+            for (let i = 0; i <= 2; i++) {
+
+              average_tba_array.push([i, media])
+
+            }
+
+            
+            for (let i = 0; i <= 2; i++) {
+
+              upper_variance_array.push([i, varianzaSopra])
+
+            }
+
+            
+            for (let i = 0; i <= 2; i++) {
+
+              lower_variance_array.push([i, varianzaSotto])
+
+            }
         })
+
+        
             
 
             //document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_last_tba' style = 'margin-top: 500px'></svg>"
@@ -725,53 +751,63 @@ input[type=checkbox] {
                   d3.select(this).style("fill", "#CC0000")
                 });
 
-              var Gen = d3.line();
-              var points = []
+            var average_line = d3.line()
+                .x(function (d) { return xScale(d[0]); })
+                .y(function (d) { return yScale(d[1]); })
+                .curve(d3.curveMonotoneX)
 
-              for (let i = 0; i < id_and_sn.length; i++) {
-                points.push([i+1, media])
-              }
-              var pathMedia = Gen(points);
 
-              //d3.select('path')
-                //.attr('d', pathOfLine);
-              g.append("path")
-                .attr("d", pathMedia)
-                .attr("stroke", "black")
+              new_svg.append("path")
+                .datum(average_tba_array)
+                .attr("class", "line")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                .attr("d", average_line)
+                .style("fill", "none")
+                .style("stroke", "#CC0000")
+                .style("stroke-width", "2")
 
-              var points = []
+              //upper variance line
 
-              for (let i = 0; i < id_and_sn.length; i++) {
-                points.push([i + 1, varianzaSopra])
-              }
-              var pathVarianzaSopra = Gen(points);
+              var upper_variance_line = d3.line()
+                .x(function (d) { return xScale(d[0]); })
+                .y(function (d) { return yScale(d[1]); })
+                .curve(d3.curveMonotoneX)
 
-              g.append("path")
-                .attr("d", pathVarianzaSopra)
-                .attr("stroke", "black")
+                console.log(average_tba_array, upper_variance_array, lower_variance_array)
+              new_svg.append("path")
+                .datum(upper_variance_array)
+                .attr("class", "line")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                .attr("d", upper_variance_line)
+                .style("fill", "none")
+                .style("stroke", "#CC0000")
+                .style("stroke-width", "2")
 
-              var points = []
+              //lower variance line
+              var lower_variance_line = d3.line()
+                .x(function (d) { return xScale(d[0]); })
+                .y(function (d) { return yScale(d[1]); })
+                .curve(d3.curveMonotoneX)
 
-              for (let i = 0; i < id_and_sn.length; i++) {
-                points.push([i + 1, varianzaSotto])
-              }
-              var pathVarianzaSotto = Gen(points);
 
-              g.append("path")
-                .attr("d", pathVarianzaSotto)
-                .attr("stroke", "black")
+              new_svg.append("path")
+                .datum(lower_variance_array)
+                .attr("class", "line")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                .attr("d", lower_variance_line)
+                .style("fill", "none")
+                .style("stroke", "#CC0000")
+                .style("stroke-width", "2")
+
+
+                
+                console.log(average_tba_array, lower_variance_array, upper_variance_array)
+              
   
              
       
             })
-            //datasetLastTba.length = 0
-            //datasetLastTba = [[1, 36.02638818372388],[2, 34.75492251318247]]
             
-
-            //datasetLastTba = JSON.parse(localStorage.getItem("datasetLastTba"))
-
-            //CREAZIONE SVG
-
             
 
 
