@@ -547,6 +547,7 @@ input[type=checkbox] {
 
 </style>
   <body>
+
     <h3 id = "featuresH3">Features: </h3>
     <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”></Body>
     <select id="selectMenuFeatures">
@@ -561,15 +562,20 @@ input[type=checkbox] {
     <br>
     <div id = "selectedValues"></div>
     <br>
-
+    <div id="coordinates"></div>
     <div id ="svg-div">
-
+    <svg width='500' height='400' id='svg_last_tba'></svg>
     </div>
 	<script>
-        var colors = ["#CC0000",'#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed', '#ff69b4','#ba55d3','#cd5c5c','#cc5500','#40e0d0'];
 
+        function sleep(time) {
+            return new Promise((resolve) => setTimeout(resolve, time));
+          }
+
+        var colors = ["#CC0000",'#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed', '#ff69b4','#ba55d3','#cd5c5c','#cc5500','#40e0d0'];
         var featuresGroup = ["Last Tba"]
-        
+        var datasetLastTba = [];
+        var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
         "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
         "S2", "S3", "S4", "S5", "SN", "Slot", "Speed_S3_BUS", "Speed_Sync", "Stazione", "Step", "TH", "TR", "Tdut1", "Tdut2",
@@ -593,136 +599,180 @@ input[type=checkbox] {
         .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
 
-
-        var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
         for (let i = 0; i < id_and_sn.length; i++){
             var tmp = id_and_sn[i]
-            console.log(id_and_sn[i])
-            document.getElementById("featuresH3").innerHTML += tmp[1] + " "
+            var virgola = ", "
+            if(i+1 == id_and_sn.length) virgola = ""
+            document.getElementById("featuresH3").innerHTML += tmp[1] + virgola
         }
         
 
-            var datasetLastTba = [];
+        
 
-            //document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_last_tba' style = 'margin-top: 500px'></svg>"
-            var new_svg = d3.select("#svg_last_tba"),
-            margin = 200,
-            width = new_svg.attr("width") - margin, //300
-            height = new_svg.attr("height") - margin //200
+        for (let i = 0; i < id_and_sn.length; i++) {
 
-            
+            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[i][0] + "/features", function (data) {
 
+              datasetLastTba.push([i + 1, data.last_tba, id_and_sn[i][1]])
+        
+            })
 
-            for(let i = 0; i < id_and_sn.length; i++){
+          }
 
-                d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[i][0] +"/features", function(data){
+          var min = 100000, max = 0, count = 0, media = 0, varianza = 0, varianzaSopra = 0, varianzaSotto = 0
 
+          //calcolo robehs
 
-            console.log(typeof(data.last_tba))
-            var tmp = data.last_tba
-            console.log(tmp)
+          sleep(1000).then(() => {
 
-            datasetLastTba.push([i+1, tmp])
+          for (let i = 0; i < datasetLastTba.length; i++){
+            console.log(datasetLastTba[i][1])
+            if(datasetLastTba[i][1] > max) max = datasetLastTba[i][1]
 
-                })
+            if(datasetLastTba[i][1] < min) min = datasetLastTba[i][1]
 
+            count += datasetLastTba[i][1] 
 
+          }
+          media = count/ datasetLastTba.length
+          count = 0
+
+          for (let i = 0; i < datasetLastTba.length; i++) {
+              
+
+              count += Math.pow((media - datasetLastTba[i][1]), 2)
 
             }
-
-            console.log(datasetLastTba)
-            
-            localStorage.setItem("max", JSON.stringify(100)); //riferito a Tamb
-            localStorage.setItem("min", JSON.stringify(0)); //riferito a Tamb
-            localStorage.setItem("datasetLastTba", JSON.stringify(datasetLastTba));
-
-            datasetLastTba = JSON.parse(localStorage.getItem("datasetLastTba"))
-
-            
-        // Creazione assi cartesiani TAMB. 
-        var min = 34, max = 36
-            
-
-                xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-                yScale = d3.scaleLinear().domain([0, 100]).range([height, 0]);
-
-                
-                var g = new_svg.append("g")
-            .attr("transform", "translate(" + 100 + "," + 100 + ")");
-
-
-          new_svg.append('text')
-            .attr('x', width/2 + 100)
-            .attr('y', 100)
-            .attr('text-anchor', 'middle')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 20)
-            .text("Grafico Last Tba");
-        
-            // X label
-            new_svg.append('text')
-            .attr('x', width/2 + 100)
-            .attr('y', height - 15 + 150)
-            .attr('text-anchor', 'middle')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 12)
-            .text("Time");
-        
-            // Y label
-            new_svg.append('text')
-            .attr('text-anchor', 'middle')
-            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
-            .style('font-family', 'Helvetica')
-            .style('font-size', 12)
-            .text("Last Tba");
-
-            //for(let i = 3; i < 5; i ++){
-              //datasetLastTba.push([i,  40.333])
-            //}
-
-            g.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(xScale));
-        
-            g.append("g")
-            .call(d3.axisLeft(yScale));
-            
-            // Step 7
-            new_svg.append('g')
-            .selectAll("dot")
-            .data(datasetLastTba)
-            .enter()
-            .append("circle")
-            .attr("cx", function (d) { return xScale(d[0]); } )
-            .attr("cy", function (d) { return yScale(d[1]); } )
-            .attr("r", 3)
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .style("fill", "#CC0000")
-            .attr("id", function(d,i){ return "dotLastTba"})
-            .on('mouseover', function (d, i) {
-            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedGroup + ": " + d[1]
-            d3.select(this).style("fill", "#7CFC00")
+          varianza = count/datasetLastTba.length
+          varianzaSopra = varianza * 3
+          varianzaSotto = varianza / 3
         })
-            .on('mouseout', function (d, i) {
-                document.getElementById("coordinates").innerHTML = ""
-                d3.select(this).style("fill", "#CC0000")
-            });
+            
 
-            // Step 8        
-            var line = d3.line()
-            .x(function(d) { return xScale(d[0]); }) 
-            .y(function(d) { return yScale(d[1]); }) 
-            .curve(d3.curveMonotoneX)
-        
-            new_svg.append("path")
-            .datum(datasetLastTba) 
-            .attr("class", "line") 
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .attr("d", line)
-            .style("fill", "none")
-            .style("stroke", "#CC0000")
-            .style("stroke-width", "2")
-            .attr("id", function(d,i){ return "pathLastTba"});
+            //document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_last_tba' style = 'margin-top: 500px'></svg>"
+            
+
+            d3.select("#selectMenuFeatures").on("change", function(d) {
+              
+             
+              console.log(datasetLastTba)
+              //localStorage.setItem("datasetLastTba", JSON.stringify(datasetLastTba));
+
+              var new_svg = d3.select("#svg_last_tba"),
+                margin = 200,
+                width = new_svg.attr("width") - margin, //300
+                height = new_svg.attr("height") - margin //200
+
+              xScale = d3.scaleLinear().domain([0, id_and_sn.length]).range([0, width]),
+              yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+
+              var g = new_svg.append("g")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")");
+
+
+              new_svg.append('text')
+                .attr('x', width / 2 + 100)
+                .attr('y', 80)
+                .attr('text-anchor', 'middle')
+                .style('font-family', 'Helvetica')
+                .style('font-size', 20)
+                .text("Grafico Last Tba");
+
+              // X label
+              new_svg.append('text')
+                .attr('x', width / 2 + 100)
+                .attr('y', height - 15 + 150)
+                .attr('text-anchor', 'middle')
+                .style('font-family', 'Helvetica')
+                .style('font-size', 12)
+                .text("Spindles");
+
+              // Y label
+              new_svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+                .style('font-family', 'Helvetica')
+                .style('font-size', 12)
+                .text("Last Tba");
+
+
+              g.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScale));
+
+              g.append("g")
+                .call(d3.axisLeft(yScale));
+
+              // Step 7
+              new_svg.append('g')
+                .selectAll("dot")
+                .data(datasetLastTba)
+                .enter()
+                .append("circle")
+                .attr("cx", function (d) { return xScale(d[0]); })
+                .attr("cy", function (d) { return yScale(d[1]); })
+                .attr("r", 3)
+                .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                .style("fill", "#CC0000")
+                .attr("id", function (d, i) { return "dotLastTba" })
+                .on('mouseover', function (d, i) {
+                  document.getElementById("coordinates").innerHTML = "Spindle: " + d[2] + " , " + "Last Tba" + ": " + d[1]
+                  d3.select(this).style("fill", "#7CFC00")
+                })
+                .on('mouseout', function (d, i) {
+                  document.getElementById("coordinates").innerHTML = ""
+                  d3.select(this).style("fill", "#CC0000")
+                });
+
+              var Gen = d3.line();
+              var points = []
+
+              for (let i = 0; i < id_and_sn.length; i++) {
+                points.push([i+1, media])
+              }
+              var pathMedia = Gen(points);
+
+              //d3.select('path')
+                //.attr('d', pathOfLine);
+              g.append("path")
+                .attr("d", pathMedia)
+                .attr("stroke", "black")
+
+              var points = []
+
+              for (let i = 0; i < id_and_sn.length; i++) {
+                points.push([i + 1, varianzaSopra])
+              }
+              var pathVarianzaSopra = Gen(points);
+
+              g.append("path")
+                .attr("d", pathVarianzaSopra)
+                .attr("stroke", "black")
+
+              var points = []
+
+              for (let i = 0; i < id_and_sn.length; i++) {
+                points.push([i + 1, varianzaSotto])
+              }
+              var pathVarianzaSotto = Gen(points);
+
+              g.append("path")
+                .attr("d", pathVarianzaSotto)
+                .attr("stroke", "black")
+  
+             
+      
+            })
+            //datasetLastTba.length = 0
+            //datasetLastTba = [[1, 36.02638818372388],[2, 34.75492251318247]]
+            
+
+            //datasetLastTba = JSON.parse(localStorage.getItem("datasetLastTba"))
+
+            //CREAZIONE SVG
+
+            
 
 
     </script>
