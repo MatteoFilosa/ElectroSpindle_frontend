@@ -544,11 +544,14 @@ input[type=checkbox] {
     box-shadow: none;
   }
 
+  
 
 </style>
   <body>
-
-    <h3 id = "featuresH3">Features: </h3>
+    <div class = "selectedSpindlesDiv">
+      <h3 id="featuresH3">Features: </h3>
+    </div>
+    
     <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”></Body>
     <select id="selectMenuFeatures">
         <option value="" disabled selected>Selezione feature</option>
@@ -564,6 +567,7 @@ input[type=checkbox] {
     <br>
     <div id="coordinates"></div>
     <div id ="svg-div">
+      <div id = "loading">Caricamento...</div>
     <svg width='500' height='400' id='svg_last_tba'></svg>
     </div>
 	<script>
@@ -600,6 +604,7 @@ input[type=checkbox] {
 
 
         for (let i = 0; i < id_and_sn.length; i++){
+            if (id_and_sn.length >= 50) document.getElementById("svg_last_tba").style = "margin-top: 240px;"
             var tmp = id_and_sn[i]
             var virgola = ", "
             if(i+1 == id_and_sn.length) virgola = ""
@@ -616,6 +621,8 @@ input[type=checkbox] {
               datasetLastTba.push([i + 1, data.last_tba, id_and_sn[i][1]])
         
             })
+
+            if(i + 1 == id_and_sn.length) document.getElementById("loading").innerHTML = ""
 
           }
 

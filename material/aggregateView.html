@@ -19,6 +19,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </head>
 <style>
+
+  
     /* CSS */
 text.shadow {
   stroke: black;
@@ -26,272 +28,13 @@ text.shadow {
   opacity: 0.8s;
 }
 
-svg {
-  position: absolute;
-  left: 0px;
-  top: 130px;
-}
-
-#svg_last_tba {
-  position: absolute;
-  left: 0px;
-  top: 130px;
-}
-
-#svg_tba {
-  position: absolute;
-  left: 400px;
-  top: 130px;
-}
-
-#svg_tba0{
-
-  position: absolute;
-  left: 0px;
-  top: 400px;
-
-}
-
-#svg1{
-
-  position: absolute;
-  left: 400px;
-  top: 130px;
-  
-}
-
-#svg_tba1{
-
-  position: absolute;
-  left: 400px;
-  top: 400px;
-
-}
-
-#svg2{
-
-  position: absolute;
-  left: 800px;
-  top: 130px;
-  
-}
-
-#svg_tba2{
-
-  position: absolute;
-  left: 800px;
-  top: 400px;
-
-}
-
-#svg3{
-
-  position: absolute;
-  left: 1200px;
-  top: 130px;
-  
-}
-
-#svg_tba3{
-
-  position: absolute;
-  left: 1200px;
-  top: 400px;
-
-}
-
-#svg4{
-
-  position: absolute;
-  left: 1600px;
-  top: 130px;
-  
-}
-
-#svg_tba4{
-
-  position: absolute;
-  left: 1600px;
-  top: 400px;
-
+.grid-container {
+ display:inline-flex;
+ 
+ 
 }
 
 
-#svg5{
-
-  position: absolute;
-  left: 2000px;
-  top: 130px;
-  
-}
-
-#svg_tba5{
-
-  position: absolute;
-  left: 2000px;
-  top: 400px;
-
-}
-
-#svg6{
-
-  position: absolute;
-  left: 2400px;
-  top: 130px;
-  
-}
-
-#svg_tba6{
-
-  position: absolute;
-  left: 2400px;
-  top: 400px;
-
-}
-
-#svg7{
-
-  position: absolute;
-  left: 2800px;
-  top: 130px;
-  
-}
-
-#svg_tba7{
-
-  position: absolute;
-  left: 2800px;
-  top: 400px;
-
-}
-
-#svg8{
-
-  position: absolute;
-  left: 3200px;
-  top: 130px;
-  
-}
-
-#svg_tba8{
-
-  position: absolute;
-  left: 3200px;
-  top: 400px;
-
-}
-
-#svg9{
-
-  position: absolute;
-  left: 3600px;
-  top: 130px;
-  
-}
-
-#svg_tba9{
-
-  position: absolute;
-  left: 3600px;
-  top: 400px;
-
-}
-
-#svg10{
-
-  position: absolute;
-  left: 4000px;
-  top: 130px;
-  
-}
-
-#svg_tba10{
-
-  position: absolute;
-  left: 4000px;
-  top: 400px;
-
-}
-
-#svg11{
-
-  position: absolute;
-  left: 4400px;
-  top: 130px;
-  
-}
-
-#svg_tba11{
-
-  position: absolute;
-  left: 4400px;
-  top: 400px;
-
-}
-
-#svg12{
-
-  position: absolute;
-  left: 4800px;
-  top: 130px;
-  
-}
-
-#svg_tba12{
-
-  position: absolute;
-  left: 4800px;
-  top: 400px;
-
-}
-
-#svg13{
-
-  position: absolute;
-  left: 4800px;
-  top: 130px;
-  
-}
-
-#svg_tba13{
-
-  position: absolute;
-  left: 4800px;
-  top: 400px;
-
-}
-
-#svg14{
-
-  position: absolute;
-  left: 5200px;
-  top: 130px;
-  
-}
-
-#svg_tba14{
-
-  position: absolute;
-  left: 5200px;
-  top: 400px;
-
-}
-
-#svg15{
-
-  position: absolute;
-  left: 5600px;
-  top: 130px;
-  
-}
-
-#svg_tba15{
-
-  position: absolute;
-  left: 5600px;
-  top: 400px;
-
-}
 
 
 #coordinates{
@@ -575,15 +318,15 @@ input[type=checkbox] {
   <option value="" disabled selected>Selezione attributo</option>
 </select>
 
-
-<!--Step 2-->
+<button id="featuresBtn" class="button-blue" style="left: 350px; top: -25px;" onclick="features()">Features</button>
+<button id="analytics_2" class="button-blue" style="left: 350px; top: -25px;">Analytics</button>
 <div id = "svg-div">
-  <svg width='500' height='400' id ='svg_last_tba'></svg>
+  <div class="grid-container" id = "grid-container">
+  </div>
 </div>
 
 
-<button id = "featuresBtn" class="button-blue" style = "left: 350px; top: -25px;" onclick = "features()" >Features</button>
-<button id = "analytics_2" class="button-blue"style = "left: 350px; top: -25px;" >Analytics</button>
+
 <!-- Initialize a select button -->
 <!--<button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button>!-->
 
@@ -902,7 +645,7 @@ if(selectedGroup == "Time") selectedGroup = "time"
 
   }
 
-        var coordinates = -400
+        var coordinates = -400, coordinates_top = 0
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
         "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
         "S2", "S3", "S4", "S5", "SN", "Slot", "Speed_S3_BUS", "Speed_Sync", "Stazione", "Step", "TH", "TR", "Tdut1", "Tdut2",
@@ -927,20 +670,25 @@ if(selectedGroup == "Time") selectedGroup = "time"
 
     var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
     var aggregato = 0
+    var count = 0
     
     d3.select("#selectMenu").on("change", function(d) {
-
+    count += 1
+    var selectedOption = d3.select(this).property("value")
     if (document.getElementById("aggregato").checked == true) aggregato = 1
     else aggregato = 0
-
-    var selectedOption = d3.select(this).property("value")
+    
+  
+    document.getElementById("svg-div").innerHTML += "<div class='grid-container' id='grid-container" + count + "'>"
+    
     if(selectedOption == "Time") selectedOption = "time"
-    //if (aggregato == 0) document.getElementById("selectedValues").style.visibility = "hidden"
-    //if (aggregato != 1) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedGroup +'" onchange = "modifyElement('+ selectedGroup +')" checked>' + selectedGroup + "</checkbox>"
+    //coordinates_top += 700
+    //Per ogni spindle devo aggiungere un grafichetto
     for(let i = 0; i < id_and_sn.length; i++){
-        coordinates += 400
-
-        document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg" + selectedOption + "_" + i + "' style = 'margin-left:" + coordinates + "px'></svg>"
+        
+        
+        
+        document.getElementById("grid-container" + count).innerHTML += "<svg width='500' height='400' id ='svg" + selectedOption + "_" + i +"'></svg>"
 
             d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[i][0] +"/raw_data?limit=100", function(data) {
         
@@ -1071,6 +819,9 @@ if(selectedGroup == "Time") selectedGroup = "time"
                 
 
     }
+    document.getElementById("svg-div").innerHTML += "</div>"
+
+    //document.getElementById("grid-container").innerHTML += "</div>" //chiusura riga
   })
         
         
