@@ -335,7 +335,7 @@ input[type=checkbox] {
   position: absolute;
   left: 500px;
   top: 0px; 
-  height: 200px;
+  height: 100px;
   width: 500px;
 
 }
@@ -553,6 +553,17 @@ input[type=checkbox] {
     box-shadow: none;
   }
 
+#svg-div {
+ display:inline-flex;
+ 
+ 
+}
+
+#svg_default {
+ margin-top: 20px;
+ 
+ 
+}
 
 </style>
 <body>
@@ -630,11 +641,37 @@ input[type=checkbox] {
 
         function aggregateHelper(){
 
-          document.getElementById("aggregato").disabled = true
-          document.getElementById("selectMenu").disabled = true
+
           
           var data = JSON.parse(localStorage.getItem("storageData"));
-          newGraph("", data, "#CC0000", graph_number, coordinates, 1)
+
+          if(document.getElementById("aggregato").checked == true) newGraph("", data, "#CC0000", graph_number, coordinates, 1)
+
+          else { //vuol dire che devo rendere visibili gli attributi di prima
+
+            var to_add = document.getElementById("selectedValues").childNodes
+
+            for (let i = 0; i <= to_add.length; i++) {
+              
+              if(to_add[i] != undefined){
+
+                if ((to_add[i].id != null) && (to_add[i].checked == true)) {
+
+                  var tmp = to_add[i].id
+                  console.log(tmp)
+                  if (tmp == "Time") tmp = "time"
+                  console.log("#svg" + tmp)
+                  d3.select("#svg" + tmp).attr("visibility", "visible")
+
+                }
+
+              }
+              
+            }
+            d3.select("#svg_default").attr("visibility", "hidden")
+          }
+
+
 
 
         }
@@ -654,21 +691,38 @@ input[type=checkbox] {
 
                 var toAddDot = "#dot" + selectedOption
                 var toAddPath = "#path" + selectedOption
-                console.log("Deleted: " + toAddDot + ", " + toAddPath) 
-                d3.select("#svg_default").selectAll(toAddDot).attr("visibility", "visible");
-                d3.select("#svg_default").selectAll(toAddPath).attr("visibility", "visible");
+                
+                if(document.getElementById("aggregato").checked == true){
 
-               
+                  d3.select("#svg_default").selectAll(toAddDot).attr("visibility", "visible");
+                  d3.select("#svg_default").selectAll(toAddPath).attr("visibility", "visible");
+
+                }
+
+                else{
+                  d3.selectAll("#svg" + selectedOption).attr("visibility", "visible");
+                }
 
             }
         //si cancella tutto ciò che fa parte del grafico con l'id selezionato
             else if (document.getElementById(selectedOption).checked == false){
-                
+
                 var toRemoveDot = "#dot" + selectedOption
                 var toRemovePath = "#path" + selectedOption
-                console.log("Deleted: " + toRemoveDot + ", " + toRemovePath) 
-                d3.selectAll(toRemoveDot).attr("visibility", "hidden");
-                d3.selectAll(toRemovePath).attr("visibility", "hidden");
+
+                if(document.getElementById("aggregato").checked == true){
+
+                  
+                  d3.selectAll(toRemoveDot).attr("visibility", "hidden");
+                  d3.selectAll(toRemovePath).attr("visibility", "hidden");
+
+                }
+
+                else {
+                  d3.selectAll("#svg" + selectedOption).attr("visibility", "hidden");
+                }
+                
+                
                 
 
                 // da rivedere per colore
@@ -688,13 +742,14 @@ input[type=checkbox] {
 
                 d3.select("#svg_default").attr("visibility", "hidden");
 
-                for (let i = 2; i <= 100; i ++){
+                for (let i = 0; i <= allGroup.length; i ++){
 
-                    console.log("#svg" + i)
-                    d3.select("#svg" + i).selectAll("circle").remove();
-                    d3.select("#svg" + i).selectAll("path").remove();
-                    d3.select("#svg" + i).selectAll("text").remove();
-                    d3.select("#svg" + i).selectAll("g").remove();
+                    var tmp = allGroup[i]
+                    if(allGroup[i] == "Time") tmp = "time"
+                    d3.select("#svg" + tmp).selectAll("circle").remove();
+                    d3.select("#svg" + tmp).selectAll("path").remove();
+                    d3.select("#svg" + tmp).selectAll("text").remove();
+                    d3.select("#svg" + tmp).selectAll("g").remove();
                     //document.getElementById("svg" + i).remove();
                     
                 }
@@ -721,14 +776,19 @@ input[type=checkbox] {
             ///Variabili 
 
             coordinates = 0, colorSelector = 0
-            document.getElementById("selectedValues").style.visibility = "visible"
+            //document.getElementById("selectedValues").style.visibility = "visible"
             svg_number = "_default"
             d3.select("#svg_default").attr("visibility", "visible");
 
             ///Nascosti altri grafici OK
-            for (let i = 2; i <= 100; i ++){
-            d3.select("#svg" + i).attr("visibility", "hidden");
-            }
+            for (let i = 0; i <= allGroup.length; i ++){
+
+                    var tmp = allGroup[i]
+                    if(allGroup[i] == "Time") tmp = "time"
+                    d3.select("#svg" + tmp).attr("visibility", "hidden")
+                    
+                    
+                }
             
             ///Scala per grafici OK
 
@@ -737,6 +797,34 @@ input[type=checkbox] {
             var data = JSON.parse(localStorage.getItem("storageData"))
             console.log(data)
             var valori = JSON.parse(localStorage.getItem("selectedValues")) //data.data
+            var to_add = document.getElementById("selectedValues").childNodes
+
+            //Eliminare dall'array dei valori i valori corrispondenti alle checkbox NON checkate
+              
+              for(let u = 0; u < to_add.length; u++){
+
+                if (to_add[u] != undefined) {
+
+                  if ((to_add[u].id != null) && (to_add[u].checked == false)) {
+
+                    var tmp = to_add[u].id
+
+                    if (tmp == "Time") tmp = "time"
+
+                    if (valori.includes(tmp)){
+
+                      const index = valori.indexOf(tmp);
+                      if (index > -1) { // only splice array when item is found
+                        valori.splice(index, 1); // 2nd parameter means remove one item only
+                      }
+
+                    } 
+
+                  }
+
+                }
+              }
+
 
             for(let j= 0; j < valori.length; j++){
 
@@ -767,7 +855,7 @@ input[type=checkbox] {
             ///Per ogni attributo che mi serve, pusho la roba che mi serve nel dataset, aggiorno colore e il div con + selectedgroup
 
           ///VARIABILI
-
+        if(document.getElementById("svg_default") != null) document.getElementById("svg_default").remove()
         var valori = JSON.parse(localStorage.getItem("selectedValues"))
         document.getElementById("svg-div").innerHTML += "<svg width='1000' height='800' id ='svg_default'></svg>"
         var new_svg = d3.select("#svg_default")
@@ -781,7 +869,7 @@ input[type=checkbox] {
 
           new_svg.append('text')
             .attr('x', width/2 + 100)
-            .attr('y', 100)
+            .attr('y', 80)
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 20)
@@ -895,8 +983,8 @@ input[type=checkbox] {
 
           //Creazione grafico
 
-          document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg' + svg_number +'"></svg>'
-            var svg_to_select = "#svg" + svg_number
+          document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg' + selectedGroup +'"></svg>'
+            var svg_to_select = "#svg" + selectedGroup
             console.log(svg_to_select)
             var new_svg = d3.select(svg_to_select),
                 margin = 200,
@@ -905,7 +993,7 @@ input[type=checkbox] {
 
              // nel caso io cancelli tutto nell'opzione sovrapponi, adesso metto i nuovi svg dalla coordinata 0+400 anziché dalle vecchie.
             
-            var tmp =  document.getElementById("svg" + svg_number)
+            var tmp =  document.getElementById("svg" + selectedGroup)
             tmp.style.position = 'absolute';
             tmp.style.top = '200px';
             tmp.style.left = coordinates + "px"
@@ -918,7 +1006,7 @@ input[type=checkbox] {
 
           new_svg.append('text')
             .attr('x', width/2 + 100)
-            .attr('y', 100)
+            .attr('y', 80)
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 20)
@@ -992,7 +1080,8 @@ input[type=checkbox] {
 
         
             // codice finale
-            if (aggregato == 0) document.getElementById("selectedValues").style.visibility = "hidden"
+            //if (aggregato == 0) document.getElementById("selectedValues").style.visibility = "hidden"
+            console.log(selectedGroup)
             if (aggregato != 1) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedGroup +'" onchange = "modifyElement('+ selectedGroup +')" checked>' + selectedGroup + "</checkbox>"
             selectedValues.push(selectedGroup)
             localStorage.setItem("selectedValues", JSON.stringify(selectedValues))
@@ -1002,36 +1091,35 @@ input[type=checkbox] {
 
   d3.select("#selectMenu").on("change", function(d) {
 
-      //document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
+      //if(selectedOption != undefined) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
       //document.getElementById("selectedOption").style.visibility = "hidden"
       var checkBoxAggregato = document.getElementById("aggregato");
       var data = JSON.parse(localStorage.getItem("storageData"));
-      // recover the option that has been chosen
+    
       var selectedOption = d3.select(this).property("value")
-      console.log(selectedOption)
+      //d3.select(this).attr("disabled", "true")
+
 
       localStorage.setItem("selectedOption", JSON.stringify(selectedOption));
 
     if (checkBoxAggregato.checked == false){ //se Aggregato non è checkato, cancella tutto per fare spazio al nuovo grafico sullo stesso svg
 
-    colour = "#CC0000"
-    graph_number += 1
-    console.log(graph_number)
-    coordinates += 400
-    newGraph(selectedOption, data, colour, graph_number, coordinates, 0)
+        colour = "#CC0000"
+        graph_number += 1
+        console.log(graph_number)
+        coordinates += 400
+        newGraph(selectedOption, data, colour, graph_number, coordinates, 0)
     
 
-}
+    }
 
-else if (checkBoxAggregato.checked == true){ 
+    else if (checkBoxAggregato.checked == true){ 
 
-  document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
-  console.log(selectedOption)
-  localStorage.setItem("selectedOption", JSON.stringify(selectedOption))
-  modifyElement(selectedOption, 1)
+      document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
+      localStorage.setItem("selectedOption", JSON.stringify(selectedOption))
+      modifyElement(selectedOption, 1)
  
-    
-}
+    }
 
 
 })
