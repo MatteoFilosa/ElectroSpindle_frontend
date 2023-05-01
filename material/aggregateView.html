@@ -637,7 +637,7 @@ if(selectedGroup == "Time") selectedGroup = "time"
 
   
       // codice finale
-      if (aggregato == 0) document.getElementById("selectedValues").style.visibility = "hidden"
+      //if (aggregato == 0) document.getElementById("selectedValues").style.visibility = "hidden"
       if (aggregato != 1) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedGroup +'" onchange = "modifyElement('+ selectedGroup +')" checked>' + selectedGroup + "</checkbox>"
       selectedValues.push(selectedGroup)
       localStorage.setItem("selectedValues", JSON.stringify(selectedValues))

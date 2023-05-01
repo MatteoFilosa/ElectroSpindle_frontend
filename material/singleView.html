@@ -612,12 +612,110 @@ input[type=checkbox] {
 
 <script>
 
-      function getDarkColor() {
-          var color = '#';
-          for (var i = 0; i < 6; i++) {
-              color += Math.floor(Math.random() * 10);
+      function addToDefault(selectedGroup) {
+
+        var max = JSON.parse(localStorage.getItem("maxDefault"))
+        var min = JSON.parse(localStorage.getItem("minDefault"))
+
+        for (let i = 0; i < 99; i++) {
+          
+          if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
+            min = eval('data.data.' + selectedGroup + "[" + i + "]")
+            console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
           }
-          return color;
+          if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
+            max = eval('data.data.' + selectedGroup + "[" + i + "]")
+          }
+          dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+
+        }
+        
+        document.getElementById("svg-div").innerHTML += "<svg width='1000' height='800' id ='svg_default'></svg>"
+        var new_svg = d3.select("#svg_default")
+        var g = new_svg.append("g")
+          .attr("transform", "translate(" + 100 + "," + 100 + ")");
+        var width = 500, height = 400
+
+        ///SETTING DEL TESTO
+
+        new_svg.selectAll('text').remove()
+
+        new_svg.append('text')
+          .attr('x', width / 2 + 100)
+          .attr('y', 80)
+          .attr('text-anchor', 'middle')
+          .style('font-family', 'Helvetica')
+          .style('font-size', 20)
+          .text("Grafico Misto");
+
+        // X label
+        new_svg.append('text')
+          .attr('x', width / 2 + 100)
+          .attr('y', height - 15 + 150)
+          .attr('text-anchor', 'middle')
+          .style('font-family', 'Helvetica')
+          .style('font-size', 12)
+          .text("Time");
+
+        // Y label
+        new_svg.append('text')
+          .attr('text-anchor', 'middle')
+          .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+          .style('font-family', 'Helvetica')
+          .style('font-size', 12)
+          .text("Valori misti");
+
+        var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+          yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+
+        g.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(xScale));
+
+        g.append("g")
+          .call(d3.axisLeft(yScale));
+
+          new_svg.append('g')
+          .selectAll("dot")
+          .data(dataset)
+          .enter()
+          .append("circle")
+          .attr("cx", function (d) { return xScale(d[0]); })
+          .attr("cy", function (d) { return yScale(d[1]); })
+          .attr("r", 3)
+          .attr("transform", "translate(" + 100 + "," + 100 + ")")
+          .style("fill", colors[colorSelector])
+          .attr("id", function (d, i) { return "dot" + valori[j] })
+          .on('mouseover', function (d, i) {
+            document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + valori[j] + ": " + d[1]
+            d3.select(this).style("fill", "#7CFC00")
+          })
+          .on('mouseout', function (d, i) {
+            document.getElementById("coordinates").innerHTML = ""
+            d3.select(this).style("fill", colors[colorSelector])
+          });
+
+        var line = d3.line()
+          .x(function (d) { return xScale(d[0]); })
+          .y(function (d) { return yScale(d[1]); })
+          .curve(d3.curveMonotoneX)
+
+        new_svg.append("path")
+          .datum(dataset)
+          .attr("class", "line")
+          .attr("transform", "translate(" + 100 + "," + 100 + ")")
+          .attr("d", line)
+          .style("fill", "none")
+          .style("stroke", colors[colorSelector])
+          .style("stroke-width", "2")
+          .attr("id", function (d, i) { return "path" + valori[j] });
+
+        if (colorSelector < colors.length) colorSelector += 1
+        else colorSelector = 0
+
+
+          
       }
         var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
         "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
@@ -645,7 +743,7 @@ input[type=checkbox] {
           
           var data = JSON.parse(localStorage.getItem("storageData"));
 
-          if(document.getElementById("aggregato").checked == true) newGraph("", data, "#CC0000", graph_number, coordinates, 1)
+          if(document.getElementById("aggregato").checked == true) newGraph("", data, "#CC0000", graph_number, coordinates, 1, 0)
 
           else { //vuol dire che devo rendere visibili gli attributi di prima
 
@@ -684,7 +782,7 @@ input[type=checkbox] {
             //var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
             
             console.log(selectedOption)
-            if(selectedOption == "Time") selectedOption = "time"
+            //if(selectedOption == "Time") selectedOption = "time"
 
    
             if (document.getElementById(selectedOption).checked == true){
@@ -761,7 +859,7 @@ input[type=checkbox] {
                 }
 
 
-    function newGraph(selectedGroup, data, colour, svg_number, coordinates, aggregato){
+    function newGraph(selectedGroup, data, colour, svg_number, coordinates, aggregato, toAddDefault){
 
       // codice iniziale
       
@@ -794,6 +892,7 @@ input[type=checkbox] {
 
             var min = 100000
             var max = 0
+            var toAddDefaultArray = []
             var data = JSON.parse(localStorage.getItem("storageData"))
             console.log(data)
             var valori = JSON.parse(localStorage.getItem("selectedValues")) //data.data
@@ -808,6 +907,7 @@ input[type=checkbox] {
                   if ((to_add[u].id != null) && (to_add[u].checked == false)) {
 
                     var tmp = to_add[u].id
+                    
 
                     if (tmp == "Time") tmp = "time"
 
@@ -822,33 +922,69 @@ input[type=checkbox] {
 
                   }
 
+                  else if ((to_add[u].id != null) && (to_add[u].checked == true)) toAddDefaultArray.push(to_add[u].id)
+
                 }
               }
+              console.log(toAddDefaultArray)
+
+            if (toAddDefault == 1){ //ho un solo valore da iterare
+
+              min = JSON.parse(localStorage.getItem("minDefault"))
+              max = JSON.parse(localStorage.getItem("maxDefault"))
+
+              for (let i = 0; i < 99; i++) {
 
 
-            for(let j= 0; j < valori.length; j++){
+                console.log('data.data.' + selectedGroup + "[" + i + "]")
+                if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
+                  min = eval('data.data.' + selectedGroup + "[" + i + "]")
+                  console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+                }
+                if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
+                  max = eval('data.data.' + selectedGroup + "[" + i + "]")
+                }
+                dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
 
-              var selectedGroup = valori[j]
-
-              for(let i = 0; i < 99; i++){
-    
-            
-              console.log('data.data.' + selectedGroup + "["+ i +"]")
-              if(eval('data.data.' + selectedGroup + "["+ i +"]") < min){
-                  min = eval('data.data.' + selectedGroup + "["+ i +"]")
-                  console.log(eval('data.data.' + selectedGroup + "["+ i +"]"))
               }
-              if(eval('data.data.' + selectedGroup + "["+ i +"]") > max){
-                max = eval('data.data.' + selectedGroup + "["+ i +"]")
-              }    
-              dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
-
-            } 
 
               xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-              yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+              localStorage.setItem("maxDefault", JSON.stringify(max))
+              localStorage.setItem("minDefault", JSON.stringify(min))
 
             }
+
+            else if(toAddDefault == 0){ // ho tanti valori da iterare
+              for (let j = 0; j < valori.length; j++) { //Serve per scalare gli assi correttamente
+
+                var selectedGroup = valori[j]
+
+                for (let i = 0; i < 99; i++) {
+
+
+                  console.log('data.data.' + selectedGroup + "[" + i + "]")
+                  if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
+                    min = eval('data.data.' + selectedGroup + "[" + i + "]")
+                    console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+                  }
+                  if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
+                    max = eval('data.data.' + selectedGroup + "[" + i + "]")
+                  }
+                  dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+
+                }
+
+                xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                  yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+                localStorage.setItem("maxDefault", JSON.stringify(max))
+                localStorage.setItem("minDefault", JSON.stringify(min))
+
+              }
+
+            }
+
+            
 
 
             ///Creazione grafici FOR (NON OK). 
@@ -904,6 +1040,8 @@ input[type=checkbox] {
             .call(d3.axisLeft(yScale));
 
             //IMPORTANTE CREAZIONE DOT E PATH
+        if(toAddDefault == 1) valori = toAddDefaultArray
+        console.log(valori)
         for(let j = 0; j < valori.length; j++){
           var dataset = []
           for(let i = 0; i < 99; i++){
@@ -913,6 +1051,8 @@ input[type=checkbox] {
 
             
             var selectedGroup = valori[j]
+
+            if(selectedGroup == "Time") selectedGroup = "time"
             
             dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
 
@@ -1108,7 +1248,7 @@ input[type=checkbox] {
         graph_number += 1
         console.log(graph_number)
         coordinates += 400
-        newGraph(selectedOption, data, colour, graph_number, coordinates, 0)
+        newGraph(selectedOption, data, colour, graph_number, coordinates, 0, 0)
     
 
     }
@@ -1117,7 +1257,8 @@ input[type=checkbox] {
 
       document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
       localStorage.setItem("selectedOption", JSON.stringify(selectedOption))
-      modifyElement(selectedOption, 1)
+      //modifyElement(selectedOption, 1)
+      newGraph(selectedOption, data, colour, graph_number, coordinates, 1, 1)
  
     }
 
