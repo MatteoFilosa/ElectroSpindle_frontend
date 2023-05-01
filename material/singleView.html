@@ -748,6 +748,7 @@ input[type=checkbox] {
           else { //vuol dire che devo rendere visibili gli attributi di prima
 
             var to_add = document.getElementById("selectedValues").childNodes
+            var count = -1
 
             for (let i = 0; i <= to_add.length; i++) {
               
@@ -755,12 +756,17 @@ input[type=checkbox] {
 
                 if ((to_add[i].id != null) && (to_add[i].checked == true)) {
 
+                  count ++;
                   var tmp = to_add[i].id
                   console.log(tmp)
                   if (tmp == "Time") tmp = "time"
                   console.log("#svg" + tmp)
                   d3.select("#svg" + tmp).attr("visibility", "visible")
+                  console.log(count)
 
+                  if(d3.select("#svg" + tmp).size() == 0){
+                    newGraph(tmp, data, "#CC0000", graph_number, (400*count), 0, 3)
+                  }
                 }
 
               }
@@ -862,6 +868,9 @@ input[type=checkbox] {
     function newGraph(selectedGroup, data, colour, svg_number, coordinates, aggregato, toAddDefault){
 
       // codice iniziale
+
+      
+
       
       if(selectedGroup == "Time") selectedGroup = "time"
 
@@ -1104,7 +1113,7 @@ input[type=checkbox] {
         else if (aggregato == 0){ //Caso NON aggregato
 
          
-
+          if (toAddDefault == 3) coordinates += 400
           //scala per grafico
 
           for(let i = 0; i < 99; i++){
