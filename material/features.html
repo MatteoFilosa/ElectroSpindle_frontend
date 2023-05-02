@@ -544,6 +544,14 @@ input[type=checkbox] {
     box-shadow: none;
   }
 
+  #tooltip {
+    background-color: lightyellow;
+    position:absolute;
+    left: 200px;
+    top: 200px;
+    visibility: visible;
+  }
+
   
 
 </style>
@@ -567,8 +575,10 @@ input[type=checkbox] {
     <br>
     <div id="coordinates"></div>
     <div id ="svg-div">
+      
       <div id = "loading">Caricamento...</div>
     <svg width='500' height='400' id='svg_last_tba'></svg>
+    <div id="tooltip"></div>
     </div>
 	<script>
 
@@ -577,13 +587,10 @@ input[type=checkbox] {
           }
 
         var colors = ["#CC0000",'#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed', '#ff69b4','#ba55d3','#cd5c5c','#cc5500','#40e0d0'];
-        var featuresGroup = ["Last Tba"]
+        var featuresGroup = ["Last value"]
         var datasetLastTba = [];
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
-        var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON","Barcode_DUT","C39_Sync","Date_start","Error_Code_HSD",
-        "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
-        "S2", "S3", "S4", "S5", "SN", "Slot", "Speed_S3_BUS", "Speed_Sync", "Stazione", "Step", "TH", "TR", "Tdut1", "Tdut2",
-        "Tdut3", "VibANT_Sync", "Vib_EM", "error_mask", "linea", "not used"]
+        var allGroup = ["Tba"]
 
         d3.select("#selectMenuFeatures")
         .selectAll('myOptions')
@@ -653,9 +660,9 @@ input[type=checkbox] {
 
             }
             
-          varianza = countVarianza/datasetLastTba.length
-          varianzaSopra = varianza * 3
-          varianzaSotto = varianza / 3
+          varianza = Math.sqrt(countVarianza/datasetLastTba.length)
+          varianzaSopra = media + varianza * 3
+          varianzaSotto = media - varianza * 3
           console.log(varianzaSopra, varianzaSotto)
 
          
@@ -682,16 +689,36 @@ input[type=checkbox] {
             if(min > varianzaSotto) min = varianzaSotto - 5
             if(min < 0) min = 0
             if(max < varianzaSopra) max = varianzaSopra + 5
+
+            
             
         })
+            function displayTooltip(d, i, event){
+              document.getElementById("tooltip").style.visibility = "visible"
+              console.log(d[0], d[1], event.screenX, event.screenY)
+              var tooltip = document.getElementById("tooltip")
+              tooltip.innerHTML = "Spindle " + d[2] + ", Last Tba: " + d[1]
+              tooltip.style.position = "absolute"
+              tooltip.style.top = (event.screenY -80) + "px"
+              tooltip.style.left = (event.screenX -80) + "px"
+              
 
+            }
+
+            function hideTooltip(d, i, event) {
+                
+              document.getElementById("tooltip").style.visibility = "hidden"
         
+              }
+            
             
 
             //document.getElementById("svg-div").innerHTML += "<svg width='500' height='400' id ='svg_last_tba' style = 'margin-top: 500px'></svg>"
             
 
             d3.select("#selectMenuFeatures").on("change", function(d) {
+
+           
               
              
               console.log(datasetLastTba)
@@ -743,6 +770,7 @@ input[type=checkbox] {
               g.append("g")
                 .call(d3.axisLeft(yScale));
 
+
               // Step 7
               new_svg.append('g')
                 .selectAll("dot")
@@ -755,14 +783,10 @@ input[type=checkbox] {
                 .attr("transform", "translate(" + 100 + "," + 100 + ")")
                 .style("fill", "#CC0000")
                 .attr("id", function (d, i) { return "dotLastTba" })
-                .on('mouseover', function (d, i) {
-                  document.getElementById("coordinates").innerHTML = "Spindle: " + d[2] + " , " + "Last Tba" + ": " + d[1]
-                  d3.select(this).style("fill", "#7CFC00")
-                })
-                .on('mouseout', function (d, i) {
-                  document.getElementById("coordinates").innerHTML = ""
-                  d3.select(this).style("fill", "#CC0000")
-                });
+                .on("mouseover", function (d, i) { return displayTooltip(d, i, event) })
+                .on("mouseout", function(d, i){  return hideTooltip() })
+                
+                
 
             var average_line = d3.line()
                 .x(function (d) { return xScale(d[0]); })
@@ -821,16 +845,16 @@ input[type=checkbox] {
                 .style('font-family', 'Helvetica')
                 .style('font-size', 20)
                 .style('fill', "#CC0000" )
-                .text("■ Media")
+                .text("■ Media(μ)")
                 
               new_svg.append('text')
-                .attr('x', width / 2 + 70)
+                .attr('x', width / 2 + 90)
                 .attr('y', 50)
                 .attr('text-anchor', 'middle')
                 .style('font-family', 'Helvetica')
                 .style('font-size', 20)
                 .style('fill', "#006400")
-                .text("■ Varianza sopra")
+                .text("■ μ + 3σ")
 
               new_svg.append('text')
                 .attr('x', width / 2 + 220)
@@ -839,7 +863,7 @@ input[type=checkbox] {
                 .style('font-family', 'Helvetica')
                 .style('font-size', 20)
                 .style('fill', "#ff8c00")
-                .text("■ Varianza sotto")
+                .text("■ μ - 3σ")
                 
                 console.log(average_tba_array, lower_variance_array, upper_variance_array)
               

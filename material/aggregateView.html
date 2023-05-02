@@ -300,6 +300,13 @@ input[type=checkbox] {
     background-color: #ffbfbf;
     box-shadow: none;
   }
+   #tooltip {
+    background-color: lightyellow;
+    position:absolute;
+    left: 200px;
+    top: 200px;
+    visibility: visible;
+  }
 
   
 
@@ -324,6 +331,7 @@ input[type=checkbox] {
   <div class="grid-container" id = "grid-container">
   </div>
 </div>
+<div id="tooltip"></div>
 
 
 
@@ -339,6 +347,24 @@ input[type=checkbox] {
 <div id = "features" style = "float: right"></div>
 
 <script>
+
+   function displayTooltip(d, i, selectedGroup, event) {
+      document.getElementById("tooltip").style.visibility = "visible"
+      console.log(d[0], d[1], event.screenX, event.screenY)
+      var tooltip = document.getElementById("tooltip")
+      tooltip.innerHTML = selectedGroup + ": " + d[1]
+      tooltip.style.position = "absolute"
+      tooltip.style.top = (event.screenY - 80) + "px"
+      tooltip.style.left = (event.screenX - 80) + "px"
+
+
+    }
+
+    function hideTooltip(d, i, event) {
+
+      document.getElementById("tooltip").style.visibility = "hidden"
+
+    }
 
 function aggregateHelper(){
 
@@ -426,7 +452,7 @@ if(selectedGroup == "Time") selectedGroup = "time"
 
     new_svg.append('text')
       .attr('x', width/2 + 100)
-      .attr('y', 100)
+      .attr('y', 80)
       .attr('text-anchor', 'middle')
       .style('font-family', 'Helvetica')
       .style('font-size', 20)
@@ -487,14 +513,8 @@ if(selectedGroup == "Time") selectedGroup = "time"
       .attr("transform", "translate(" + 100 + "," + 100 + ")")
       .style("fill", colors[colorSelector])
       .attr("id", function(d,i){ return "dot" + valori[j]})
-      .on('mouseover', function (d, i) {
-      document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + valori[j] + ": " + d[1]
-      d3.select(this).style("fill", "#7CFC00")
-  })
-      .on('mouseout', function (d, i) {
-          document.getElementById("coordinates").innerHTML = ""
-          d3.select(this).style("fill", colors[colorSelector])
-      });
+      .on("mouseover", function (d, i) { return displayTooltip(d, i, valori[j], event) })
+      .on("mouseout", function (d, i) { return hideTooltip() })
 
       var line = d3.line()
       .x(function(d) { return xScale(d[0]); }) 
@@ -563,7 +583,7 @@ if(selectedGroup == "Time") selectedGroup = "time"
 
     new_svg.append('text')
       .attr('x', width/2 + 100)
-      .attr('y', 100)
+      .attr('y', 80)
       .attr('text-anchor', 'middle')
       .style('font-family', 'Helvetica')
       .style('font-size', 20)
@@ -608,14 +628,8 @@ if(selectedGroup == "Time") selectedGroup = "time"
       .attr("transform", "translate(" + 100 + "," + 100 + ")")
       .style("fill", "#CC0000")
       .attr("id", function(d,i){ return "dot" + selectedGroup})
-      .on('mouseover', function (d, i) {
-      document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedGroup + ": " + d[1]
-      d3.select(this).style("fill", "#7CFC00")
-  })
-      .on('mouseout', function (d, i) {
-          document.getElementById("coordinates").innerHTML = ""
-          d3.select(this).style("fill", "#CC0000")
-      });
+      .on("mouseover", function (d, i) { return displayTooltip(d, i, selectedGroup, event) })
+        .on("mouseout", function (d, i) { return hideTooltip() })
 
       // Step 8        
       var line = d3.line()
@@ -755,16 +769,8 @@ if(selectedGroup == "Time") selectedGroup = "time"
                     .attr("transform", "translate(" + 100 + "," + 100 + ")")
                     .style("fill", "#CC0000")
                     .attr("id", function(d,i){ return "dot_" + i + "_" + selectedOption})
-                    .on('mouseover', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = "Time: " + d[0] + " , " + selectedOption + ": " + d[1]
-                    d3.select(this).style("fill", "#7CFC00")
-                  
-                })
-                    
-                    .on('mouseout', function (d, i) {
-                    document.getElementById("coordinates").innerHTML = ""
-                    d3.select(this).style("fill", "#CC0000")
-                }); 
+                    .on("mouseover", function (d, i) { return displayTooltip(d, i, selectedOption, event) })
+                  .on("mouseout", function (d, i) { return hideTooltip() })
 
                 var line = d3.line()
                     .x(function(d) { return xScale(d[0]); }) 
@@ -783,7 +789,7 @@ if(selectedGroup == "Time") selectedGroup = "time"
 
                 svg.append('text')
                     .attr('x', width/2 + 100)
-                    .attr('y', 100)
+                    .attr('y', 80)
                     .attr('text-anchor', 'middle')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 20)
@@ -809,7 +815,7 @@ if(selectedGroup == "Time") selectedGroup = "time"
                 //SN
                 svg.append('text')
                     .attr('x', width/2 + 100)
-                    .attr('y', 70)
+                    .attr('y', 55)
                     .attr('text-anchor', 'middle')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 16)
