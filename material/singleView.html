@@ -713,8 +713,9 @@ input[type=checkbox] {
           .attr("transform", "translate(" + 100 + "," + 100 + ")")
           .style("fill", colors[colorSelector])
           .attr("id", function (d, i) { return "dot" + valori[j] })
-          .on("mouseover", function (d, i) { return displayTooltip(d, i, selectedGroup, event) })
-          .on("mouseout", function (d, i) { return hideTooltip() })
+          .on("mouseover", function (d, i) { console.log("ok")  
+          displayTooltip(d, i, selectedGroup, event) })
+          .on("mouseout", function (d, i) { hideTooltip() })
 
         var line = d3.line()
           .x(function (d) { return xScale(d[0]); })
@@ -978,13 +979,15 @@ input[type=checkbox] {
               }
 
               xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+              yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
               localStorage.setItem("maxDefault", JSON.stringify(max))
               localStorage.setItem("minDefault", JSON.stringify(min))
 
             }
 
             else if(toAddDefault == 0){ // ho tanti valori da iterare
+
+
               for (let j = 0; j < valori.length; j++) { //Serve per scalare gli assi correttamente
 
                 var selectedGroup = valori[j]
@@ -992,7 +995,7 @@ input[type=checkbox] {
                 for (let i = 0; i < 99; i++) {
 
 
-                  console.log('data.data.' + selectedGroup + "[" + i + "]")
+                  
                   if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
                     min = eval('data.data.' + selectedGroup + "[" + i + "]")
                     console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
@@ -1005,7 +1008,8 @@ input[type=checkbox] {
                 }
 
                 xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-                  yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+              
                 localStorage.setItem("maxDefault", JSON.stringify(max))
                 localStorage.setItem("minDefault", JSON.stringify(min))
 
@@ -1057,21 +1061,51 @@ input[type=checkbox] {
             .style('font-size', 12)
             .text("Valori misti");
 
-            var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-
-
-            g.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(xScale));
-        
-            g.append("g")
-            .call(d3.axisLeft(yScale));
+            
 
             //IMPORTANTE CREAZIONE DOT E PATH
         if(toAddDefault == 1) valori = toAddDefaultArray
         console.log(valori)
-        for(let j = 0; j < valori.length; j++){
+
+        for(let j = 0; j < valori.length; j++){ //QUI
+
+          var selectedGroup = valori[j]
+
+          for (let i = 0; i < 99; i++) { //riscalo y per ogni valore
+
+
+
+            if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
+              min = eval('data.data.' + selectedGroup + "[" + i + "]")
+              console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+            }
+            if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
+              max = eval('data.data.' + selectedGroup + "[" + i + "]")
+            }
+            dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+
+          }
+
+          xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+          yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+          console.log
+          //oldmin = min
+          //oldmax = max
+
+
+          
+          
+
+
+          g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale));
+
+          g.append("g")
+            .call(d3.axisLeft(yScale));
+
+          
+
           var dataset = []
           for(let i = 0; i < 99; i++){
         
@@ -1099,8 +1133,9 @@ input[type=checkbox] {
             .attr("transform", "translate(" + 100 + "," + 100 + ")")
             .style("fill", colors[colorSelector])
             .attr("id", function(d,i){ return "dot" + valori[j]})
-            .on("mouseover", function (d, i) { return displayTooltip(d, i, valori[j], event) })
-          .on("mouseout", function (d, i) { return hideTooltip() })
+            .on("mouseover", function (d, i) { console.log("ok") 
+            displayTooltip(d, i, valori[j], event) })
+          .on("mouseout", function (d, i) { hideTooltip() })
      
             var line = d3.line()
             .x(function(d) { return xScale(d[0]); }) 
@@ -1214,8 +1249,9 @@ input[type=checkbox] {
             .attr("transform", "translate(" + 100 + "," + 100 + ")")
             .style("fill", "#CC0000")
             .attr("id", function(d,i){ return "dot" + selectedGroup})
-            .on("mouseover", function (d, i) { return displayTooltip(d, i, selectedGroup, event) })
-            .on("mouseout", function (d, i) { return hideTooltip() })
+            .on("mouseover", function (d, i) { console.log("ok")
+              displayTooltip(d, i, selectedGroup, event) })
+            .on("mouseout", function (d, i) { hideTooltip() })
 
             // Step 8        
             var line = d3.line()
