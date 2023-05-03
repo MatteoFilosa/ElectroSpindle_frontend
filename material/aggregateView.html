@@ -338,6 +338,51 @@ label { display: inline-block; }
   
 }
 
+.axis2 line{
+  stroke: black;
+}
+
+.axis2 path{
+  stroke: black;
+}
+
+.axis2 text{
+  
+  fill: #bf0000;
+
+  
+}
+
+.axis3 line{
+  stroke: black;
+}
+
+.axis3 path{
+  stroke: black;
+}
+
+.axis3 text{
+  
+  fill: #800000;
+
+  
+}
+
+.axis4 line{
+  stroke: black;
+}
+
+.axis4 path{
+  stroke: black;
+}
+
+.axis4 text{
+  
+  fill: #ff7f50;
+
+  
+}
+
 
   
 
@@ -440,6 +485,7 @@ label { display: inline-block; }
 
 
     function aggregate(){
+      var cambio = 0
       var realDataset = []
       var min = 100000
       var max = 0
@@ -533,11 +579,38 @@ label { display: inline-block; }
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(xScale));
 
-              g.append("g")
-                .attr("class", "axis" + j)
-                .attr("transform", "translate(0,0)")
-                .call(d3.axisLeft(yScale));
+              if (cambio == 0){
 
+                g.append("g")
+                  .attr("class", "axis" + j)
+                  .attr("transform", "translate(0,0)")
+                  .call(d3.axisLeft(yScale));
+                
+                cambio = 1
+
+              }
+
+              else {
+
+              
+
+                g.append("g")
+                  .attr("class", "axis" + j)
+                  .attr("transform", "translate(0,0)")
+                  .call(d3.axisRight(yScale));
+
+                d3.select(".axis" + j).attr("transform", "translate(500,0)")
+                  
+                cambio = 0
+
+
+              }
+
+              
+              
+              
+              
+              console.log(".axis" + j)
               console.log(dataset)
 
               new_svg.append('g')
