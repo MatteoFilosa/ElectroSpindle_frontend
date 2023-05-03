@@ -30,8 +30,7 @@ text.shadow {
 
 .grid-container {
  display:inline-flex;
- 
- 
+
 }
 
 
@@ -311,7 +310,34 @@ input[type=checkbox] {
   #selectedValues { white-space: nowrap; }
 label { display: inline-block; }
 
+ .axis0 line{
+  stroke: black;
+}
+
+.axis0 path{
+  stroke: black;
+}
+
+.axis0 text{
+
+  fill: red;
+}
+
+.axis1 line{
+  stroke: black;
+}
+
+.axis1 path{
+  stroke: black;
+}
+
+.axis1 text{
   
+  fill: #ff7f50;
+
+  
+}
+
 
   
 
@@ -354,6 +380,15 @@ label { display: inline-block; }
 
 <script>
 
+    
+    var selectedSpindles = JSON.parse(localStorage.getItem("selectedSpindles"))
+    for (let j = 0; j < selectedSpindles.length; j++) {
+      d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + selectedSpindles[j][0] + "/raw_data?limit=100", function (data) {
+      localStorage.setItem("storageData" + j, JSON.stringify(data));
+     })
+    }
+ 
+
   var allGroup = ["Tamb", "Tba", "Time", "BUS_TERMICA_OK", "BUS_VENTOLA_ON", "Barcode_DUT", "C39_Sync", "Date_start", "Error_Code_HSD",
       "Errore_es_Bus", "Esito_prova", "Itot", "NHR", "No_tool", "NodeStateCounter", "Operatore", "Qtir", "Ripetizione", "S1",
       "S2", "S3", "S4", "S5", "SN", "Slot", "Speed_S3_BUS", "Speed_Sync", "Stazione", "Step", "TH", "TR", "Tdut1", "Tdut2",
@@ -385,9 +420,10 @@ label { display: inline-block; }
 
    function displayTooltip(d, i, selectedGroup, event) {
       document.getElementById("tooltip").style.visibility = "visible"
-      console.log(d[0], d[1], event.screenX, event.screenY)
+      
       var tooltip = document.getElementById("tooltip")
-      tooltip.innerHTML = selectedGroup + ": " + d[1]
+      if(d[2] !=null) tooltip.innerHTML = selectedGroup + ": " + d[1] + ", SN: " + d[2]
+      else tooltip.innerHTML = selectedGroup + ": " + d[1]
       tooltip.style.position = "absolute"
       tooltip.style.top = (event.screenY - 80) + "px"
       tooltip.style.left = (event.screenX - 80) + "px"
@@ -404,50 +440,140 @@ label { display: inline-block; }
 
 
     function aggregate(){
-
-    
+      var realDataset = []
+      var min = 100000
+      var max = 0
+      var selectedSpindles = JSON.parse(localStorage.getItem("selectedSpindles"))
+      console.log(id_and_sn)
       if(document.getElementById("aggregato").checked == true){
 
-        colorSelector = 0
-        svg_number = "_default"
+        colorSelector = 0, dataset = []
+      
         d3.select("#svg_default").attr("visibility", "visible");
 
         
         for(let i = 0; i < allGroup.length; i++){ //Per ogni attributo...
 
-          var min = 100000
-          var max = 0
-          var data = JSON.parse(localStorage.getItem("storageData"))
 
-          if(document.getElementById(allGroup[i]) != null){
+          if(document.getElementById(allGroup[i]) != null){ //Se quell'attributo è presente nel div delle checkbox...
 
-            for (let j = 0; j <= id_and_sn.length; j++) { //Per ogni spindle facente parte di quell'attributo...
+          for (let j = 0; j < selectedSpindles.length; j++) { //Per ogni spindle facente parte di quell'attributo...
 
-            ///Nascosti altri grafici OK
-              tmp = allGroup[j]
-              if(tmp == "Time") tmp = "time"
-              d3.select("#svg" + tmp + "_" + i).attr("visibility", "hidden");
-
+              tmp = allGroup[i]
+              console.log(j)
+              if (tmp == "Time") tmp = "time"
+              console.log("#svg" + tmp + "_" + j)
+              d3.select("#svg" + tmp + "_" + j).remove();
               
+        }
+            
+         
+            document.getElementById("svg-div").innerHTML += "<svg width='1000' height='800' id ='svg_aggregate_" + allGroup[i] + "'></svg>" // per ogni attributo ho un grafico
+            var new_svg = d3.select("#svg_aggregate_" + allGroup[i])
+            var g = new_svg.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(" + 100 + "," + 100 + ")");
+            var width = 500, height = 400
 
+            ///SETTING DEL TESTO
+
+            new_svg.selectAll('text').remove()
+
+            new_svg.append('text')
+              .attr('x', width / 2 + 100)
+              .attr('y', 80)
+              .attr('text-anchor', 'middle')
+              .style('font-family', 'Helvetica')
+              .style('font-size', 20)
+              .text("Grafico Aggregato " + allGroup[i]);
+
+            // X label
+            new_svg.append('text')
+              .attr('x', width / 2 + 100)
+              .attr('y', height - 15 + 150)
+              .attr('text-anchor', 'middle')
+              .style('font-family', 'Helvetica')
+              .style('font-size', 12)
+              .text("Time");
+
+            // Y label
+            new_svg.append('text')
+              .attr('text-anchor', 'middle')
+              .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+              .style('font-family', 'Helvetica')
+              .style('font-size', 12)
+              .text(allGroup[i]);
+
+           
+
+            for (let j = 0; j < selectedSpindles.length; j++) { //Per ogni spindle facente parte di quell'attributo...
+
+              var data = JSON.parse(localStorage.getItem("storageData"+j))
+              max = 0, min = 100000
 
               for (let z = 0; z < 99; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
-
-
-
+                console.log(tmp)
                 if (eval('data.data.' + tmp + "[" + z + "]") < min) {
                   min = eval('data.data.' + tmp + "[" + z + "]")
-                  
+
                 }
                 if (eval('data.data.' + tmp + "[" + z + "]") > max) {
                   max = eval('data.data.' + tmp + "[" + z + "]")
                 }
-                dataset.push([z + 1, eval('data.data.' + tmp + "[" + z + "]")]);
+                dataset.push([z + 1, eval('data.data.' + tmp + "[" + z + "]"), selectedSpindles[j][1]]);
 
               }
 
+
               xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
               yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+              
+              g.append("g")
+                .attr("class", "axis" )
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScale));
+
+              g.append("g")
+                .attr("class", "axis" + j)
+                .attr("transform", "translate(0,0)")
+                .call(d3.axisLeft(yScale));
+
+              console.log(dataset)
+
+              new_svg.append('g')
+                .selectAll("dot")
+                .data(dataset)
+                .enter()
+                .append("circle")
+                .attr("cx", function (d) { return xScale(d[0]); })
+                .attr("cy", function (d) { return yScale(d[1]); })
+                .attr("r", 3)
+                .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                .style("fill", colors[colorSelector])
+                .attr("id", function (d, i) { return "dot" + tmp })
+                .on("mouseover", function (d, i) { return displayTooltip(d, i, tmp, event) })
+                .on("mouseout", function (d, i) { return hideTooltip() })
+
+              var line = d3.line()
+                .x(function (d) { return xScale(d[0]); })
+                .y(function (d) { return yScale(d[1]); })
+                .curve(d3.curveMonotoneX)
+
+              new_svg.append("path")
+                .datum(dataset)
+                .attr("class", "line")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                .attr("d", line)
+                .style("fill", "none")
+                .style("stroke", colors[colorSelector])
+                .style("stroke-width", "2")
+                .attr("id", function (d, i) { return "path" + tmp });
+
+              if (colorSelector < colors.length) colorSelector += 1
+              else colorSelector = 0
+              dataset.length = 0
+
+
             }
 
 
@@ -456,102 +582,7 @@ label { display: inline-block; }
         }
         
 
-        document.getElementById("svg-div").innerHTML += "<svg width='1000' height='800' id ='svg_default'></svg>"
-        var new_svg = d3.select("#svg_default")
-        var g = new_svg.append("g")
-          .attr("transform", "translate(" + 100 + "," + 100 + ")");
-        var width = 500, height = 400
-
-        ///SETTING DEL TESTO
-
-        new_svg.selectAll('text').remove()
-
-        new_svg.append('text')
-          .attr('x', width / 2 + 100)
-          .attr('y', 80)
-          .attr('text-anchor', 'middle')
-          .style('font-family', 'Helvetica')
-          .style('font-size', 20)
-          .text("Grafico Misto");
-
-        // X label
-        new_svg.append('text')
-          .attr('x', width / 2 + 100)
-          .attr('y', height - 15 + 150)
-          .attr('text-anchor', 'middle')
-          .style('font-family', 'Helvetica')
-          .style('font-size', 12)
-          .text("Time");
-
-        // Y label
-        new_svg.append('text')
-          .attr('text-anchor', 'middle')
-          .attr('transform', 'translate(60,' + height + ')rotate(-90)')
-          .style('font-family', 'Helvetica')
-          .style('font-size', 12)
-          .text("Valori misti");
-
-        var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-          yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-
-
-        g.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(xScale));
-
-        g.append("g")
-          .call(d3.axisLeft(yScale));
-
-        //IMPORTANTE CREAZIONE DOT E PATH
-        for (let j = 0; j < valori.length; j++) {
-          var dataset = []
-          for (let i = 0; i < 99; i++) {
-
-
-            console.log(valori.length)
-
-
-            var selectedGroup = valori[j]
-
-            dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
-
-
-          }
-          console.log(dataset)
-          new_svg.append('g')
-            .selectAll("dot")
-            .data(dataset)
-            .enter()
-            .append("circle")
-            .attr("cx", function (d) { return xScale(d[0]); })
-            .attr("cy", function (d) { return yScale(d[1]); })
-            .attr("r", 3)
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .style("fill", colors[colorSelector])
-            .attr("id", function (d, i) { return "dot" + valori[j] })
-            .on("mouseover", function (d, i) { return displayTooltip(d, i, valori[j], event) })
-            .on("mouseout", function (d, i) { return hideTooltip() })
-
-          var line = d3.line()
-            .x(function (d) { return xScale(d[0]); })
-            .y(function (d) { return yScale(d[1]); })
-            .curve(d3.curveMonotoneX)
-
-          new_svg.append("path")
-            .datum(dataset)
-            .attr("class", "line")
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .attr("d", line)
-            .style("fill", "none")
-            .style("stroke", colors[colorSelector])
-            .style("stroke-width", "2")
-            .attr("id", function (d, i) { return "path" + valori[j] });
-
-          if (colorSelector < colors.length) colorSelector += 1
-          else colorSelector = 0
-
-
-        }
+        
 
       }
       

@@ -691,6 +691,14 @@ display: inline-block;
   top: 428px;
 }
 
+#submit{
+
+  position: absolute;
+  left: 285px;
+  top: 288px;
+
+}
+
 </style>
 
 <body>
@@ -702,7 +710,7 @@ display: inline-block;
 <Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>  
   Modello <select id="modello"></select>
  
-Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> <button class = "button-green" id = "submit" onclick = "resetFilters()">Reset filtri</button>
+Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> 
 
 
 
@@ -765,7 +773,7 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
   </div>
   <div class="month-list" id = "month-list"></div>
 </div>
-
+<button class="button-green" id="submit" onclick="resetFilters()">Reset filtri</button>
 
 <div id="dstCalendar">
  
