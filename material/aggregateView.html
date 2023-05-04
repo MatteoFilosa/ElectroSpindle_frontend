@@ -592,14 +592,14 @@ label { display: inline-block; }
 
               else {
 
-              
-
+    
                 g.append("g")
                   .attr("class", "axis" + j)
                   .attr("transform", "translate(0,0)")
                   .call(d3.axisRight(yScale));
 
                 d3.select(".axis" + j).attr("transform", "translate(500,0)")
+                d3.select(".axis" + j).selectAll("text").style('fill', 'white')
                   
                 cambio = 0
 
