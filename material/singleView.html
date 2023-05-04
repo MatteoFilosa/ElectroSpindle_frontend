@@ -889,6 +889,7 @@ input[type=checkbox] {
                 var dataset = [];
                 var min = 100000
                 var max = 0
+                var control = 0
 
           if(aggregato == 1){ // Caso AGGREGATO
 
@@ -1019,118 +1020,214 @@ input[type=checkbox] {
               for (let j = 0; j < valori.length; j++) { //Serve per scalare gli assi correttamente
 
                 var selectedGroup = valori[j]
-                if(valori.includes("Tba")) console.log("pernacchia")
-                if((selectedGroup != "Tamb") && (selectedGroup != "Tba") && (selectedGroup != "Tdut2") && (selectedGroup != "Tdut3")){
-                  max = 0, min = 100000, scalaAggiuntiva += 1
-                }
 
+                if(valori.includes("Tba") || valori.includes("Tamb") || valori.includes("Tdut2") || valori.includes("Tdut3") ){
+                  if (valori.includes("Itot") || valori.includes("Qtir") || valori.includes("Speed_S3_BUS") || valori.includes("Speed_Sync") || valori.includes("VibANT_Sync")){ //scale non omogenee
+
+                    max = 0, min = 100000, scalaAggiuntiva += 1, control = 1
+
+
+
+                    for (let i = 0; i < 99; i++) {
+
+
+
+                      if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
+                        min = eval('data.data.' + selectedGroup + "[" + i + "]")
+                        console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+                      }
+                      if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
+                        max = eval('data.data.' + selectedGroup + "[" + i + "]")
+                      }
+                      dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+
+                    }
+
+                    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                      yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+                    localStorage.setItem("maxDefault", JSON.stringify(max))
+                    localStorage.setItem("minDefault", JSON.stringify(min))
+
+                    g.append("g")
+                      .attr("transform", "translate(0," + height + ")")
+                      .call(d3.axisBottom(xScale));
+
+                    if (scalaAggiuntiva >= 1) {
+
+                      g.append("g")
+                        .call(d3.axisLeft(yScale))
+                        .attr("class", "asseDestro");
+
+                      d3.select(".asseDestro").attr("transform", "translate(500,0)")
+
+
+
+                    }
+
+                    else {
+
+                      g.append("g")
+                        .call(d3.axisLeft(yScale));
+
+                    }
+
+
+
+
+                    var dataset = []
+                    for (let i = 0; i < 99; i++) {
+
+
+
+                      if (selectedGroup == "Time") selectedGroup = "time"
+
+                      dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+
+                    }
+
+
+                    new_svg.append('g')
+                      .selectAll("dot")
+                      .data(dataset)
+                      .enter()
+                      .append("circle")
+                      .attr("cx", function (d) { return xScale(d[0]); })
+                      .attr("cy", function (d) { return yScale(d[1]); })
+                      .attr("r", 3)
+                      .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                      .style("fill", colors[colorSelector])
+                      .attr("id", function (d, i) { return "dot" + valori[j] })
+                      .on("mouseover", function (d, i) {
+                        console.log("ok")
+                        displayTooltip(d, i, valori[j], event)
+                      })
+                      .on("mouseout", function (d, i) { hideTooltip() })
+
+                    var line = d3.line()
+                      .x(function (d) { return xScale(d[0]); })
+                      .y(function (d) { return yScale(d[1]); })
+                      .curve(d3.curveMonotoneX)
+
+                    new_svg.append("path")
+                      .datum(dataset)
+                      .attr("class", "line")
+                      .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                      .attr("d", line)
+                      .style("fill", "none")
+                      .style("stroke", colors[colorSelector])
+                      .style("stroke-width", "2")
+                      .attr("id", function (d, i) { return "path" + valori[j] });
+
+                    if (colorSelector < colors.length) colorSelector += 1
+                    else colorSelector = 0
+                   
+                  }
                 
-                for (let i = 0; i < 99; i++) {
-
-
                   
-                  if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
-                    min = eval('data.data.' + selectedGroup + "[" + i + "]")
-                    console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+
+                } 
+
+              }
+              if(control != 1){
+
+                for (let j = 0; j < valori.length; j++) { //QUI
+
+                  var selectedGroup = valori[j]
+                  
+                  for (let i = 0; i < 99; i++) { //riscalo y per ogni valore
+
+
+                    if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
+                      min = eval('data.data.' + selectedGroup + "[" + i + "]")
+                      console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+                    }
+                    if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
+                      max = eval('data.data.' + selectedGroup + "[" + i + "]")
+                    }
+
                   }
-                  if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
-                    max = eval('data.data.' + selectedGroup + "[" + i + "]")
+
+
+                  xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
                   }
-                  dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
 
-                }
+                  for (let j = 0; j < valori.length; j++) {
 
-                xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-              
-                localStorage.setItem("maxDefault", JSON.stringify(max))
-                localStorage.setItem("minDefault", JSON.stringify(min))
+                     var dataset = []
+                    for (let i = 0; i < 99; i++) {
 
-                g.append("g")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(xScale));
 
-                if(scalaAggiuntiva >= 1){
+                      console.log(valori.length)
 
+
+                      var selectedGroup = valori[j]
+
+                      if (selectedGroup == "Time") selectedGroup = "time"
+
+                      dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+
+
+                    }
+ 
                   g.append("g")
-                    .call(d3.axisLeft(yScale))
-                    .attr("class", "asseDestro");
-
-                  d3.select(".asseDestro").attr("transform", "translate(500,0)")
-
-                 
-
-                }
-
-                else{
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(xScale));
 
                   g.append("g")
                     .call(d3.axisLeft(yScale));
 
-                }
+
+                  console.log(dataset)
+                  new_svg.append('g')
+                    .selectAll("dot")
+                    .data(dataset)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) { return xScale(d[0]); })
+                    .attr("cy", function (d) { return yScale(d[1]); })
+                    .attr("r", 3)
+                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                    .style("fill", colors[colorSelector])
+                    .attr("id", function (d, i) { return "dot" + valori[j] })
+                    .on("mouseover", function (d, i) {
+                      console.log("ok")
+                      displayTooltip(d, i, valori[j], event)
+                    })
+                    .on("mouseout", function (d, i) { hideTooltip() })
+
+                  var line = d3.line()
+                    .x(function (d) { return xScale(d[0]); })
+                    .y(function (d) { return yScale(d[1]); })
+                    .curve(d3.curveMonotoneX)
+
+                  new_svg.append("path")
+                    .datum(dataset)
+                    .attr("class", "line")
+                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                    .attr("d", line)
+                    .style("fill", "none")
+                    .style("stroke", colors[colorSelector])
+                    .style("stroke-width", "2")
+                    .attr("id", function (d, i) { return "path" + valori[j] });
+
+                  if (colorSelector < colors.length) colorSelector += 1
+                  else colorSelector = 0
+
                 
-
-
-
-                var dataset = []
-                for (let i = 0; i < 99; i++) {
-
-                  
-
-                  if (selectedGroup == "Time") selectedGroup = "time"
-
-                  dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
-
-                }
-
-
-                new_svg.append('g')
-                  .selectAll("dot")
-                  .data(dataset)
-                  .enter()
-                  .append("circle")
-                  .attr("cx", function (d) { return xScale(d[0]); })
-                  .attr("cy", function (d) { return yScale(d[1]); })
-                  .attr("r", 3)
-                  .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                  .style("fill", colors[colorSelector])
-                  .attr("id", function (d, i) { return "dot" + valori[j] })
-                  .on("mouseover", function (d, i) {
-                    console.log("ok")
-                    displayTooltip(d, i, valori[j], event)
-                  })
-                  .on("mouseout", function (d, i) { hideTooltip() })
-
-                var line = d3.line()
-                  .x(function (d) { return xScale(d[0]); })
-                  .y(function (d) { return yScale(d[1]); })
-                  .curve(d3.curveMonotoneX)
-
-                new_svg.append("path")
-                  .datum(dataset)
-                  .attr("class", "line")
-                  .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                  .attr("d", line)
-                  .style("fill", "none")
-                  .style("stroke", colors[colorSelector])
-                  .style("stroke-width", "2")
-                  .attr("id", function (d, i) { return "path" + valori[j] });
-
-                if (colorSelector < colors.length) colorSelector += 1
-                else colorSelector = 0
+                
+                  }
 
               }
+              
 
             }
 
             
 
 
-            ///Creazione grafici FOR (NON OK). 
-            ///Per ogni attributo che mi serve, pusho la roba che mi serve nel dataset, aggiorno colore e il div con + selectedgroup
-
-          ///VARIABILI
-        
+    
 
             
 
