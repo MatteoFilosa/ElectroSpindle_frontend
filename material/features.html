@@ -565,7 +565,7 @@ input[type=checkbox] {
         <option value="" disabled selected>Selezione feature</option>
     </select>
     <br>
-    <div id = "selectedFeature"></div>
+    <div id = "selectedFeatures"></div>
     <br>
     <select id="selectMenu">
         <option value="" disabled selected>Selezione attributo</option>
@@ -581,6 +581,25 @@ input[type=checkbox] {
     <div id="tooltip"></div>
     </div>
 	<script>
+    function modifyElement(selectedOption) {
+
+
+
+            d3.select("#svg_last_tba").remove()
+            document.getElementById(selectedOption).remove()
+            document.getElementById("label" + selectedOption).remove()
+            
+
+          }
+
+
+
+
+         
+
+        
+
+      
 
         function sleep(time) {
             return new Promise((resolve) => setTimeout(resolve, time));
@@ -618,6 +637,14 @@ input[type=checkbox] {
             document.getElementById("featuresH3").innerHTML += tmp[1] + virgola
         }
         
+        var valori = JSON.parse(localStorage.getItem("selectedValuesFeatures"))
+        
+        for (i = 0; i < valori.length; i++){
+
+          document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + valori[i] + '" onchange = "modifyElement(' + valori[i] + ')" checked>' + "<label for='" + valori[i] + "' id = 'label" + valori[i] + "'>" + valori[i] + "</label>" 
+          
+
+        }
 
         
 
@@ -718,7 +745,9 @@ input[type=checkbox] {
 
             d3.select("#selectMenuFeatures").on("change", function(d) {
 
-           
+              var selectedFeature = d3.select(this).property("value")
+              document.getElementById("selectedFeatures").innerHTML += '<input type = "checkbox" id = "' + selectedFeature + '" onchange = "modifyElement(' + selectedFeature + ')" checked>' + "<label for='" + selectedFeature + "' id = 'label" + selectedFeature + "'>" + selectedFeature + "</label>" 
+              
               
              
               console.log(datasetLastTba)

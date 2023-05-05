@@ -734,6 +734,8 @@ input[type=checkbox] {
 
         if (colorSelector < colors.length) colorSelector += 1
         else colorSelector = 0
+                            console.log("d")
+
 
 
           
@@ -747,7 +749,7 @@ input[type=checkbox] {
         .text(function (d) { return d; }) // text showed in the menu
         .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
-        var coordinates = - 400, graph_number = 1, colorSelector = 0, selectedValues = []
+        var coordinates = - 400,  colorSelector = 0, selectedValues = []
 
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
         d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?limit=100", function(data) {
@@ -761,13 +763,13 @@ input[type=checkbox] {
           
           var data = JSON.parse(localStorage.getItem("storageData"));
 
-          if(document.getElementById("aggregato").checked == true) newGraph("", data, "#CC0000", graph_number, coordinates, 1, 0)
+          if(document.getElementById("aggregato").checked == true) newGraph("", data,   coordinates, 1, 0)
 
           else { //vuol dire che devo rendere visibili gli attributi di prima
 
             var to_add = document.getElementById("selectedValues").childNodes
             var count = -1
-
+            colorSelector -= 1
             for (let i = 0; i <= to_add.length; i++) {
               
               if(to_add[i] != undefined){
@@ -777,13 +779,13 @@ input[type=checkbox] {
                   count ++;
                   var tmp = to_add[i].id
                   console.log(tmp)
-                  if (tmp == "Time") tmp = "time"
+                  
                   console.log("#svg" + tmp)
                   d3.select("#svg" + tmp).attr("visibility", "visible")
                   console.log(count)
 
                   if(d3.select("#svg" + tmp).size() == 0){
-                    newGraph(tmp, data, "#CC0000", graph_number, (400*count), 0, 3)
+                    newGraph(tmp, data,   (400*count), 0, 3)
                   }
                 }
 
@@ -806,7 +808,7 @@ input[type=checkbox] {
             //var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
             
             console.log(selectedOption)
-            //if(selectedOption == "Time") selectedOption = "time"
+         
 
    
             if (document.getElementById(selectedOption).checked == true){
@@ -841,7 +843,21 @@ input[type=checkbox] {
                 }
 
                 else {
-                  d3.selectAll("#svg" + selectedOption).attr("visibility", "hidden");
+                  d3.selectAll("#svg" + selectedOption).remove()
+                  document.getElementById(selectedOption).remove()
+                  document.getElementById("label" + selectedOption).remove()
+                  var values = JSON.parse(localStorage.getItem("selectedValues"))
+                  if (values.includes(selectedOption)) {
+
+                    const index = values.indexOf(selectedOption);
+                    if (index > -1) { // only splice array when item is found
+                      values.splice(index, 1); // 2nd parameter means remove one item only
+                    }
+
+                  }
+                  localStorage.removeItem("selectedValues")
+                  localStorage.setItem("selectedValues", JSON.stringify(values))
+
                 }
                 
                 
@@ -862,12 +878,12 @@ input[type=checkbox] {
                 document.getElementById("aggregato").checked = false
                 document.getElementById("selectMenu").selectedIndex = 0; 
 
-                d3.select("#svg_default").attr("visibility", "hidden");
+                d3.select("#svg_default").remove()    //attr("visibility", "hidden");
 
                 for (let i = 0; i <= allGroup.length; i ++){
 
                     var tmp = allGroup[i]
-                    if(allGroup[i] == "Time") tmp = "time"
+                   
                     d3.select("#svg" + tmp).selectAll("circle").remove();
                     d3.select("#svg" + tmp).selectAll("path").remove();
                     d3.select("#svg" + tmp).selectAll("text").remove();
@@ -883,7 +899,7 @@ input[type=checkbox] {
                 }
 
 
-    function newGraph(selectedGroup, data, colour, svg_number, coordinates, aggregato, toAddDefault){
+    function newGraph(selectedGroup, data,  coordinates, aggregato, toAddDefault){
 
 
                 var dataset = [];
@@ -896,15 +912,14 @@ input[type=checkbox] {
             ///Variabili 
 
             coordinates = 0, colorSelector = 0
-            //document.getElementById("selectedValues").style.visibility = "visible"
-            svg_number = "_default"
+            
             d3.select("#svg_default").attr("visibility", "visible");
 
             ///Nascosti altri grafici OK
             for (let i = 0; i <= allGroup.length; i ++){
 
                     var tmp = allGroup[i]
-                    if(allGroup[i] == "Time") tmp = "time"
+                  
                     d3.select("#svg" + tmp).attr("visibility", "hidden")
                     
                     
@@ -917,8 +932,23 @@ input[type=checkbox] {
             var toAddDefaultArray = []
             var data = JSON.parse(localStorage.getItem("storageData"))
             console.log(data)
-            var valori = JSON.parse(localStorage.getItem("selectedValues")) //data.data
+
+            
+            var valori = []
             var to_add = document.getElementById("selectedValues").childNodes
+
+            for(let i = 0; i < to_add.length; i++){
+
+              if (to_add[i] != undefined) {
+
+                if ((to_add[i].id != null) && (to_add[i].checked == true)) {
+
+                  valori.push(to_add[i])
+
+                }
+              }
+
+            }
 
             //Eliminare dall'array dei valori i valori corrispondenti alle checkbox NON checkate
               
@@ -931,7 +961,6 @@ input[type=checkbox] {
                     var tmp = to_add[u].id
                     
 
-                    if (tmp == "Time") tmp = "time"
 
                     if (valori.includes(tmp)){
 
@@ -1020,6 +1049,7 @@ input[type=checkbox] {
               for (let j = 0; j < valori.length; j++) { //Serve per scalare gli assi correttamente
 
                 var selectedGroup = valori[j]
+                console.log(selectedGroup)
 
                 if(valori.includes("Tba") || valori.includes("Tamb") || valori.includes("Tdut2") || valori.includes("Tdut3") ){
                   if (valori.includes("Itot") || valori.includes("Qtir") || valori.includes("Speed_S3_BUS") || valori.includes("Speed_Sync") || valori.includes("VibANT_Sync")){ //scale non omogenee
@@ -1053,10 +1083,22 @@ input[type=checkbox] {
                       .attr("transform", "translate(0," + height + ")")
                       .call(d3.axisBottom(xScale));
 
-                    if (scalaAggiuntiva >= 1) {
+                    if (scalaAggiuntiva == 1) {
 
                       g.append("g")
                         .call(d3.axisLeft(yScale))
+                        .attr("class", "asseDestro");
+
+                      d3.select(".asseDestro").attr("transform", "translate(500,0)")
+
+
+
+                    }
+
+                    else if (scalaAggiuntiva == 2) {
+
+                      g.append("g")
+                        .call(d3.axisRight(yScale))
                         .attr("class", "asseDestro");
 
                       d3.select(".asseDestro").attr("transform", "translate(500,0)")
@@ -1069,6 +1111,7 @@ input[type=checkbox] {
 
                       g.append("g")
                         .call(d3.axisLeft(yScale));
+                        console.log("au")
 
                     }
 
@@ -1080,7 +1123,7 @@ input[type=checkbox] {
 
 
 
-                      if (selectedGroup == "Time") selectedGroup = "time"
+                    
 
                       dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
 
@@ -1121,6 +1164,8 @@ input[type=checkbox] {
 
                     if (colorSelector < colors.length) colorSelector += 1
                     else colorSelector = 0
+                                        console.log("d")
+
                    
                   }
                 
@@ -1164,7 +1209,7 @@ input[type=checkbox] {
 
                       var selectedGroup = valori[j]
 
-                      if (selectedGroup == "Time") selectedGroup = "time"
+                     
 
                       dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
 
@@ -1214,6 +1259,7 @@ input[type=checkbox] {
 
                   if (colorSelector < colors.length) colorSelector += 1
                   else colorSelector = 0
+                    console.log("d")
 
                 
                 
@@ -1361,7 +1407,7 @@ input[type=checkbox] {
             // codice finale
             //if (aggregato == 0) document.getElementById("selectedValues").style.visibility = "hidden"
             console.log(selectedGroup)
-            if (aggregato != 1) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedGroup +'" onchange = "modifyElement('+ selectedGroup +')" checked>' + selectedGroup + "</checkbox>"
+            if (aggregato != 1) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedGroup +'" onchange = "modifyElement('+ selectedGroup +')" checked>' + "<label for='" + selectedGroup + "' id = 'label" + selectedGroup + "'>" + selectedGroup + "</label>" 
             selectedValues.push(selectedGroup)
             localStorage.setItem("selectedValues", JSON.stringify(selectedValues))
 
@@ -1383,21 +1429,19 @@ input[type=checkbox] {
 
     if (checkBoxAggregato.checked == false){ //se Aggregato non è checkato, cancella tutto per fare spazio al nuovo grafico sullo stesso svg
 
-        colour = "#CC0000"
-        graph_number += 1
-        console.log(graph_number)
+        
         coordinates += 400
-        newGraph(selectedOption, data, colour, graph_number, coordinates, 0, 0)
+        newGraph(selectedOption, data, coordinates, 0, 0)
     
 
     }
 
     else if (checkBoxAggregato.checked == true){ 
 
-      document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
+      document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + "<label for='" + selectedOption + "' id = 'label" + selectedOption + "'>" + selectedOption + "</label>" 
       localStorage.setItem("selectedOption", JSON.stringify(selectedOption))
       //modifyElement(selectedOption, 1)
-      newGraph(selectedOption, data, colour, graph_number, coordinates, 1, 1)
+      newGraph(selectedOption, data,   coordinates, 1, 1)
  
     }
 

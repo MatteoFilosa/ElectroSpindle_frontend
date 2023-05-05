@@ -821,6 +821,25 @@ label { display: inline-block; }
 
           window.open('features.html', '_blank');
 
+          var valori = []
+          var to_add = document.getElementById("selectedValues").childNodes
+
+          for (let i = 0; i < to_add.length; i++) {
+
+            if (to_add[i] != undefined) {
+
+              if ((to_add[i].id != null) && (to_add[i].checked == true)) {
+
+                valori.push(to_add[i].id)
+
+              }
+            }
+
+          }
+          console.log(valori)
+
+          localStorage.setItem("selectedValuesFeatures", JSON.stringify(valori))
+
 
         }
 
