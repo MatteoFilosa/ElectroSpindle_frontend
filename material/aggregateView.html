@@ -61,7 +61,7 @@
     
     var selectedSpindles = JSON.parse(localStorage.getItem("selectedSpindles"))
 
-    var globalData = []
+
 
     /*
     for (let j = 0; j < selectedSpindles.length; j++) {
@@ -69,17 +69,25 @@
       globalData.push[j]
     }
     */
-   
+
+    
+   var globalData = []
+
     for (let j = 0; j < selectedSpindles.length; j++) {
       d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + selectedSpindles[j][0] + "/raw_data?downsample=100", function (data) {
 
+      
       for (var key in data) {
           var value = data[key];
-          globalData[j].push(value)
+          var nuovoArray = [value];
+          globalData.push(nuovoArray);
+          
 
         }
      })
     }
+
+    console.log(globalData);
  
 
   var allGroup = ["Tamb", "Tba", "Itot", "Qtir", "Speed_S3_BUS", "Speed_Sync", "Tdut2", "Tdut3", "VibANT_Sync", "Step"]
@@ -203,13 +211,13 @@
             var data = JSON.parse(localStorage.getItem("storageData" + j))
 
             for (let z = 0; z < 43100; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
-          if (eval('globalData[0].' + tmp + "[" + i + "]") != undefined) {
-              if (eval('data.data.' + tmp + "[" + z + "]") < min) {
-                min = eval('data.data.' + tmp + "[" + z + "]")
+          if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") != undefined) {
+              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") < min) {
+                min = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]")
 
               }
-              if (eval('data.data.' + tmp + "[" + z + "]") > max) {
-                max = eval('data.data.' + tmp + "[" + z + "]")
+              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") > max) {
+                max = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]")
               }
               
 
@@ -234,17 +242,17 @@
               dataset.length = 0 //annulliamo il dataset ogni volta sennò diventa un misto 
               for (let z = 0; z < 43100; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
 
-              if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined){
-                if (eval('data.data.' + tmp + "[" + z + "]") < min) {
-                  min = eval('data.data.' + tmp + "[" + z + "]")
+              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") != undefined){
+                if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") < min) {
+                  min = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]")
 
                 }
-                if (eval('data.data.' + tmp + "[" + z + "]") > max) {
-                  max = eval('data.data.' + tmp + "[" + z + "]")
+                if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") > max) {
+                  max = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]")
                 }
 
-                dataset.push([z + 1, eval('data.data.' + tmp + "[" + z + "]"), selectedSpindles[j][1]]);
-                console.log(z + 1, eval('data.data.' + tmp + "[" + z + "]"), selectedSpindles[j][1])
+                dataset.push([z + 1, eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]"), selectedSpindles[j][1]]);
+                console.log(z + 1, eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]"), selectedSpindles[j][1])
               }
             }
 
@@ -357,14 +365,14 @@
             for (let i = 0; i < 43100; i++) {
 
             
-            if (eval('globalData[0].' + selectedOption + "[" + i + "]") != undefined) {
-              if (eval('data.data.' + selectedOption + "[" + i + "]") < min) {
-                min = eval('data.data.' + selectedOption + "[" + i + "]")
+            if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]") != undefined) {
+              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]") < min) {
+                min = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]")
               }
-              if (eval('data.data.' + selectedOption + "[" + i + "]") > max) {
-                max = eval('data.data.' + selectedOption + "[" + i + "]")
+              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]") > max) {
+                max = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]")
               }
-              dataset.push([i + 1, eval('data.data.' + selectedOption + "[" + i + "]")]);
+              dataset.push([i + 1, eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]")]);
               
             }
           }
@@ -543,17 +551,17 @@
             var min = 100000
             var max = 0
 
-            for(let i = 0; i < 43100; i++){
+            for(let j = 0; j < 43100; j++){
 
       
-          if (eval('globalData[0].' + selectedOption + "[" + i + "]") != undefined) {
-            if(eval('globalData[0].' + selectedOption + "[" + i + "]") < min){
-                min = eval('globalData[0].' + selectedOption + "[" + i + "]")
+          if (eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]") != undefined) {
+            if(eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]") < min){
+                min = eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]")
             }
-            if(eval('globalData[0].' + selectedOption + "[" + i + "]") > max){
-              max = eval('globalData[0].' + selectedOption + "[" + i + "]")
+            if(eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]") > max){
+              max = eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]")
             }    
-          dataset.push([i+1, eval('globalData[0].' + selectedOption + "[" + i + "]")]);
+          dataset.push([j+1, eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]")]);
 
           }
         }
