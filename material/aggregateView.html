@@ -5,393 +5,26 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <title>Spindle multipli</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
-    <link rel="stylesheet" href="./style.css"></link>
+    <link rel="stylesheet" href="./style_aggregate.css"></link>
     <script>
     //inizializzazione array di colori per i grafici
         var colors = [ "#CC0000",
   '#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed',
   '#ff69b4','#ba55d3','#cd5c5c','#cc5500','#40e0d0'
     ];
-
+//
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </head>
-<style>
 
-  
-    /* CSS */
-text.shadow {
-  stroke: black;
-  stroke-width: 0.6px;
-  opacity: 0.8s;
-}
-
-.grid-container {
- display:inline-flex;
-
-}
-
-
-
-
-#coordinates{
-
-  position: absolute;
-  left: 8px;
-  top: 140px;
-}
-
-#legenda {
-  clear:both
-}
-
-.input-color {
-  position: relative;
-}
-.input-color input {
-  padding-left: 20px;
-}
-.input-color .color-box {
-  width: 10px;
-  height: 10px;
-  display: inline-block;
-  background-color: #ccc;
-  position: absolute;
-  left: 5px;
-  top: 5px;
-}
-
-input[type=number] {
-
-  margin-left: 8px;
-  box-sizing: border-box;
-  border: 2px solid lightseagreen;
-  border-radius: 4px;
-  background-color: rgb(205, 236, 246);
- 
-}
-
-input[type=checkbox] {
-  background-color: lightblue;
-}
-
-
-#problems-found{
-
-  position: absolute;
-  left: 500px;
-  top: 0px; 
-  height: 200px;
-  width: 500px;
-
-}
-
-#availableSpindles{
-
-  position: absolute;
-  left: 800px;
-  top: 0px; 
-  height: 500px;
-  width: 500px;
-
-}
-
-#histogram {
-  position: absolute;
-  left: 600px;
-  top: 0px;
-}
-
-#svg3 {
-  position: absolute;
-  left: 800px;
-  top: 200px;
-}
-
-  .button-blue {
-    background-color: #0095ff;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-  
-  .button-blue:hover,
-  .button-blue:focus {
-    background-color: #07c;
-  }
-  
-  .button-blue:focus {
-    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-  }
-  
-  .button-blue:active {
-    background-color: #0064bd;
-    box-shadow: none;
-  }
-
-  .button-green {
-    background-color: #32CD32;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-
-  .button-blue-spindle {
-    background-color: #0095ff;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-    height: fit-content;
-    width: fit-content;
-  }
-  
-  .button-blue:hover,
-  .button-blue:focus {
-    background-color: #07c;
-  }
-  
-  .button-blue:focus {
-    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-  }
-  
-  .button-blue:active {
-    background-color: #0064bd;
-    box-shadow: none;
-  }
-
-  .button-green {
-    background-color: #32CD32;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-  
-  .button-green:hover,
-  .button-green:focus {
-    background-color: #9ACD32;
-  }
-  
-  .button-green:focus {
-    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-  }
-  
-  .button-green:active {
-    background-color: #228B22;
-    box-shadow: none;
-  }
-
-
-
-  .button-red {
-    background-color: #ff0000;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-  
-  .button-red:hover,
-  .button-red:focus {
-    background-color: #b30000;
-  }
-  
-  .button-red:focus {
-    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-  }
-  
-  .button-red:active {
-    background-color: #ffbfbf;
-    box-shadow: none;
-  }
-   #tooltip {
-    background-color: lightyellow;
-    position:absolute;
-    left: 200px;
-    top: 200px;
-    visibility: visible;
-  }
-
-  #selectedValues { white-space: nowrap; }
-label { display: inline-block; }
-
- .axis0 line{
-  stroke: black;
-}
-
-.axis0 path{
-  stroke: black;
-}
-
-.axis0 text{
-
-  fill: red;
-}
-
-.axis1 line{
-  stroke: black;
-}
-
-.axis1 path{
-  stroke: black;
-}
-
-.axis1 text{
-  
-  fill: #ff7f50;
-
-  
-}
-
-.axis2 line{
-  stroke: black;
-}
-
-.axis2 path{
-  stroke: black;
-}
-
-.axis2 text{
-  
-  fill: #bf0000;
-
-  
-}
-
-.axis3 line{
-  stroke: black;
-}
-
-.axis3 path{
-  stroke: black;
-}
-
-.axis3 text{
-  
-  fill: #800000;
-
-  
-}
-
-.axis4 line{
-  stroke: black;
-}
-
-.axis4 path{
-  stroke: black;
-}
-
-.axis4 text{
-  
-  fill: #ff7f50;
-
-  
-}
-
-
-  
-
-</style>
 
 <body>
 <h1>Visualizzazione spindle multipli</h1>
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
-<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>
+<!--<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”></Body>-->
 
 <input type = "checkbox" id ="aggregato" class = "checkbox" onchange ="aggregate()"> Aggregato per attributo
 <!--<input type = "checkbox" id ="tamb" class = "checkbox" onchange ="modifyElement('tamb')" checked> Tamb
@@ -427,14 +60,29 @@ label { display: inline-block; }
 
     
     var selectedSpindles = JSON.parse(localStorage.getItem("selectedSpindles"))
+
+    var globalData = []
+
+    /*
     for (let j = 0; j < selectedSpindles.length; j++) {
-      d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + selectedSpindles[j][0] + "/raw_data?limit=100", function (data) {
-      localStorage.setItem("storageData" + j, JSON.stringify(data));
+
+      globalData.push[j]
+    }
+    */
+   
+    for (let j = 0; j < selectedSpindles.length; j++) {
+      d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + selectedSpindles[j][0] + "/raw_data?downsample=100", function (data) {
+
+      for (var key in data) {
+          var value = data[key];
+          globalData[j].push(value)
+
+        }
      })
     }
  
 
-  var allGroup = ["Tamb", "Tba", "Itot", "Qtir", "Speed_S3_BUS", "Speed_Sync", "Tdut2", "Tdut3", "VibANT_Sync"]
+  var allGroup = ["Tamb", "Tba", "Itot", "Qtir", "Speed_S3_BUS", "Speed_Sync", "Tdut2", "Tdut3", "VibANT_Sync", "Step"]
     d3.select("#selectMenu")
       .selectAll('myOptions')
       .data(allGroup)
@@ -538,7 +186,7 @@ label { display: inline-block; }
             // Y label
             new_svg.append('text')
               .attr('text-anchor', 'middle')
-              .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+              .attr('transform', 'translate(40,' + height + ')rotate(-90)')
               .style('font-family', 'Helvetica')
               .style('font-size', 12)
               .text(allGroup[i]);
@@ -554,8 +202,8 @@ label { display: inline-block; }
 
             var data = JSON.parse(localStorage.getItem("storageData" + j))
 
-            for (let z = 0; z < 99; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
-
+            for (let z = 0; z < 43100; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
+          if (eval('globalData[0].' + tmp + "[" + i + "]") != undefined) {
               if (eval('data.data.' + tmp + "[" + z + "]") < min) {
                 min = eval('data.data.' + tmp + "[" + z + "]")
 
@@ -566,12 +214,13 @@ label { display: inline-block; }
               
 
             }
+          }
               
         }
 
         console.log(min, max)
         //e ora ho la mia scala definitiva...
-        xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+        xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
         yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);    
          
             
@@ -583,8 +232,9 @@ label { display: inline-block; }
               
               data = JSON.parse(localStorage.getItem("storageData" + j))
               dataset.length = 0 //annulliamo il dataset ogni volta sennò diventa un misto 
-              for (let z = 0; z < 99; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
+              for (let z = 0; z < 43100; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
 
+              if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined){
                 if (eval('data.data.' + tmp + "[" + z + "]") < min) {
                   min = eval('data.data.' + tmp + "[" + z + "]")
 
@@ -596,6 +246,7 @@ label { display: inline-block; }
                 dataset.push([z + 1, eval('data.data.' + tmp + "[" + z + "]"), selectedSpindles[j][1]]);
                 console.log(z + 1, eval('data.data.' + tmp + "[" + z + "]"), selectedSpindles[j][1])
               }
+            }
 
               console.log(dataset)
               
@@ -679,7 +330,7 @@ label { display: inline-block; }
           count += 1
           document.getElementById("svg-div").innerHTML += "<div class='grid-container' id='grid-container" + count + "'>"
 
-          document.getElementById("grid-container" + count).innerHTML += "<svg width='500' height='400' id ='svg" + selectedOption + "_" + j + "'></svg>"
+          document.getElementById("grid-container" + count).innerHTML += "<svg width='800' height='510' id ='svg" + selectedOption + "_" + j + "'></svg>"
 
           
 
@@ -703,11 +354,10 @@ label { display: inline-block; }
             var min = 100000
             var max = 0
 
-            for (let i = 0; i < 99; i++) {
+            for (let i = 0; i < 43100; i++) {
 
-              xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-                yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-
+            
+            if (eval('globalData[0].' + selectedOption + "[" + i + "]") != undefined) {
               if (eval('data.data.' + selectedOption + "[" + i + "]") < min) {
                 min = eval('data.data.' + selectedOption + "[" + i + "]")
               }
@@ -715,15 +365,16 @@ label { display: inline-block; }
                 max = eval('data.data.' + selectedOption + "[" + i + "]")
               }
               dataset.push([i + 1, eval('data.data.' + selectedOption + "[" + i + "]")]);
-
+              
             }
-
+          }
+            
             localStorage.setItem("max", JSON.stringify(max));
             localStorage.setItem("min", JSON.stringify(min));
 
 
 
-            xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+            xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
               yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
             var g = svg.append("g")
@@ -785,7 +436,7 @@ label { display: inline-block; }
             // Y label
             svg.append('text')
               .attr('text-anchor', 'middle')
-              .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+              .attr('transform', 'translate(40,' + height + ')rotate(-90)')
               .style('font-family', 'Helvetica')
               .style('font-size', 12)
               .text(selectedOption);
@@ -854,8 +505,7 @@ label { display: inline-block; }
 
     d3.select("#selectMenu").on("change", function(d) {
 
-      
-    
+  
 
     count += 1
     var selectedOption = d3.select(this).property("value")
@@ -866,7 +516,6 @@ label { display: inline-block; }
   
     document.getElementById("svg-div").innerHTML += "<div class='grid-container' id='grid-container" + count + "'>"
     
-    if(selectedOption == "Time") selectedOption = "time"
     
     //Per ogni spindle devo aggiungere un grafichetto
 
@@ -874,11 +523,7 @@ label { display: inline-block; }
         
         
         
-        document.getElementById("grid-container" + count).innerHTML += "<svg width='500' height='400' id ='svg" + selectedOption + "_" + i +"'></svg>"
-
-            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[i][0] +"/raw_data?limit=100", function(data) {
-
-            localStorage.setItem("storageData", JSON.stringify(data));
+        document.getElementById("grid-container" + count).innerHTML += "<svg width='800' height='510' id ='svg" + selectedOption + "_" + i +"'></svg>"
         
             
             var svg = d3.select("#svg" + selectedOption + "_" + i),
@@ -898,27 +543,27 @@ label { display: inline-block; }
             var min = 100000
             var max = 0
 
-            for(let i = 0; i < 99; i++){
+            for(let i = 0; i < 43100; i++){
 
-          xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-          yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-
-            if(eval('data.data.' + selectedOption + "["+ i +"]") < min){
-                min = eval('data.data.' + selectedOption + "["+ i +"]")
+      
+          if (eval('globalData[0].' + selectedOption + "[" + i + "]") != undefined) {
+            if(eval('globalData[0].' + selectedOption + "[" + i + "]") < min){
+                min = eval('globalData[0].' + selectedOption + "[" + i + "]")
             }
-            if(eval('data.data.' + selectedOption + "["+ i +"]") > max){
-              max = eval('data.data.' + selectedOption + "["+ i +"]")
+            if(eval('globalData[0].' + selectedOption + "[" + i + "]") > max){
+              max = eval('globalData[0].' + selectedOption + "[" + i + "]")
             }    
-          dataset.push([i+1, eval('data.data.' + selectedOption + "["+ i +"]")]);
+          dataset.push([i+1, eval('globalData[0].' + selectedOption + "[" + i + "]")]);
 
           }
-            
+        }
+            console.log(dataset)
             localStorage.setItem("max", JSON.stringify(max)); 
             localStorage.setItem("min", JSON.stringify(min)); 
 
             
    
-                xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
                 yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
                 var g = svg.append("g")
@@ -980,7 +625,7 @@ label { display: inline-block; }
                 // Y label
                 svg.append('text')
                     .attr('text-anchor', 'middle')
-                    .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+                    .attr('transform', 'translate(40,' + height + ')rotate(-90)')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 12)
                     .text(selectedOption);
@@ -994,7 +639,6 @@ label { display: inline-block; }
                     .style('font-size', 16)
                     .text(id_and_sn[i][1]);
 
-                  });
                 
 
     }

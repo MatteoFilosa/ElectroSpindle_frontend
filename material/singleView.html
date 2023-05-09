@@ -5,8 +5,8 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <title>Spindle singolo</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-
-    <link rel="stylesheet" href="./style.css"></link>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="./style_single.css"></link>
     <script>
     //inizializzazione array di colori per i grafici
         var colors = [ '#CC0000',
@@ -18,565 +18,11 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </head>
-<style>
-    /* CSS */
-text.shadow {
-  stroke: black;
-  stroke-width: 0.6px;
-  opacity: 0.8s;
-}
 
-svg {
-  position: absolute;
-  left: 0px;
-  top: 130px;
-}
-
-#svg_tba {
-  position: absolute;
-  left: 400px;
-  top: 130px;
-}
-
-#svg_tba0{
-
-  position: absolute;
-  left: 0px;
-  top: 400px;
-
-}
-
-#svg_tamb1{
-
-  position: absolute;
-  left: 400px;
-  top: 130px;
-  
-}
-
-#svg_tba1{
-
-  position: absolute;
-  left: 400px;
-  top: 400px;
-
-}
-
-#svg_tamb2{
-
-  position: absolute;
-  left: 800px;
-  top: 130px;
-  
-}
-
-#svg_tba2{
-
-  position: absolute;
-  left: 800px;
-  top: 400px;
-
-}
-
-#svg_tamb3{
-
-  position: absolute;
-  left: 1200px;
-  top: 130px;
-  
-}
-
-#svg_tba3{
-
-  position: absolute;
-  left: 1200px;
-  top: 400px;
-
-}
-
-#svg_tamb4{
-
-  position: absolute;
-  left: 1600px;
-  top: 130px;
-  
-}
-
-#svg_tba4{
-
-  position: absolute;
-  left: 1600px;
-  top: 400px;
-
-}
-
-
-#svg_tamb5{
-
-  position: absolute;
-  left: 2000px;
-  top: 130px;
-  
-}
-
-#svg_tba5{
-
-  position: absolute;
-  left: 2000px;
-  top: 400px;
-
-}
-
-#svg_tamb6{
-
-  position: absolute;
-  left: 2400px;
-  top: 130px;
-  
-}
-
-#svg_tba6{
-
-  position: absolute;
-  left: 2400px;
-  top: 400px;
-
-}
-
-#svg_tamb7{
-
-  position: absolute;
-  left: 2800px;
-  top: 130px;
-  
-}
-
-#svg_tba7{
-
-  position: absolute;
-  left: 2800px;
-  top: 400px;
-
-}
-
-#svg_tamb8{
-
-  position: absolute;
-  left: 3200px;
-  top: 130px;
-  
-}
-
-#svg_tba8{
-
-  position: absolute;
-  left: 3200px;
-  top: 400px;
-
-}
-
-#svg_tamb9{
-
-  position: absolute;
-  left: 3600px;
-  top: 130px;
-  
-}
-
-#svg_tba9{
-
-  position: absolute;
-  left: 3600px;
-  top: 400px;
-
-}
-
-#svg_tamb10{
-
-  position: absolute;
-  left: 4000px;
-  top: 130px;
-  
-}
-
-#svg_tba10{
-
-  position: absolute;
-  left: 4000px;
-  top: 400px;
-
-}
-
-#svg_tamb11{
-
-  position: absolute;
-  left: 4400px;
-  top: 130px;
-  
-}
-
-#svg_tba11{
-
-  position: absolute;
-  left: 4400px;
-  top: 400px;
-
-}
-
-#svg_tamb12{
-
-  position: absolute;
-  left: 4800px;
-  top: 130px;
-  
-}
-
-#svg_tba12{
-
-  position: absolute;
-  left: 4800px;
-  top: 400px;
-
-}
-
-#svg_tamb13{
-
-  position: absolute;
-  left: 4800px;
-  top: 130px;
-  
-}
-
-#svg_tba13{
-
-  position: absolute;
-  left: 4800px;
-  top: 400px;
-
-}
-
-#svg_tamb14{
-
-  position: absolute;
-  left: 5200px;
-  top: 130px;
-  
-}
-
-#svg_tba14{
-
-  position: absolute;
-  left: 5200px;
-  top: 400px;
-
-}
-
-#svg_tamb15{
-
-  position: absolute;
-  left: 5600px;
-  top: 130px;
-  
-}
-
-#svg_tba15{
-
-  position: absolute;
-  left: 5600px;
-  top: 400px;
-
-}
-
-
-#coordinates{
-
-  position: absolute;
-  left: 8px;
-  top: 140px;
-}
-
-#legenda {
-  clear:both
-}
-
-.input-color {
-  position: relative;
-}
-.input-color input {
-  padding-left: 20px;
-}
-.input-color .color-box {
-  width: 10px;
-  height: 10px;
-  display: inline-block;
-  background-color: #ccc;
-  position: absolute;
-  left: 5px;
-  top: 5px;
-}
-
-input[type=number] {
-
-  margin-left: 8px;
-  box-sizing: border-box;
-  border: 2px solid lightseagreen;
-  border-radius: 4px;
-  background-color: rgb(205, 236, 246);
- 
-}
-
-input[type=checkbox] {
-  background-color: lightblue;
-}
-
-
-#problems-found{
-
-  position: absolute;
-  left: 500px;
-  top: 0px; 
-  height: 100px;
-  width: 500px;
-
-}
-
-#availableSpindles{
-
-  position: absolute;
-  left: 800px;
-  top: 0px; 
-  height: 500px;
-  width: 500px;
-
-}
-
-
-#histogram {
-  position: absolute;
-  left: 600px;
-  top: 0px;
-}
-
-#svg3 {
-  position: absolute;
-  left: 800px;
-  top: 200px;
-}
-
-  .button-blue {
-    background-color: #0095ff;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-  
-  .button-blue:hover,
-  .button-blue:focus {
-    background-color: #07c;
-  }
-  
-  .button-blue:focus {
-    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-  }
-  
-  .button-blue:active {
-    background-color: #0064bd;
-    box-shadow: none;
-  }
-
-  .button-green {
-    background-color: #32CD32;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-
-  .button-blue-spindle {
-    background-color: #0095ff;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-    height: fit-content;
-    width: fit-content;
-  }
-  
-  .button-blue:hover,
-  .button-blue:focus {
-    background-color: #07c;
-  }
-  
-  .button-blue:focus {
-    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-  }
-  
-  .button-blue:active {
-    background-color: #0064bd;
-    box-shadow: none;
-  }
-
-  .button-green {
-    background-color: #32CD32;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-  
-  .button-green:hover,
-  .button-green:focus {
-    background-color: #9ACD32;
-  }
-  
-  .button-green:focus {
-    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-  }
-  
-  .button-green:active {
-    background-color: #228B22;
-    box-shadow: none;
-  }
-
-
-
-  .button-red {
-    background-color: #ff0000;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.15385;
-    margin: 0;
-    outline: none;
-    padding: 8px .8em;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-  
-  .button-red:hover,
-  .button-red:focus {
-    background-color: #b30000;
-  }
-  
-  .button-red:focus {
-    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-  }
-  
-  .button-red:active {
-    background-color: #ffbfbf;
-    box-shadow: none;
-  }
-
-#svg-div {
- display:inline-flex;
- 
- 
-}
-
-#svg_default {
- margin-top: 20px;
- 
- 
-}
- #tooltip {
-    background-color: lightyellow;
-    position:absolute;
-    left: 200px;
-    top: 200px;
-    visibility: visible;
-  }
-
-</style>
 <body>
 <h1>Visualizzazione spindle singolo</h1>
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
-<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”>
+<!--<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”></Body>-->
 <div id ="selectedSpindles"></div>
 <input type = "checkbox" id ="aggregato" class = "checkbox" onclick="aggregateHelper()" > Aggregato
 
@@ -620,6 +66,11 @@ input[type=checkbox] {
 <button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button>
 
 <script>
+
+  function sleep(time) {
+      return new Promise((resolve) => setTimeout(resolve, time));
+    }
+
   function displayTooltip(d, i, selectedGroup, event) {
       document.getElementById("tooltip").style.visibility = "visible"
       console.log(d[0], d[1], event.screenX, event.screenY)
@@ -643,19 +94,21 @@ input[type=checkbox] {
         var max = JSON.parse(localStorage.getItem("maxDefault"))
         var min = JSON.parse(localStorage.getItem("minDefault"))
 
-        for (let i = 0; i < 99; i++) {
+        for (let i = 0; i < 43100; i++) {
+
+          if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
           
-          if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
-            min = eval('data.data.' + selectedGroup + "[" + i + "]")
-            console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+          if (eval('globalData[0].' + selectedGroup + "[" + i + "]") < min) {
+            min = eval('globalData[0].' + selectedGroup + "[" + i + "]")
+            console.log(eval('globalData[0].' + selectedGroup + "[" + i + "]"))
           }
-          if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
-            max = eval('data.data.' + selectedGroup + "[" + i + "]")
+          if (eval('globalData[0].' + selectedGroup + "[" + i + "]") > max) {
+            max = eval('globalData[0].' + selectedGroup + "[" + i + "]")
           }
-          dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+          dataset.push([i + 1, eval('globalData[0].' + selectedGroup + "[" + i + "]")]);
 
         }
-        
+      }
         document.getElementById("svg-div").innerHTML += "<svg width='1000' height='800' id ='svg_default'></svg>"
         var new_svg = d3.select("#svg_default")
         var g = new_svg.append("g")
@@ -686,12 +139,12 @@ input[type=checkbox] {
         // Y label
         new_svg.append('text')
           .attr('text-anchor', 'middle')
-          .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+          .attr('transform', 'translate(40,' + height + ')rotate(-90)')
           .style('font-family', 'Helvetica')
           .style('font-size', 12)
           .text("Valori misti");
 
-        var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+        var xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
           yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
 
@@ -734,13 +187,10 @@ input[type=checkbox] {
 
         if (colorSelector < colors.length) colorSelector += 1
         else colorSelector = 0
-                            console.log("d")
-
-
-
+    
           
       }
-        var allGroup = ["Tamb", "Tba", "Itot", "Qtir", "Speed_S3_BUS", "Speed_Sync", "Tdut2", "Tdut3", "VibANT_Sync"]
+        var allGroup = ["Tamb", "Tba", "Itot", "Qtir", "Speed_S3_BUS", "Speed_Sync", "Tdut2", "Tdut3", "VibANT_Sync", "Step"]
         d3.select("#selectMenu")
         .selectAll('myOptions')
         .data(allGroup)
@@ -749,19 +199,42 @@ input[type=checkbox] {
         .text(function (d) { return d; }) // text showed in the menu
         .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
-        var coordinates = - 400,  colorSelector = 0, selectedValues = []
-
+        var coordinates = - 750,  colorSelector = 0, selectedValues = [], globalData = []
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
-        d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?limit=100", function(data) {
 
-          localStorage.setItem("storageData", JSON.stringify(data));
+
+
+
+        var globalData = []
+        d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?downsample=100", function(data) {
+          
+          for (var key in data) {
+            var value = data[key];
+            globalData.push(value)
+            
+            }
+
         })
+        
+        sleep(1000).then(() => {
+
+          console.log(globalData[0])
+
+        })
+         
+
+
+
+
+
+
+   
 
         function aggregateHelper(){
 
 
           
-          var data = JSON.parse(localStorage.getItem("storageData"));
+          var data = globalData
 
           if(document.getElementById("aggregato").checked == true) newGraph("", data,   coordinates, 1, 0)
 
@@ -804,7 +277,7 @@ input[type=checkbox] {
             
         
           if (flag != 1) selectedOption = selectedOption.id
-            var data = JSON.parse(localStorage.getItem("storageData"));
+            var data = globalData
             //var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
             
             console.log(selectedOption)
@@ -930,7 +403,7 @@ input[type=checkbox] {
             var min = 100000
             var max = 0
             var toAddDefaultArray = []
-            var data = JSON.parse(localStorage.getItem("storageData"))
+            var data = globalData
             console.log(data)
 
             
@@ -984,22 +457,23 @@ input[type=checkbox] {
               min = JSON.parse(localStorage.getItem("minDefault"))
               max = JSON.parse(localStorage.getItem("maxDefault"))
 
-              for (let i = 0; i < 99; i++) {
+              for (let i = 0; i < 43100; i++) {
 
 
-                console.log('data.data.' + selectedGroup + "[" + i + "]")
-                if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
-                  min = eval('data.data.' + selectedGroup + "[" + i + "]")
-                  console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+                if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
+                if (eval('globalData[0].' + selectedGroup + "[" + i + "]") < min) {
+                  min = eval('globalData[0].' + selectedGroup + "[" + i + "]")
+                  console.log(eval('globalData[0].' + selectedGroup + "[" + i + "]"))
                 }
-                if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
-                  max = eval('data.data.' + selectedGroup + "[" + i + "]")
+                if (eval('globalData[0].' + selectedGroup + "[" + i + "]") > max) {
+                  max = eval('globalData[0].' + selectedGroup + "[" + i + "]")
                 }
-                dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+                dataset.push([i + 1, eval('globalData[0].' + selectedGroup + "[" + i + "]")]);
 
               }
+              }
 
-              xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+              xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
               yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
               localStorage.setItem("maxDefault", JSON.stringify(max))
               localStorage.setItem("minDefault", JSON.stringify(min))
@@ -1041,7 +515,7 @@ input[type=checkbox] {
               // Y label
               new_svg.append('text')
                 .attr('text-anchor', 'middle')
-                .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+                .attr('transform', 'translate(40,' + height + ')rotate(-90)')
                 .style('font-family', 'Helvetica')
                 .style('font-size', 12)
                 .text("Valori misti");
@@ -1058,22 +532,22 @@ input[type=checkbox] {
 
 
 
-                    for (let i = 0; i < 99; i++) {
+                    for (let i = 0; i < 43100; i++) {
 
+                      if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
 
-
-                      if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
-                        min = eval('data.data.' + selectedGroup + "[" + i + "]")
-                        console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+                      if (eval('globalData[0].' + selectedGroup + "[" + i + "]") < min) {
+                        min = eval('globalData[0].' + selectedGroup + "[" + i + "]")
+                        console.log(eval('globalData[0].' + selectedGroup + "[" + i + "]"))
                       }
-                      if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
-                        max = eval('data.data.' + selectedGroup + "[" + i + "]")
+                      if (eval('globalData[0].' + selectedGroup + "[" + i + "]") > max) {
+                        max = eval('globalData[0].' + selectedGroup + "[" + i + "]")
                       }
-                      dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+                      dataset.push([i + 1, eval('globalData[0].' + selectedGroup + "[" + i + "]")]);
 
                     }
-
-                    xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                  }
+                    xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
                       yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
                     localStorage.setItem("maxDefault", JSON.stringify(max))
@@ -1119,15 +593,15 @@ input[type=checkbox] {
 
 
                     var dataset = []
-                    for (let i = 0; i < 99; i++) {
+                    for (let i = 0; i < 43100; i++) {
 
 
 
-                    
+                      if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
 
-                      dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
+                      dataset.push([i + 1, eval('globalData[0].' + selectedGroup + "[" + i + "]")]);
 
-                    }
+                    }}
 
 
                     new_svg.append('g')
@@ -1180,28 +654,28 @@ input[type=checkbox] {
 
                   var selectedGroup = valori[j]
                   
-                  for (let i = 0; i < 99; i++) { //riscalo y per ogni valore
+                  for (let i = 0; i < 43100; i++) { //riscalo y per ogni valore
 
-
-                    if (eval('data.data.' + selectedGroup + "[" + i + "]") < min) {
-                      min = eval('data.data.' + selectedGroup + "[" + i + "]")
-                      console.log(eval('data.data.' + selectedGroup + "[" + i + "]"))
+                    if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
+                    if (eval('globalData[0].' + selectedGroup + "[" + i + "]") < min) {
+                      min = eval('globalData[0].' + selectedGroup + "[" + i + "]")
+                      console.log(eval('globalData[0].' + selectedGroup + "[" + i + "]"))
                     }
-                    if (eval('data.data.' + selectedGroup + "[" + i + "]") > max) {
-                      max = eval('data.data.' + selectedGroup + "[" + i + "]")
+                    if (eval('globalData[0].' + selectedGroup + "[" + i + "]") > max) {
+                      max = eval('globalData[0].' + selectedGroup + "[" + i + "]")
                     }
 
-                  }
+                  }}
 
 
-                  xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+                  xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
                     yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
                   }
 
                   for (let j = 0; j < valori.length; j++) {
 
                      var dataset = []
-                    for (let i = 0; i < 99; i++) {
+                    for (let i = 0; i < 43100; i++) {
 
 
                       console.log(valori.length)
@@ -1210,11 +684,11 @@ input[type=checkbox] {
                       var selectedGroup = valori[j]
 
                      
+                      if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
+                      dataset.push([i + 1, eval('globalData[0].' + selectedGroup + "[" + i + "]")]);
 
-                      dataset.push([i + 1, eval('data.data.' + selectedGroup + "[" + i + "]")]);
 
-
-                    }
+                    }}
  
                   g.append("g")
                     .attr("transform", "translate(0," + height + ")")
@@ -1294,26 +768,31 @@ input[type=checkbox] {
         else if (aggregato == 0){ //Caso NON aggregato
 
          
-          if (toAddDefault == 3) coordinates += 400
+          if (toAddDefault == 3) coordinates += 750
           //scala per grafico
 
-          for(let i = 0; i < 99; i++){
+          for(let i = 0; i < 43100; i++){
 
-          xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-          yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
-            if(eval('data.data.' + selectedGroup + "["+ i +"]") < min){
-                min = eval('data.data.' + selectedGroup + "["+ i +"]")
+          if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
+          //console.log(eval('globalData[0].' + selectedGroup + "["+ i +"]"))
+            if(eval('globalData[0].' + selectedGroup + "["+ i +"]") < min){
+                min = eval('globalData[0].' + selectedGroup + "["+ i +"]")
             }
-            if(eval('data.data.' + selectedGroup + "["+ i +"]") > max){
-              max = eval('data.data.' + selectedGroup + "["+ i +"]")
+            if(eval('globalData[0].' + selectedGroup + "["+ i +"]") > max){
+              max = eval('globalData[0].' + selectedGroup + "["+ i +"]")
             }    
-          dataset.push([i+1, eval('data.data.' + selectedGroup + "["+ i +"]")]);
+          dataset.push([i+1, eval('globalData[0].' + selectedGroup + "["+ i +"]")]);
 
           }
+        }
+
+          console.log(dataset)
+          xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
+              yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
           //Creazione grafico
 
-          document.getElementById("svg-div").innerHTML += '<svg width="500" height="400" id="svg' + selectedGroup +'"></svg>'
+          document.getElementById("svg-div").innerHTML += '<svg width="800" height="510" id="svg' + selectedGroup +'"></svg>'
             var svg_to_select = "#svg" + selectedGroup
             console.log(svg_to_select)
             var new_svg = d3.select(svg_to_select),
@@ -1354,12 +833,12 @@ input[type=checkbox] {
             // Y label
             new_svg.append('text')
             .attr('text-anchor', 'middle')
-            .attr('transform', 'translate(60,' + height + ')rotate(-90)')
+            .attr('transform', 'translate(40,' + height + ')rotate(-90)')
             .style('font-family', 'Helvetica')
             .style('font-size', 12)
             .text(selectedGroup);
 
-            var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+            var xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
                 yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
             g.append("g")
@@ -1386,20 +865,23 @@ input[type=checkbox] {
             .on("mouseout", function (d, i) { hideTooltip() })
 
             // Step 8        
+
             var line = d3.line()
             .x(function(d) { return xScale(d[0]); }) 
             .y(function(d) { return yScale(d[1]); }) 
             .curve(d3.curveMonotoneX)
         
-            new_svg.append("path")
-            .datum(dataset) 
-            .attr("class", "line") 
-            .attr("transform", "translate(" + 100 + "," + 100 + ")")
-            .attr("d", line)
-            .style("fill", "none")
-            .style("stroke", "#CC0000")
-            .style("stroke-width", "2")
-            .attr("id", function(d,i){ return "path" + selectedGroup});
+              new_svg.append("path")
+                .datum(dataset)
+                .attr("class", "line")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")")
+                .attr("d", line)
+                .style("fill", "none")
+                .style("stroke", "#CC0000")
+                .style("stroke-width", "2")
+                .attr("id", function (d, i) { return "path" + selectedGroup });
+
+
 
         }
 
@@ -1419,7 +901,7 @@ input[type=checkbox] {
       //if(selectedOption != undefined) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
       //document.getElementById("selectedOption").style.visibility = "hidden"
       var checkBoxAggregato = document.getElementById("aggregato");
-      var data = JSON.parse(localStorage.getItem("storageData"));
+      var data = globalData
     
       var selectedOption = d3.select(this).property("value")
       //d3.select(this).attr("disabled", "true")
@@ -1430,7 +912,7 @@ input[type=checkbox] {
     if (checkBoxAggregato.checked == false){ //se Aggregato non è checkato, cancella tutto per fare spazio al nuovo grafico sullo stesso svg
 
         
-        coordinates += 400
+        coordinates += 750
         newGraph(selectedOption, data, coordinates, 0, 0)
     
 
@@ -1454,7 +936,7 @@ input[type=checkbox] {
 
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
         
-        document.getElementById("selectedSpindles").innerHTML += "Spindle selezionato: "+ id_and_sn[0][1]
+        document.getElementById("selectedSpindles").innerHTML += "Spindle selezionato: "+ id_and_sn[0][1] 
             
 
             
