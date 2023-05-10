@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <title>ElectroSpindle Dashboard</title>
+    <title >ElectroSpindle Dashboard</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
 
     <link rel="stylesheet" href="calendar.css">
@@ -38,9 +38,9 @@
 <h1>ElectroSpindle: Dashboard</h1>
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
 <!--<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”></Body>-->  
-  Modello <select id="modello"></select>
+  Model <select id="modello"></select>
  
-Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> 
+Insert Spindle SN <input type = "text" id ="request" maxlength="10" required placeholder="Serial Number"> 
 
 
 
@@ -51,12 +51,12 @@ Inserisci SN Spindle <input type = "text" id ="request" maxlength="10" required 
 <!--<input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici-->
 <!--<input type="checkbox" id ="separati" onchange = "separati()"> Separati -->
 <br> <br>
-Rodaggi disponibili dal 10/01/2022 al 21/09/2022
+Breakins available from 10/01/2022 to 21/09/2022
 
 <br> <br>
 
 <div class = "button-wrapper">
-  <h4>Seleziona data</h4>
+  <h4>Pick date</h4>
   <button class = "button-green" onclick = "displayCalendar(0)" id = "daButton">Da</button>
 
   <div id = "day-start">  </div>
@@ -124,7 +124,7 @@ Rodaggi disponibili dal 10/01/2022 al 21/09/2022
 
 </div>
 
-<h3 style = "top: 400px;">Spindle selezionati</h3> <br>
+<h3 style = "top: 400px;">Seslected Spindles</h3> <br>
 <div id = "divselectAll0">
   <input type = "checkbox" id="selectAll0" onchange = "selectAll(0)" >Seleziona tutto
 </div>
