@@ -168,13 +168,13 @@ Breakins available from 10/01/2022 to 21/09/2022
 
 function clearSelectedSpindles(){
 
-  document.getElementById("selectedSpindles").innerHTML = "<div class='header'><span id = 'headerSpan'>SN</span><span id = 'headerSpan'>Model</span><span id = 'headerSpan'>Breakin date</span></div>"
+  document.getElementById("selectedSpindles").innerHTML = "<div class='header'><span id = 'snSpan'>SN</span><span id = 'modelSpan'>Model</span><span id = 'breakinSpan'>Breakin date</span></div>"
   
 }
 
   function clearAvailableSpindles() {
 
-    document.getElementById("availableSpindles").innerHTML = "<div class='header'><span id = 'headerSpan'>SN</span><span id = 'headerSpan'>Model</span><span id = 'headerSpan'>Breakin date</span></div>"
+    document.getElementById("availableSpindles").innerHTML = "<div class='header'><span id = 'snSpan'>SN</span><span id = 'modelSpan'>Model</span><span id = 'breakinSpan'>Breakin date</span></div>"
 
   }
 
@@ -196,7 +196,7 @@ function saveSpindle(sn){
 
     }
     
-    document.getElementById("selectedSpindles").innerHTML += "<div id = 'spindleRow'> <input type = 'checkbox' id = '" + sn + "' checked><label for = '" +sn +"'>" + to_write + "</label></div>" 
+    document.getElementById("selectedSpindles").innerHTML += "<div id = 'spindleRow'> <input type = 'checkbox' class = 'checkbox-spindles' id = '" + sn + "' checked><label for = '" +sn +"'>" + to_write + "</label></div>" 
     document.getElementById("selectAll1").checked = true
 
   }
@@ -300,25 +300,14 @@ function resetFilters(){
   for (i = 0; i < id_and_sn.length; i++) {              
 
           
-                var to_write = "<span id = 'spindlesSpan'>" + id_and_sn[i][1]  + "</span>" + "<span id = 'spindlesSpan'>" + "H6161H2188" + "</span>" + id_and_sn[i][2]
+                var to_write = "<span id = 'spindlesSpan'>" + id_and_sn[i][1]  + "</span>" + "<span id = 'spindlesSpan'>" + "H6161H2188" + "</span>" + "<span id = 'spindlesSpan'>" + id_and_sn[i][2] + "</span>"
                 console.log(to_write)
    
-                    document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'> <input type = 'checkbox' id = '"+ id_and_sn[i][1] +"'onclick = saveSpindle("+ id_and_sn[i][1] +")>"+ "<label for='" + id_and_sn[i][1] + "'>" + to_write + "</label></div>"  
+                    document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'> <input type = 'checkbox' class = 'checkbox-spindles' id = '"+ id_and_sn[i][1] +"'onclick = saveSpindle("+ id_and_sn[i][1] +")>"+ "<label for='" + id_and_sn[i][1] + "'>" + to_write + "</label></div>"  
  
 }
 }
 
-/*
-    var s = document.getElementById("calendar-original"),
-        d = document.getElementById("dstCalendar");
-
-        var clone = s.cloneNode(true);
-        clone.removeAttribute("id");
-        clone.add
-        d.appendChild(clone);
-        */
-
-        
 
         function displayCalendar(direction){ // 0 vuol dire che ho cliccato "Da", 1 vuol dire che ho cliccato "A"
 
@@ -534,7 +523,7 @@ function resetFilters(){
                       sn_to_save.push(data.breakin_data[i]["serial number"])
                       to_write = data.breakin_data[i]["serial number"]
                       var real_write = "<span id = 'spindlesSpan'>" + to_write + "</span>" + "<span id = 'spindlesSpan'>" +"H6161H2188" + "</span>"  + "<span id = 'spindlesSpan'>" + data.breakin_data[i]["date"] + "</span>"
-                      document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' id = '"+ to_write +"'onclick = saveSpindle("+ to_write +")>"+ "<label for='" + to_write + "'>" + real_write + "</label></div>"
+                      document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' id = '"+ to_write +"'onclick = saveSpindle("+ to_write +")>"+ "<label for='" + to_write + "'>" + real_write + "</label></div>"
 
                     }
 
@@ -546,7 +535,7 @@ function resetFilters(){
                       if(found != null){
                       var tmp = found["input"]
                       var real_write = data.breakin_data[i]["serial number"] + "   H6161H2188    " + data.breakin_data[i]["date"]
-                      if(tmp!=null) document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + real_write + "</label></div>"
+                      if(tmp!=null) document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + real_write + "</label></div>"
                       }
 
                       id_to_save.push(data.breakin_data[i].sequence_id)
@@ -592,7 +581,7 @@ function resetFilters(){
                 var tmp = found["input"]
                 var to_write = "<span id = 'spindlesSpan'>" + tmp + "</span>" + "<span id = 'spindlesSpan'>" +"H6161H2188" + "</span>"  + "<span id = 'spindlesSpan'>" + id_and_sn[i][2] + "</span>"
                 console.log(id_and_sn[i][2])
-                if(tmp!=null) document.getElementById("availableSpindles").innerHTML +=  "<div id = 'spindleRow'><input type = 'checkbox' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + to_write + "</label></div>" 
+                if(tmp!=null) document.getElementById("availableSpindles").innerHTML +=  "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + to_write + "</label></div>" 
             }
             }
 
@@ -621,7 +610,7 @@ function resetFilters(){
                       var tmp = found["input"]
                       var to_write = "<span id = 'spindlesSpan'>" + tmp + "</span>" + "<span id = 'spindlesSpan'>" + "H6161H2188" + "</span>"+  "<span id = 'spindlesSpan'>" + date + "</span>" //la data
                       console.log(filterHelper)
-                      if(tmp!=null) document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + to_write + "</label></div>" 
+                      if(tmp!=null) document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + to_write + "</label></div>" 
                       }
 
                   

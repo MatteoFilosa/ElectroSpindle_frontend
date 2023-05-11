@@ -13,9 +13,10 @@ html * {
 }
 
 #spindleRow{
-    border-width: thin;
-    border-style:solid;
-    border-color: grey;
+
+    border: 1px grey;
+    border-style: solid none;
+    padding-top: 2%;
     padding-left: 5%;
     
     
@@ -44,7 +45,7 @@ html * {
 }
 
 .header{
-    padding-bottom: 5%;
+    padding-bottom: 2%;
     color: grey
 }
 
@@ -55,279 +56,6 @@ text.shadow {
     stroke: black;
     stroke-width: 0.6px;
     opacity: 0.8s;
-}
-
-svg {
-    position: absolute;
-    left: 0px;
-    top: 130px;
-}
-
-#svg_tba {
-    position: absolute;
-    left: 400px;
-    top: 130px;
-}
-
-#svg_tba0 {
-
-    position: absolute;
-    left: 0px;
-    top: 400px;
-
-}
-
-#svg_tamb1 {
-
-    position: absolute;
-    left: 400px;
-    top: 130px;
-
-}
-
-#svg_tba1 {
-
-    position: absolute;
-    left: 400px;
-    top: 400px;
-
-}
-
-#svg_tamb2 {
-
-    position: absolute;
-    left: 800px;
-    top: 130px;
-
-}
-
-#svg_tba2 {
-
-    position: absolute;
-    left: 800px;
-    top: 400px;
-
-}
-
-#svg_tamb3 {
-
-    position: absolute;
-    left: 1200px;
-    top: 130px;
-
-}
-
-#svg_tba3 {
-
-    position: absolute;
-    left: 1200px;
-    top: 400px;
-
-}
-
-#svg_tamb4 {
-
-    position: absolute;
-    left: 1600px;
-    top: 130px;
-
-}
-
-#svg_tba4 {
-
-    position: absolute;
-    left: 1600px;
-    top: 400px;
-
-}
-
-
-#svg_tamb5 {
-
-    position: absolute;
-    left: 2000px;
-    top: 130px;
-
-}
-
-#svg_tba5 {
-
-    position: absolute;
-    left: 2000px;
-    top: 400px;
-
-}
-
-#svg_tamb6 {
-
-    position: absolute;
-    left: 2400px;
-    top: 130px;
-
-}
-
-#svg_tba6 {
-
-    position: absolute;
-    left: 2400px;
-    top: 400px;
-
-}
-
-#svg_tamb7 {
-
-    position: absolute;
-    left: 2800px;
-    top: 130px;
-
-}
-
-#svg_tba7 {
-
-    position: absolute;
-    left: 2800px;
-    top: 400px;
-
-}
-
-#svg_tamb8 {
-
-    position: absolute;
-    left: 3200px;
-    top: 130px;
-
-}
-
-#svg_tba8 {
-
-    position: absolute;
-    left: 3200px;
-    top: 400px;
-
-}
-
-#svg_tamb9 {
-
-    position: absolute;
-    left: 3600px;
-    top: 130px;
-
-}
-
-#svg_tba9 {
-
-    position: absolute;
-    left: 3600px;
-    top: 400px;
-
-}
-
-#svg_tamb10 {
-
-    position: absolute;
-    left: 4000px;
-    top: 130px;
-
-}
-
-#svg_tba10 {
-
-    position: absolute;
-    left: 4000px;
-    top: 400px;
-
-}
-
-#svg_tamb11 {
-
-    position: absolute;
-    left: 4400px;
-    top: 130px;
-
-}
-
-#svg_tba11 {
-
-    position: absolute;
-    left: 4400px;
-    top: 400px;
-
-}
-
-#svg_tamb12 {
-
-    position: absolute;
-    left: 4800px;
-    top: 130px;
-
-}
-
-#svg_tba12 {
-
-    position: absolute;
-    left: 4800px;
-    top: 400px;
-
-}
-
-#svg_tamb13 {
-
-    position: absolute;
-    left: 4800px;
-    top: 130px;
-
-}
-
-#svg_tba13 {
-
-    position: absolute;
-    left: 4800px;
-    top: 400px;
-
-}
-
-#svg_tamb14 {
-
-    position: absolute;
-    left: 5200px;
-    top: 130px;
-
-}
-
-#svg_tba14 {
-
-    position: absolute;
-    left: 5200px;
-    top: 400px;
-
-}
-
-#svg_tamb15 {
-
-    position: absolute;
-    left: 5600px;
-    top: 130px;
-
-}
-
-#svg_tba15 {
-
-    position: absolute;
-    left: 5600px;
-    top: 400px;
-
-}
-
-
-#coordinates {
-
-    position: absolute;
-    left: 8px;
-    top: 140px;
-}
-
-#legenda {
-    clear: both
 }
 
 .input-color {
@@ -384,13 +112,12 @@ input[type=checkbox] {
     top: 100px;
     width: 500px;
     display: block;
-
     justify-content: space-between;
     font-size: 13px;
     transform: scale(1.2);
     font-weight: 400;
     border-radius: 25px;
-    background-color: lightgrey;
+    background-color: white;
     padding-left: 2.5px;
     padding-top: 20px;
     padding-right: 2.5px;
@@ -415,10 +142,12 @@ input[type=checkbox] {
     transform: scale(1.2);
     font-weight: 400;
     border-radius: 25px;
-    background-color: lightgrey;
+    background-color: white;
     padding-left: 2.5px;
     padding-top: 20px;
     padding-right: 2.5px;
+    border-style: outset;
+    border: 1px solid gray;
 
 }
 
@@ -656,13 +385,13 @@ input[type=checkbox] {
 
 h3 {
     position: absolute;
-    left: 880px;
+    left: 980px;
     top: 20px;
 }
 
 #cerca {
     position: absolute;
-    left: 1030px;
+    left: 1100px;
     top: 650px;
 
 }
@@ -670,7 +399,7 @@ h3 {
 #clearSelected {
 
     position: absolute;
-    left: 920px;
+    left: 1000px;
     top: 650px;
 
 }
@@ -702,13 +431,13 @@ h3 {
 
 #divselectAll0 {
     position: absolute;
-    left: 700px;
+    left: 800px;
     top: 50px;
 }
 
 #divselectAll1 {
     position: absolute;
-    left: 700px;
+    left: 800px;
     top: 428px;
 }
 
