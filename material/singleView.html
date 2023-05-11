@@ -9,12 +9,9 @@
     <link rel="stylesheet" href="./style_single.css"></link>
     <script>
     //inizializzazione array di colori per i grafici
-        var colors = [ '#CC0000',
-  '#ff8c00','#bf0000','#800000','#400000','#9400d3',
-  '#000000','#ba55d3','#cd5c5c','#cc5500','#40e0d0'
-    ];
+  
 
-    const colorsGPT = [
+    const colors = [
         "#0074D9", // blu
         "#FF4136", // rosso
         "#2ECC40", // verde
@@ -90,7 +87,7 @@
 
   function displayTooltip(d, i, selectedGroup, event) {
       document.getElementById("tooltip").style.visibility = "visible"
-      console.log(d[0], d[1], event.screenX, event.screenY)
+     
       var tooltip = document.getElementById("tooltip")
       tooltip.innerHTML = selectedGroup + ": " + d[1]
       tooltip.style.position = "absolute"
@@ -117,7 +114,7 @@
           
           if (eval('globalData[0].' + selectedGroup + "[" + i + "]") < min) {
             min = eval('globalData[0].' + selectedGroup + "[" + i + "]")
-            console.log(eval('globalData[0].' + selectedGroup + "[" + i + "]"))
+           
           }
           if (eval('globalData[0].' + selectedGroup + "[" + i + "]") > max) {
             max = eval('globalData[0].' + selectedGroup + "[" + i + "]")
@@ -183,7 +180,7 @@
           .attr("transform", "translate(" + 100 + "," + 100 + ")")
           .style("fill", colors[colorSelector])
           .attr("id", function (d, i) { return "dot" + valori[j] })
-          .on("mouseover", function (d, i) { console.log("ok")  
+          .on("mouseover", function (d, i) {   
           displayTooltip(d, i, selectedGroup, event) })
           .on("mouseout", function (d, i) { hideTooltip() })
 
@@ -233,11 +230,7 @@
 
         })
         
-        sleep(1000).then(() => {
-
-          console.log(globalData[0])
-
-        })
+       
          
 
 
@@ -268,11 +261,11 @@
 
                   count ++;
                   var tmp = to_add[i].id
-                  console.log(tmp)
+              
                   
-                  console.log("#svg" + tmp)
+       
                   d3.select("#svg" + tmp).attr("visibility", "visible")
-                  console.log(count)
+                
 
                   if(d3.select("#svg" + tmp).size() == 0){
                     newGraph(tmp, data,   (400*count), 0, 3)
@@ -297,7 +290,7 @@
             var data = globalData
             //var selectedOption = JSON.parse(localStorage.getItem("selectedOption"));
             
-            console.log(selectedOption)
+          
          
 
    
@@ -384,7 +377,7 @@
    
                 
                 coordinates = - 400
-                console.log(coordinates)
+           
                 localStorage.removeItem("selectedValues");
                 }
 
@@ -421,7 +414,7 @@
             var max = 0
             var toAddDefaultArray = []
             var data = globalData
-            console.log(data)
+    
 
             
             var valori = []
@@ -467,7 +460,7 @@
 
                 }
               }
-              console.log(toAddDefaultArray)
+              
 
             if (toAddDefault == 1){ //ho un solo valore da iterare (toAddDefault vuol dire che aggiungo un valore al grafico grosso)
 
@@ -480,7 +473,7 @@
                 if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
                 if (eval('globalData[0].' + selectedGroup + "[" + i + "]") < min) {
                   min = eval('globalData[0].' + selectedGroup + "[" + i + "]")
-                  console.log(eval('globalData[0].' + selectedGroup + "[" + i + "]"))
+               
                 }
                 if (eval('globalData[0].' + selectedGroup + "[" + i + "]") > max) {
                   max = eval('globalData[0].' + selectedGroup + "[" + i + "]")
@@ -540,7 +533,7 @@
               for (let j = 0; j < valori.length; j++) { //Serve per scalare gli assi correttamente
 
                 var selectedGroup = valori[j]
-                console.log(selectedGroup)
+       
 
                 if(valori.includes("Tba") || valori.includes("Tamb") || valori.includes("Tdut2") || valori.includes("Tdut3") ){
                   if (valori.includes("Itot") || valori.includes("Qtir") || valori.includes("Speed_S3_BUS") || valori.includes("Speed_Sync") || valori.includes("VibANT_Sync")){ //scale non omogenee
@@ -555,7 +548,7 @@
 
                       if (eval('globalData[0].' + selectedGroup + "[" + i + "]") < min) {
                         min = eval('globalData[0].' + selectedGroup + "[" + i + "]")
-                        console.log(eval('globalData[0].' + selectedGroup + "[" + i + "]"))
+                      
                       }
                       if (eval('globalData[0].' + selectedGroup + "[" + i + "]") > max) {
                         max = eval('globalData[0].' + selectedGroup + "[" + i + "]")
@@ -565,46 +558,64 @@
                     }
                   }
                     xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
-                      yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+                    yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
                     localStorage.setItem("maxDefault", JSON.stringify(max))
                     localStorage.setItem("minDefault", JSON.stringify(min))
 
-                    g.append("g")
-                      .attr("transform", "translate(0," + height + ")")
-                      .call(d3.axisBottom(xScale));
+                    
 
                     if (scalaAggiuntiva == 1) {
 
                       g.append("g")
-                        .call(d3.axisLeft(yScale))
-                        .attr("class", "asseDestro");
-
-                      d3.select(".asseDestro").attr("transform", "translate(500,0)")
-
-
-
-                    }
-
-                    else if (scalaAggiuntiva == 2) {
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(xScale)); //aggiungiamo una sola volta asse x
 
                       g.append("g")
                         .call(d3.axisRight(yScale))
                         .attr("class", "asseDestro");
-
+                      console.log("sì")
                       d3.select(".asseDestro").attr("transform", "translate(500,0)")
-
-
-
+                      d3.select(".asseDestro").selectAll("text").style("fill", colors[colorSelector])
+                   
                     }
 
-                    else {
+
+                    else if (scalaAggiuntiva == 2) {
 
                       g.append("g")
-                        .call(d3.axisLeft(yScale));
-                        console.log("au")
+                        .call(d3.axisLeft(yScale))
+                        .attr("class", "asseSinistro");
+                     
+                        d3.select(".asseSinistro").selectAll("text").style("fill", colors[colorSelector])
+                      console.log("eo")
+                      
 
                     }
+
+                    else if (scalaAggiuntiva == 3) {
+
+                      g.append("g")
+                        .call(d3.axisRight(yScale))
+                        .attr("class", "asseSinistro2");
+
+                      d3.select(".asseSinistro2").selectAll("text").style("fill", colors[colorSelector])
+                     
+
+                    }
+
+                    else if (scalaAggiuntiva == 4) {
+
+                      g.append("g")
+                        .call(d3.axisLeft(yScale))
+                        .attr("class", "asseDestro2");
+
+                      d3.select(".asseDestro2").attr("transform", "translate(500,0)")
+                      d3.select(".asseDestro2").selectAll("text").style("fill", colors[colorSelector])
+
+
+                    }
+                    
 
 
 
@@ -633,7 +644,7 @@
                       .style("fill", colors[colorSelector])
                       .attr("id", function (d, i) { return "dot" + valori[j] })
                       .on("mouseover", function (d, i) {
-                        console.log("ok")
+                     
                         displayTooltip(d, i, valori[j], event)
                       })
                       .on("mouseout", function (d, i) { hideTooltip() })
@@ -655,7 +666,7 @@
 
                     if (colorSelector < colors.length) colorSelector += 1
                     else colorSelector = 0
-                                        console.log("d")
+                                   
 
                    
                   }
@@ -676,7 +687,7 @@
                     if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
                     if (eval('globalData[0].' + selectedGroup + "[" + i + "]") < min) {
                       min = eval('globalData[0].' + selectedGroup + "[" + i + "]")
-                      console.log(eval('globalData[0].' + selectedGroup + "[" + i + "]"))
+                     
                     }
                     if (eval('globalData[0].' + selectedGroup + "[" + i + "]") > max) {
                       max = eval('globalData[0].' + selectedGroup + "[" + i + "]")
@@ -695,7 +706,7 @@
                     for (let i = 0; i < 43100; i++) {
 
 
-                      console.log(valori.length)
+               
 
 
                       var selectedGroup = valori[j]
@@ -715,7 +726,7 @@
                     .call(d3.axisLeft(yScale));
 
 
-                  console.log(dataset)
+             
                   new_svg.append('g')
                     .selectAll("dot")
                     .data(dataset)
@@ -728,7 +739,7 @@
                     .style("fill", colors[colorSelector])
                     .attr("id", function (d, i) { return "dot" + valori[j] })
                     .on("mouseover", function (d, i) {
-                      console.log("ok")
+                 
                       displayTooltip(d, i, valori[j], event)
                     })
                     .on("mouseout", function (d, i) { hideTooltip() })
@@ -750,7 +761,7 @@
 
                   if (colorSelector < colors.length) colorSelector += 1
                   else colorSelector = 0
-                    console.log("d")
+            
 
                 
                 
@@ -791,7 +802,7 @@
           for(let i = 0; i < 43100; i++){
 
           if (eval('globalData[0].' + selectedGroup + "[" + i + "]") != undefined) {
-          //console.log(eval('globalData[0].' + selectedGroup + "["+ i +"]"))
+    
             if(eval('globalData[0].' + selectedGroup + "["+ i +"]") < min){
                 min = eval('globalData[0].' + selectedGroup + "["+ i +"]")
             }
@@ -803,15 +814,15 @@
           }
         }
 
-          console.log(dataset)
+       
           xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
-              yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+          yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
           //Creazione grafico
 
           document.getElementById("svg-div").innerHTML += '<svg width="800" height="510" id="svg' + selectedGroup +'"></svg>'
             var svg_to_select = "#svg" + selectedGroup
-            console.log(svg_to_select)
+
             var new_svg = d3.select(svg_to_select),
                 margin = 200,
                 width = new_svg.attr("width") - margin, //300
@@ -824,7 +835,7 @@
             tmp.style.top = '200px';
             tmp.style.left = coordinates + "px"
 
-            console.log(coordinates)
+   
     
             var g = new_svg.append("g")
         .attr("transform", "translate(" + 100 + "," + 100 + ")");
@@ -836,7 +847,7 @@
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 20)
-            .text(selectedGroup + "Chart");
+            .text(selectedGroup + " Chart");
         
             // X label
             new_svg.append('text')
@@ -877,7 +888,7 @@
             .attr("transform", "translate(" + 100 + "," + 100 + ")")
             .style("fill", "#CC0000")
             .attr("id", function(d,i){ return "dot" + selectedGroup})
-            .on("mouseover", function (d, i) { console.log("ok")
+            .on("mouseover", function (d, i) { 
               displayTooltip(d, i, selectedGroup, event) })
             .on("mouseout", function (d, i) { hideTooltip() })
 
@@ -905,7 +916,7 @@
         
             // codice finale
             //if (aggregato == 0) document.getElementById("selectedValues").style.visibility = "hidden"
-            console.log(selectedGroup)
+       
             if (aggregato != 1) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedGroup +'" onchange = "modifyElement('+ selectedGroup +')" checked>' + "<label for='" + selectedGroup + "' id = 'label" + selectedGroup + "'>" + selectedGroup + "</label>" 
             selectedValues.push(selectedGroup)
             localStorage.setItem("selectedValues", JSON.stringify(selectedValues))
