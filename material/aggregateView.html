@@ -3,7 +3,7 @@
 <head>
     <!---Step 2-->
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <title>Spindle multipli</title>
+    <title>Multiple spindles visualization</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
@@ -22,16 +22,16 @@
 
 
 <body>
-<h1>Visualizzazione spindle multipli</h1>
+<h1>Multiple spindles visualization</h1>
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
 <!--<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”></Body>-->
 
-<input type = "checkbox" id ="aggregato" class = "checkbox" onchange ="aggregate()"> Aggregato per attributo
+<input type = "checkbox" id ="aggregato" class = "checkbox" onchange ="aggregate()"> Aggregate
 <!--<input type = "checkbox" id ="tamb" class = "checkbox" onchange ="modifyElement('tamb')" checked> Tamb
 <input typddde = "checkbox" id ="tba" class = "checkbox" onchange ="modifyElement('tba')" checked> Tba -->
 
 <select id="selectMenu" >
-  <option value="" disabled selected>Selezione attributo</option>
+  <option value="" disabled selected>Select attribute</option>
 </select>
 <div id="selectedValues"></div>
 
@@ -180,7 +180,7 @@
               .attr('text-anchor', 'middle')
               .style('font-family', 'Helvetica')
               .style('font-size', 20)
-              .text("Grafico Aggregato " + allGroup[i]);
+              .text(allGroup[i] + "Aggregate Chart");
 
             // X label
             new_svg.append('text')
@@ -430,7 +430,7 @@
               .attr('text-anchor', 'middle')
               .style('font-family', 'Helvetica')
               .style('font-size', 20)
-              .text('Grafico ' + selectedOption);
+              .text(selectedOption + 'chart');
 
             // X label
             svg.append('text')
@@ -619,7 +619,7 @@
                     .attr('text-anchor', 'middle')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 20)
-                    .text('Grafico ' + selectedOption);
+                    .text(selectedOption + 'chart');
         
                 // X label
                 svg.append('text')

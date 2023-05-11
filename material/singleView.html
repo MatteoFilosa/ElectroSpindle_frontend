@@ -3,7 +3,7 @@
 <head>
     <!---Step 2-->
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <title>Spindle singolo</title>
+    <title>Single spindle visualization</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="./style_single.css"></link>
@@ -20,14 +20,14 @@
 </head>
 
 <body>
-<h1>Visualizzazione spindle singolo</h1>
+<h1>Single spindle visualization</h1>
 <!-- <Body background="images/PROVA.png" background-repeat="no-repeat” background-size="cover”>  -->
 <!--<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”></Body>-->
 <div id ="selectedSpindles"></div>
-<input type = "checkbox" id ="aggregato" class = "checkbox" onclick="aggregateHelper()" > Aggregato
+<input type = "checkbox" id ="aggregato" class = "checkbox" onclick="aggregateHelper()" > Aggregate
 
 <select id="selectMenu">
-  <option value="" disabled selected>Selezione attributo</option>
+  <option value="" disabled selected>Select attribute</option>
 </select>
 <div id = "selectedValues"></div>
 
@@ -42,11 +42,11 @@
 <div id = "problems-found">
 
 
-    <h3>Problemi trovati </h3>
+    <h3>Problems found </h3>
     <!--
     <img src="images/warning.png" style="vertical-align:middle" alt="warning" width="25" height="25"> Problema in: Tba
      -->
-    <img src="images/check.png" style="vertical-align:middle" alt="check" width="25" height="25"> Nessun problema trovato!
+    <img src="images/check.png" style="vertical-align:middle" alt="check" width="25" height="25"> No problem found!
 
     <!--<img src="images/2.png" style="vertical-align:middle" alt="check" width="150" height="80">-->
 
@@ -63,7 +63,7 @@
 
 
 <div id = "coordinates"></div>
-<button id = "clear" onclick="clearSvg()" class = "button-blue">Rimuovi tutto</button>
+<button id = "clear" onclick="clearSvg()" class = "button-blue">Clear all</button>
 
 <script>
 
@@ -125,7 +125,7 @@
           .attr('text-anchor', 'middle')
           .style('font-family', 'Helvetica')
           .style('font-size', 20)
-          .text("Grafico Misto");
+          .text("Aggregate chart");
 
         // X label
         new_svg.append('text')
@@ -142,7 +142,7 @@
           .attr('transform', 'translate(40,' + height + ')rotate(-90)')
           .style('font-family', 'Helvetica')
           .style('font-size', 12)
-          .text("Valori misti");
+          .text("Aggregate values");
 
         var xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
           yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
@@ -501,7 +501,7 @@
                 .attr('text-anchor', 'middle')
                 .style('font-family', 'Helvetica')
                 .style('font-size', 20)
-                .text("Grafico Misto");
+                .text("Aggregate chart");
 
               // X label
               new_svg.append('text')
@@ -518,7 +518,7 @@
                 .attr('transform', 'translate(40,' + height + ')rotate(-90)')
                 .style('font-family', 'Helvetica')
                 .style('font-size', 12)
-                .text("Valori misti");
+                .text("Aggregate values");
 
               for (let j = 0; j < valori.length; j++) { //Serve per scalare gli assi correttamente
 
@@ -819,7 +819,7 @@
             .attr('text-anchor', 'middle')
             .style('font-family', 'Helvetica')
             .style('font-size', 20)
-            .text("Grafico " + selectedGroup);
+            .text(selectedGroup + "Chart");
         
             // X label
             new_svg.append('text')
@@ -936,7 +936,7 @@
 
         var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
         
-        document.getElementById("selectedSpindles").innerHTML += "Spindle selezionato: "+ id_and_sn[0][1] 
+        document.getElementById("selectedSpindles").innerHTML += "Selected spindle: "+ id_and_sn[0][1] 
             
 
             

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--<meta http-equiv="X-UA-Compatible" content="ie=edge">-->
     <title>Features</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_features.css">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -17,13 +17,13 @@
     
     <!--<Body background="images/test.png" background-repeat="no-repeat” background-size="cover”></Body>-->
     <select id="selectMenuFeatures">
-        <option value="" disabled selected>Selezione feature</option>
+        <option value="" disabled selected>Select feature</option>
     </select>
     <br>
     <div id = "selectedFeatures"></div>
     <br>
     <select id="selectMenu">
-        <option value="" disabled selected>Selezione attributo</option>
+        <option value="" disabled selected>Select attribute</option>
     </select>
     <br>
     <div id = "selectedValues"></div>
@@ -31,7 +31,7 @@
     <div id="coordinates"></div>
     <div id ="svg-div">
       
-      <div id = "loading">Caricamento...</div>
+      <div id = "loading">Loading...</div>
     <svg width='500' height='400' id='svg_last_tba'></svg>
     <div id="tooltip"></div>
     </div>
@@ -329,7 +329,7 @@
                 .style('font-family', 'Helvetica')
                 .style('font-size', 20)
                 .style('fill', "#CC0000" )
-                .text("■ Media(μ)")
+                .text("■ Average(μ)")
                 
               new_svg.append('text')
                 .attr('x', width / 2 + 90)
