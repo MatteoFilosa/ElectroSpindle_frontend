@@ -12,6 +12,14 @@ html * {
     transform: scale(1.2);
 }
 
+#spindleRow{
+    border-width: thin;
+    border-style:solid;
+    border-color: grey;
+    padding-top: 8px;
+    
+}
+
 
 
 /* CSS */
@@ -337,6 +345,10 @@ input[type=checkbox] {
 
 }
 
+#header{
+    color: gray;
+}
+
 #availableSpindles {
 
     position: absolute;
@@ -354,6 +366,9 @@ input[type=checkbox] {
     padding-left: 2.5px;
     padding-top: 20px;
     padding-right: 2.5px;
+    border-style: outset;
+    border: 1px solid gray;
+        
 
 }
 
