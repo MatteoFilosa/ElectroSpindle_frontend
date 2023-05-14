@@ -81,7 +81,23 @@
 <button id = "clear" onclick="clearSvg()" class = "button-blue">Clear all</button>
 
 <script>
-  
+
+  function rescale(selectedGroup, min, max) {
+
+    var xScale = d3.scaleLinear().domain([0, 43100]).range([0, 1200]),
+      yScale = d3.scaleLinear().domain([min, max]).range([1200, 0]);
+
+    // change scale to 0, to between 10 and 100
+      d3.select("#xAxis" + selectedGroup) // https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease
+        .call(d3.axisBottom(xScale));
+
+     // change scale to 0, to between 10 and 100
+      d3.select("#xAxis" + selectedGroup) // https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease
+        .call(d3.axisLeft(yScale));
+
+     
+    }
+
 
   function sleep(time) {
       return new Promise((resolve) => setTimeout(resolve, time));
@@ -159,6 +175,13 @@
           .style('font-family', 'Helvetica')
           .style('font-size', 12)
           .text("Aggregate values");
+
+        new_svg.append("svg:image")
+          .attr('x', -9)
+          .attr('y', -12)
+          .attr('width', 20)
+          .attr('height', 24)
+          .attr("xlink:href", "images/lens.png")
 
         var xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
           yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
@@ -808,7 +831,7 @@
           xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
           yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
-          //d3.select("#loader").style("display", "none");
+      
 
           //Creazione grafico
 
@@ -863,10 +886,20 @@
 
             g.append("g")
             .attr("transform", "translate(0," + height + ")")
+            .attr("id", function (d, i) { return "xAxis" + selectedGroup })
             .call(d3.axisBottom(xScale));
         
             g.append("g")
+            .attr("id", function (d, i) { return "yAxis" + selectedGroup })
             .call(d3.axisLeft(yScale));
+
+            new_svg.append("svg:image")
+              .attr('x', 720)
+              .attr('y', 400)
+              .attr('width', 30)
+              .attr('height', 30)
+              .attr("xlink:href", "images/lens.png")
+              .on("click", rescale(selectedGroup, min, max))
         
             // Step 7
             new_svg.append('g')
@@ -913,6 +946,8 @@
             selectedValues.push(selectedGroup)
             localStorage.setItem("selectedValues", JSON.stringify(selectedValues))
 
+            //d3.select("#loader").attr("hidden", true);
+
 
         }
 
@@ -942,7 +977,6 @@
 
     else if (checkBoxAggregato.checked == true){ 
 
-      //d3.select("#loader").style("display", "block");
 
       document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + "<label for='" + selectedOption + "' id = 'label" + selectedOption + "'>" + selectedOption + "</label>" 
       localStorage.setItem("selectedOption", JSON.stringify(selectedOption))
