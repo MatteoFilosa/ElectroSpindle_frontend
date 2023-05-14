@@ -48,9 +48,10 @@
 
 <!--Step 2-->
 <div id = "svg-div">
-  
-  
+ <!--<div id="loader"></div>-->
+
 </div>
+
 <div id="tooltip"></div>
 
 <div id = "problems-found">
@@ -80,6 +81,7 @@
 <button id = "clear" onclick="clearSvg()" class = "button-blue">Clear all</button>
 
 <script>
+  
 
   function sleep(time) {
       return new Promise((resolve) => setTimeout(resolve, time));
@@ -460,6 +462,8 @@
 
                 }
               }
+
+            
               
 
             if (toAddDefault == 1){ //ho un solo valore da iterare (toAddDefault vuol dire che aggiungo un valore al grafico grosso)
@@ -772,25 +776,11 @@
 
             }
 
-            
 
-
-    
-
-            
 
             //IMPORTANTE CREAZIONE DOT E PATH
         if(toAddDefault == 1) valori = toAddDefaultArray
-        
 
-        for(let j = 0; j < valori.length; j++){ //QUI
-
-         
-
-          
-          
-        }
-        
           }
           
         else if (aggregato == 0){ //Caso NON aggregato
@@ -817,6 +807,8 @@
        
           xScale = d3.scaleLinear().domain([0, 43100]).range([0, width]),
           yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
+
+          //d3.select("#loader").style("display", "none");
 
           //Creazione grafico
 
@@ -926,6 +918,8 @@
 
   d3.select("#selectMenu").on("change", function(d) {
 
+
+      
       //if(selectedOption != undefined) document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + selectedOption + "</checkbox>"
       //document.getElementById("selectedOption").style.visibility = "hidden"
       var checkBoxAggregato = document.getElementById("aggregato");
@@ -947,6 +941,8 @@
     }
 
     else if (checkBoxAggregato.checked == true){ 
+
+      //d3.select("#loader").style("display", "block");
 
       document.getElementById("selectedValues").innerHTML += '<input type = "checkbox" id = "' + selectedOption +'" onchange = "modifyElement('+ selectedOption +')" checked>' + "<label for='" + selectedOption + "' id = 'label" + selectedOption + "'>" + selectedOption + "</label>" 
       localStorage.setItem("selectedOption", JSON.stringify(selectedOption))

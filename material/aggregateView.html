@@ -146,6 +146,8 @@
 
       if(document.getElementById("aggregato").checked == true){
 
+        document.getElementById('selectMenu').setAttribute("disabled", "disabled")
+
         colorSelector = 0
       
         d3.select("#svg_default").attr("visibility", "visible");
@@ -180,7 +182,7 @@
               .attr('text-anchor', 'middle')
               .style('font-family', 'Helvetica')
               .style('font-size', 20)
-              .text(allGroup[i] + "Aggregate Chart");
+              .text(allGroup[i] + " Aggregate Chart");
 
             // X label
             new_svg.append('text')
@@ -319,6 +321,7 @@
 
       else if (document.getElementById("aggregato").checked == false){
 
+        document.getElementById("selectMenu").disabled = "false"
 
         d3.selectAll(".svg_aggregate").remove()
         count = 0
@@ -430,7 +433,7 @@
               .attr('text-anchor', 'middle')
               .style('font-family', 'Helvetica')
               .style('font-size', 20)
-              .text(selectedOption + 'chart');
+              .text(selectedOption + ' chart');
 
             // X label
             svg.append('text')
@@ -619,7 +622,7 @@
                     .attr('text-anchor', 'middle')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 20)
-                    .text(selectedOption + 'chart');
+                    .text(selectedOption + ' chart');
         
                 // X label
                 svg.append('text')
