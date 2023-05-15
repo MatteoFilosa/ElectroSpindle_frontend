@@ -411,12 +411,18 @@ h3 {
 #day-start {
 
     display: inline-block;
+    position: absolute;
+    left: 345px;
+    top: 160px;
 
 }
 
 #day-end {
 
     display: inline-block;
+    position: absolute;
+    left: 485px;
+    top: 160px;
 
 }
 
@@ -441,10 +447,10 @@ h3 {
     top: 428px;
 }
 
-#submit {
+#resetFilters {
 
     position: absolute;
-    left: 285px;
-    top: 288px;
+    left: 225px;
+    top: 155px;
 
 }

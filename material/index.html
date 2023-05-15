@@ -56,15 +56,13 @@ Breakins available from 10/01/2022 to 21/09/2022
 <br> <br>
 
 <div class = "button-wrapper">
-  <h4>Pick date</h4>
-  <button class = "button-green" onclick = "displayCalendar(0)" id = "daButton">From</button>
+
+  <button class = "button-green" onclick = "displayCalendar()" id = "PickDate">Pick date</button>
 
   <div id = "day-start">  </div>
 
   <br>
   <br>
-<button class = "button-green" onclick = "displayCalendar(1)" id = "aButton" disabled = true >To</button>
-
 
 <div id = "day-end">  </div>
 
@@ -103,7 +101,7 @@ Breakins available from 10/01/2022 to 21/09/2022
   </div>
   <div class="month-list" id = "month-list"></div>
 </div>
-<button class="button-green" id="submit" onclick="resetFilters()">Reset filters</button>
+<button class="button-green" id="resetFilters" onclick="resetFilters()">Reset filters</button>
 
 <div id="dstCalendar">
  
@@ -311,34 +309,13 @@ function resetFilters(){
 }
 
 
-        function displayCalendar(direction){ // 0 vuol dire che ho cliccato "Da", 1 vuol dire che ho cliccato "A"
+        function displayCalendar(){ 
 
 
 
           var calendar = document.getElementById("calendar-original")
-          var dayStart = document.getElementById("day-start")
-          var dayEnd = document.getElementById("day-end")
           calendar.hidden = false;
-          //Migliorare popup
-          //if(direction == 0) calendar.style = "margin-left: 20px;"
-          //else calendar.style = "margin-left: 100px;"
-          if(direction == 0){
-              document.getElementById("daButton").disabled = true
-              document.getElementById("aButton").disabled = false
-            if (dayStart.innerHTML.length >= 10){
          
-              dayStart.innerHTML = "Pick date"
-              
-          }
-        }
-        else {
-          document.getElementById("daButton").disabled = false
-          if (dayEnd.innerHTML.length >= 10){
-              dayEnd.innerHTML = "Pick date"
-              
-          }
-
-        }
       }
 
         function redirectView(){
