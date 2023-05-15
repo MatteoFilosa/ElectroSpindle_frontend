@@ -96,6 +96,10 @@ let curr_year = {value: currDate.getFullYear()}
 
 generateCalendar(curr_month.value, curr_year.value)
 
+function resetCalendar(){
+    flag = 0
+}
+
 
 function setDate(day){
 
