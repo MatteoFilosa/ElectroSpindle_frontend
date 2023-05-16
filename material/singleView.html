@@ -284,13 +284,13 @@
         .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
         var coordinates = - 750,  colorSelector = 0, selectedValues = [], globalData = []
-        var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
+        var sn_and_date = JSON.parse(localStorage.getItem("selectedSpindles"));
 
 
 
 
         var globalData = []
-        d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[0][0] +"/raw_data?downsample=100", function(data) {
+        d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + sn_and_date[0][0] +"/raw_data?downsample=100", function(data) {
           
           for (var key in data) {
             var value = data[key];
@@ -1185,9 +1185,9 @@
 
 
 
-        var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
+        var sn_and_date = JSON.parse(localStorage.getItem("selectedSpindles"));
         
-        document.getElementById("selectedSpindles").innerHTML += "Selected spindle: "+ id_and_sn[0][1] 
+        document.getElementById("selectedSpindles").innerHTML += "Selected spindle: "+ sn_and_date[0][1] 
             
 
             

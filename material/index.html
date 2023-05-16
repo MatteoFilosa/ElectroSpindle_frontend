@@ -190,7 +190,7 @@ function saveSpindle(sn){
   if(document.getElementById(sn).checked == true){
 
     for(let i = 0; i < sn_and_date.length; i++){
-      if(sn_and_date[i][1] == sn) to_write = "<span id = 'spindlesSpan'>" + sn + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>" + "<span id = 'spindlesSpan'>" + sn_and_date[i][2] + "</span>"
+      if(sn_and_date[i][0] == sn) to_write = "<span id = 'spindlesSpan'>" + sn + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>" + "<span id = 'spindlesSpan'>" + sn_and_date[i][1] + "</span>"
 
     }
     
@@ -327,9 +327,9 @@ function resetFilters(){
             
 
             
-            for(i = 0; i <145; i++){
+            for(i = 0; i <256; i++){
 
-              var tmp = sn_and_date[i][1]
+              var tmp = sn_and_date[i][0]
 
                 for(var j=0; j<nodes.length; j++) {
                   
