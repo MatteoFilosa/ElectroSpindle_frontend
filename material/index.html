@@ -184,13 +184,13 @@ function sleep (time) {
 function saveSpindle(sn){
 
 
-  id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"))
+  sn_and_date = JSON.parse(localStorage.getItem("sn_and_date"))
   var to_write = ""
 
   if(document.getElementById(sn).checked == true){
 
-    for(let i = 0; i < id_and_sn.length; i++){
-      if(id_and_sn[i][1] == sn) to_write = "<span id = 'spindlesSpan'>" + sn + "</span>" + "<span id = 'spindlesSpan'>" + "H6161H2188" + "</span>" + "<span id = 'spindlesSpan'>" + id_and_sn[i][2] + "</span>"
+    for(let i = 0; i < sn_and_date.length; i++){
+      if(sn_and_date[i][1] == sn) to_write = "<span id = 'spindlesSpan'>" + sn + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>" + "<span id = 'spindlesSpan'>" + sn_and_date[i][2] + "</span>"
 
     }
     
@@ -293,17 +293,17 @@ function resetFilters(){
   document.getElementById("request").value = ""
   //document.getElementById("daButton").disabled = false
 
-  id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"))
+  sn_and_date = JSON.parse(localStorage.getItem("sn_and_date"))
 
   clearAvailableSpindles()
 
-  for (i = 0; i < id_and_sn.length; i++) {              
+  for (i = 0; i < sn_and_date.length; i++) {              
 
           
-                var to_write = "<span id = 'spindlesSpan'>" + id_and_sn[i][1]  + "</span>" + "<span id = 'spindlesSpan'>" + "H6161H2188" + "</span>" + "<span id = 'spindlesSpan'>" + id_and_sn[i][2] + "</span>"
+                var to_write = "<span id = 'spindlesSpan'>" + sn_and_date[i][1]  + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>" + "<span id = 'spindlesSpan'>" + sn_and_date[i][2] + "</span>"
                 console.log(to_write)
    
-                    document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'> <input type = 'checkbox' class = 'checkbox-spindles' id = '"+ id_and_sn[i][1] +"'onclick = saveSpindle("+ id_and_sn[i][1] +")>"+ "<label for='" + id_and_sn[i][1] + "'>" + to_write + "</label></div>"  
+                    document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'> <input type = 'checkbox' class = 'checkbox-spindles' id = '"+ sn_and_date[i][1] +"'onclick = saveSpindle("+ sn_and_date[i][1] +")>"+ "<label for='" + sn_and_date[i][1] + "'>" + to_write + "</label></div>"  
  
 }
 }
@@ -321,7 +321,7 @@ function resetFilters(){
         function redirectView(){
             
             var selected_sn = []
-            var id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"));
+            var sn_and_date = JSON.parse(localStorage.getItem("sn_and_date"));
          
             var nodes = document.getElementById('selectedSpindles').childNodes;
             
@@ -329,7 +329,7 @@ function resetFilters(){
             
             for(i = 0; i <145; i++){
 
-              var tmp = id_and_sn[i][1]
+              var tmp = sn_and_date[i][1]
 
                 for(var j=0; j<nodes.length; j++) {
                   
@@ -341,7 +341,7 @@ function resetFilters(){
 
                       for(let z = 0; z < nodesToPush.length; z++){
 
-                        if ((nodesToPush[z].id == tmp) && (nodesToPush[z].checked == true)) selected_sn.push(id_and_sn[i])
+                        if ((nodesToPush[z].id == tmp) && (nodesToPush[z].checked == true)) selected_sn.push(sn_and_date[i])
 
                       }
 
@@ -383,30 +383,34 @@ function resetFilters(){
             }
         }        
 
-        d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin?model=H6161H2188&start=0&limit=-1", function(data) {
+        d3.json("http://arca.diag.uniroma1.it:8082/data/breakin", function(data) {
         
         var tmp_id, tmp_sn
 
-        var id_and_sn = []
+        var sn_and_date = []
         var datasetDataInizio = []
         var datasetDataFine = []
+        console.log(data.length)
 
-            for(let i = 0; i< 145; i++){
+            for(let i = 0; i< data.length; i++){
 
-                datasetDataInizio.push([data.breakin_data[i].date, data.breakin_data[i].time ]);
-                datasetDataFine.push([data.breakin_data[i].date, data.breakin_data[i].time ]);
-                tmp_id = data.breakin_data[i].sequence_id
-                tmp_sn = data.breakin_data[i]["serial number"]
-                tmp_date = data.breakin_data[i]["date"]
-                id_and_sn.push([tmp_id, tmp_sn, tmp_date])
-                var to_write = "<span id = 'spindlesSpan'>" + data.breakin_data[i]["serial number"] + "</span>" + "<span id = 'spindlesSpan'>" + "H6161H2188" + "</span>" + "<span id = 'spindlesSpan'>" + tmp_date + "</span>"
-                document.getElementById("availableSpindles").innerHTML +=  "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' + id = '"+ data.breakin_data[i]["serial number"] +"' + onclick = saveSpindle("+ data.breakin_data[i]["serial number"] +")>"+ "<label for='" + data.breakin_data[i]["serial number"] +"'>"+ to_write + "</label></div>" 
+                tmp_date = data[i]["Date_start"]
+                tmp_sn = data[i]["Serial Number"]
+                tmp_date = tmp_date.slice(0,9)
+                console.log(tmp_date)
+
+                datasetDataInizio.push(tmp_date);
+                datasetDataFine.push(tmp_date);
+             
+                sn_and_date.push([tmp_sn, tmp_date])
+                var to_write = "<span id = 'spindlesSpan'>" + data[i]["Serial Number"] + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>" + "<span id = 'spindlesSpan'>" + tmp_date + "</span>"
+                document.getElementById("availableSpindles").innerHTML +=  "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' + id = '"+ data[i]["Serial Number"] +"' + onclick = saveSpindle("+ data[i]["Serial Number"] +")>"+ "<label for='" + data[i]["Serial Number"] +"'>"+ to_write + "</label></div>" 
                 
                 
             }
              
             
-            localStorage.setItem("id_and_sn", JSON.stringify(id_and_sn))
+            localStorage.setItem("sn_and_date", JSON.stringify(sn_and_date))
             datasetDataInizio.sort(sortFunction)
             datasetDataFine.sort(sortFunction)
             //Sorting anche in base all'ora
@@ -419,7 +423,7 @@ function resetFilters(){
 
         })
         //per ora un solo modello
-        var modelli = ["H6161H2188"]
+        var modelli = ["ES951"]
 
         d3.select("#modello")
         .selectAll('myOptions')
@@ -435,7 +439,7 @@ function resetFilters(){
     
         d3.select("#calendar-original").on("click", function(d){
 
-          var id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"));
+          var sn_and_date = JSON.parse(localStorage.getItem("sn_and_date"));
           var id_to_save = []
           var sn_to_save = []
 
@@ -473,35 +477,62 @@ function resetFilters(){
           if(mese_fine == "November") mese_fine = "11"
           if(mese_fine == "December") mese_fine = "12"
 
+          if(data_inizio == "1") data_inizio = "01"
+          if(data_inizio == "2") data_inizio = "02"
+          if(data_inizio == "3") data_inizio = "03"
+          if(data_inizio == "4") data_inizio = "04"
+          if(data_inizio == "5") data_inizio = "05"
+          if(data_inizio == "6") data_inizio = "06"
+          if(data_inizio == "7") data_inizio = "07"
+          if(data_inizio == "8") data_inizio = "08"
+          if(data_inizio == "9") data_inizio = "09"
+          
+
+          if(data_fine == "1") data_fine = "01"
+          if(data_fine == "2") data_fine = "02"
+          if(data_fine == "3") data_fine = "03"
+          if(data_fine == "4") data_fine = "04"
+          if(data_fine == "5") data_fine = "05"
+          if(data_fine == "6") data_fine = "06"
+          if(data_fine == "7") data_fine = "07"
+          if(data_fine == "8") data_fine = "08"
+          if(data_fine == "9") data_fine = "09"
+
 
           var anno_inizio = JSON.parse(localStorage.getItem("year-start"))
           var anno_fine = JSON.parse(localStorage.getItem("year-end"))
 
-          data_inizio = anno_inizio + "." + mese_inizio + "." + data_inizio
-          data_fine = anno_fine + "." + mese_fine + "." + data_fine
+          data_inizio = anno_inizio + "-" + mese_inizio + "-" + data_inizio
+          data_fine = anno_fine + "-" + mese_fine + "-" + data_fine
 
           console.log(data_inizio, data_fine)
 
           
-            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin?model=H6161H2188&start=0&limit=-1", function(data){
+            d3.json("http://arca.diag.uniroma1.it:8082/data/breakin", function(data){
                 
                 var spindle_sn = document.getElementById('request').value
+                var tmp_date
+                console.log(data)
                 
                 var to_write = ""
                 clearAvailableSpindles()
 
-            for(let i = 0; i< 145; i++){
+            for(let i = 0; i< data.length; i++){
 
+              tmp_date =  data[i]["Date_start"]
+              tmp_date = tmp_date.slice(0, -9)
+              console.log(tmp_date, data_inizio, data_fine)
                 
               //console.log(data.breakin_data[i].date)
-                if((data.breakin_data[i].date >= data_inizio) && (data.breakin_data[i].date <= data_fine)) {
+                if((data[i]["Date_start"] >= data_inizio) && (data[i]["Date_start"] <= data_fine)) {
 
                     if(document.getElementById("request").value == ""){
 
-                      id_to_save.push(data.breakin_data[i].sequence_id)
-                      sn_to_save.push(data.breakin_data[i]["serial number"])
-                      to_write = data.breakin_data[i]["serial number"]
-                      var real_write = "<span id = 'spindlesSpan'>" + to_write + "</span>" + "<span id = 'spindlesSpan'>" +"H6161H2188" + "</span>"  + "<span id = 'spindlesSpan'>" + data.breakin_data[i]["date"] + "</span>"
+                    
+                      sn_to_save.push(data[i]["Serial Number"])
+                      to_write = data[i]["Serial Number"]
+                      console.log(data[i]["Serial Number"])
+                      var real_write = "<span id = 'spindlesSpan'>" + to_write + "</span>" + "<span id = 'spindlesSpan'>" +"ES951" + "</span>"  + "<span id = 'spindlesSpan'>" + tmp_date + "</span>"
                       document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' id = '"+ to_write +"'onclick = saveSpindle("+ to_write +")>"+ "<label for='" + to_write + "'>" + real_write + "</label></div>"
 
                     }
@@ -509,16 +540,16 @@ function resetFilters(){
                     else{
 
                       var written = document.getElementById("request").value
-                      var tmp = data.breakin_data[i]["serial number"]
+                      var tmp = data[i]["Serial Number"]
                       const found = tmp.match(written);
                       if(found != null){
                       var tmp = found["input"]
-                      var real_write = data.breakin_data[i]["serial number"] + "   H6161H2188    " + data.breakin_data[i]["date"]
+                      var real_write = data[i]["Serial Number"] + "   ES951    " + data[i]["Date_start"]
                       if(tmp!=null) document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + real_write + "</label></div>"
                       }
 
-                      id_to_save.push(data.breakin_data[i].sequence_id)
-                      sn_to_save.push(data.breakin_data[i]["serial number"], data.breakin_data[i]["date"])
+                
+                      sn_to_save.push(data[i]["Serial Number"], tmp_date)
                       
                     }
 
@@ -545,7 +576,7 @@ function resetFilters(){
 
             // gestire anche filtro calendario
 
-            var id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"));
+            var sn_and_date = JSON.parse(localStorage.getItem("sn_and_date"));
             var written = document.getElementById("request").value
             
             
@@ -553,13 +584,13 @@ function resetFilters(){
             if((document.getElementById("day-start").innerHTML.length <= 10) || (document.getElementById("day-end").innerHTML.length <= 10)){ // se la data non è stata pickata
               clearAvailableSpindles()
 
-              for(i = 0; i <145; i++){
-                var tmp = id_and_sn[i][1]
+              for(i = 0; i < 256; i++){
+                var tmp = sn_and_date[i][0]
                 const found = tmp.match(written);
                 if(found != null){
                 var tmp = found["input"]
-                var to_write = "<span id = 'spindlesSpan'>" + tmp + "</span>" + "<span id = 'spindlesSpan'>" +"H6161H2188" + "</span>"  + "<span id = 'spindlesSpan'>" + id_and_sn[i][2] + "</span>"
-                console.log(id_and_sn[i][2])
+                var to_write = "<span id = 'spindlesSpan'>" + tmp + "</span>" + "<span id = 'spindlesSpan'>" +"ES951" + "</span>"  + "<span id = 'spindlesSpan'>" + sn_and_date[i][1] + "</span>"
+                
                 if(tmp!=null) document.getElementById("availableSpindles").innerHTML +=  "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + to_write + "</label></div>" 
             }
             }
@@ -570,7 +601,7 @@ function resetFilters(){
               
               clearAvailableSpindles()
               var filterHelper = JSON.parse(localStorage.getItem("filterHelper"))
-              var id_and_sn = JSON.parse(localStorage.getItem("id_and_sn"))
+              var sn_and_date = JSON.parse(localStorage.getItem("sn_and_date"))
 
              
               
@@ -581,32 +612,26 @@ function resetFilters(){
    
                     if(found != null){
 
-                      for(let j = 0; j < id_and_sn.length; j++){
-                        if (filterHelper[i] == id_and_sn[j][1]) date = id_and_sn[j][2]
+                      for(let j = 0; j < sn_and_date.length; j++){
+                        if (filterHelper[i] == sn_and_date[j][0]) date = sn_and_date[j][1]
 
                       }
                       
                       var tmp = found["input"]
-                      var to_write = "<span id = 'spindlesSpan'>" + tmp + "</span>" + "<span id = 'spindlesSpan'>" + "H6161H2188" + "</span>"+  "<span id = 'spindlesSpan'>" + date + "</span>" //la data
+                      var to_write = "<span id = 'spindlesSpan'>" + tmp + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>"+  "<span id = 'spindlesSpan'>" + date + "</span>" //la data
                       console.log(filterHelper)
                       if(tmp!=null) document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' id = '"+ tmp +"' onclick = saveSpindle("+ tmp +")>"+ "<label for='" + tmp + "'>" + to_write + "</label></div>" 
                       }
 
                   
             }
-      
-                
-                
 
             }
     
-            
-    
+
             });
 
-            
-            
-            
+
             
             })
     
