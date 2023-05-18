@@ -63,7 +63,7 @@
         var colors = ["#CC0000",'#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed', '#ff69b4','#ba55d3','#cd5c5c','#cc5500','#40e0d0'];
         var featuresGroup = ["Last value"]
         var datasetLastTba = [];
-        var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
+        var sn_and_date = JSON.parse(localStorage.getItem("selectedSpindles"));
         var allGroup = ["Tba"]
 
         d3.select("#selectMenuFeatures")
@@ -84,12 +84,12 @@
         .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
 
-        for (let i = 0; i < id_and_sn.length; i++){
-            if (id_and_sn.length >= 50) document.getElementById("svg_last_tba").style = "margin-top: 240px;"
-            var tmp = id_and_sn[i]
+        for (let i = 0; i < sn_and_date.length; i++){
+            if (sn_and_date.length >= 50) document.getElementById("svg_last_tba").style = "margin-top: 240px;"
+            var tmp = sn_and_date[i][0]
             var virgola = ", "
-            if(i+1 == id_and_sn.length) virgola = ""
-            document.getElementById("featuresH3").innerHTML += tmp[1] + virgola
+            if(i+1 == sn_and_date.length) virgola = ""
+            document.getElementById("featuresH3").innerHTML += tmp + virgola
         }
         
         var valori = JSON.parse(localStorage.getItem("selectedValuesFeatures"))
@@ -103,15 +103,16 @@
 
         
 
-        for (let i = 0; i < id_and_sn.length; i++) {
+        for (let i = 0; i < sn_and_date.length; i++) {
 
-            d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + id_and_sn[i][0] + "/features", function (data) {
+            d3.json('http://arca.diag.uniroma1.it:8082/data/breakin/'+ sn_and_date[i][0] + '/features_values?columns=Tba&feature=lastValue', function (data) {
 
-              datasetLastTba.push([i + 1, data.last_tba, id_and_sn[i][1]])
+              console.log(data["Last Tba"])
+              datasetLastTba.push([i + 1, data["Last Tba"], sn_and_date[i][0]])
         
             })
 
-            if(i + 1 == id_and_sn.length) document.getElementById("loading").innerHTML = ""
+            if(i + 1 == sn_and_date.length) document.getElementById("loading").innerHTML = ""
 
           }
 
@@ -122,15 +123,18 @@
 
           sleep(1000).then(() => { //devo farlo per forza perché l'api è lenta a prendere i dati
 
+
           for (let i = 0; i < datasetLastTba.length; i++){
             console.log(datasetLastTba[i][1])
+            
             if(datasetLastTba[i][1] > max) max = datasetLastTba[i][1]
 
             if(datasetLastTba[i][1] < min) min = datasetLastTba[i][1]
 
-            count += datasetLastTba[i][1] 
+            count  = count + datasetLastTba[i][1] 
 
           }
+          console.log(count)
           media = count/ datasetLastTba.length
           var countVarianza = 0
           console.log(media)
@@ -213,7 +217,7 @@
                 width = new_svg.attr("width") - margin, //300
                 height = new_svg.attr("height") - margin //200
 
-              xScale = d3.scaleLinear().domain([0, id_and_sn.length]).range([0, width]),
+              xScale = d3.scaleLinear().domain([0, sn_and_date.length]).range([0, width]),
               yScale = d3.scaleLinear().domain([min, max]).range([height, 0]);
 
 

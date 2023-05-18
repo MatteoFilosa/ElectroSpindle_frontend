@@ -58,39 +58,14 @@
 
 <script>
 
-    
-    var selectedSpindles = JSON.parse(localStorage.getItem("selectedSpindles"))
-
-
-
-    /*
-    for (let j = 0; j < selectedSpindles.length; j++) {
-
-      globalData.push[j]
-    }
-    */
-
-    
-   var globalData = []
-
-    for (let j = 0; j < selectedSpindles.length; j++) {
-      d3.json("http://arca.diag.uniroma1.it:8082/spindles/breakin/" + selectedSpindles[j][0] + "/raw_data?downsample=100", function (data) {
-
-      
-      for (var key in data) {
-          var value = data[key];
-          var nuovoArray = [value];
-          globalData.push(nuovoArray);
-          
-
-        }
-     })
+  function sleep(time) {
+      return new Promise((resolve) => setTimeout(resolve, time));
     }
 
-    console.log(globalData);
- 
-
-  var allGroup = ["Tamb", "Tba", "Itot", "Qtir", "Speed_S3_BUS", "Speed_Sync", "Tdut2", "Tdut3", "VibANT_Sync", "Step"]
+    
+   var selectedSpindles = JSON.parse(localStorage.getItem("selectedSpindles"))
+   var globalData = [], current_spindle
+   var allGroup = ["Tamb", "Tba", "Itot", "Qtir", "Speed_S3_BUS", "Speed_Sync", "Tdut2", "Tdut3", "VibANT_Sync", "Step"]
     d3.select("#selectMenu")
       .selectAll('myOptions')
       .data(allGroup)
@@ -98,6 +73,60 @@
       .append('option')
       .text(function (d) { return d; }) // text showed in the menu
       .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
+
+    console.log(selectedSpindles)
+
+    const spindleArrays = {};
+
+      for (let j = 0; j < selectedSpindles.length; j++) {
+        // Get the current selected spindle
+        const spindle = selectedSpindles[j][0];
+
+        for (let i = 0; i < allGroup.length; i++) {
+          const column = allGroup[i];
+
+          d3.json(
+            "http://arca.diag.uniroma1.it:8082/data/breakin/" +
+            spindle +
+            "/raw_data?mode=0&factor=100&points=0&columns=" +
+            column,
+            function (data) {
+              // Check if the data array for the current spindle exists
+              if (!spindleArrays[spindle]) {
+                spindleArrays[spindle] = {};
+              }
+
+              // Save the data array for the current column
+              spindleArrays[spindle][column] = data;
+              if (j === 0 && column === "Tamb") {
+                // Parse the "Tamb" string into an array
+                const tambString = spindleArrays[spindle][column].Tamb;
+                const tambArray = JSON.parse(tambString);
+
+                // Access and print the first value of "Tamb" of the first spindle
+                const firstTambValue = tambArray[0];
+                console.log("First Tamb value of the first spindle:", firstTambValue);
+              }
+
+    
+            }
+          );
+        }
+      }
+      console.log(spindleArrays);
+
+      sleep(1000).then(() => {
+
+          
+
+
+        })
+      // Example usage of the data arrays
+      
+      
+
+  
 
   function modifyElement(selectedGroup){
 
@@ -107,7 +136,7 @@
     document.getElementById("label" + selectedGroup).remove()
     if (selectedGroup == "Time") selectedGroup = "time"
 
-    for (let i = 0; i < id_and_sn.length; i++) {
+    for (let i = 0; i < sn_and_date.length; i++) {
 
       d3.select("#svg" + selectedGroup + "_" + i).remove();
       
@@ -203,24 +232,30 @@
 
           for (let j = 0; j < selectedSpindles.length; j++) { //Poi, per ogni spindle facente parte di quell'attributo scalo al massimo e minimo e cancello i grafici di prima singoli
 
+              current_spindle = selectedSpindles[j][0]
+              selectedOption = allGroup[i]
               
-              tmp = allGroup[i]
-              console.log(j)
-              if (tmp == "Time") tmp = "time"
-              console.log("#svg" + tmp + "_" + j)
-              d3.select("#svg" + tmp + "_" + j).remove();
+              //accrocco funzionante
+              const attributeArray = spindleArrays[current_spindle][selectedOption];
+              const attributeString = eval("attributeArray." + selectedOption);
+              const attributeValues = JSON.parse(attributeString);
 
-            var data = JSON.parse(localStorage.getItem("storageData" + j))
+              const firstValue = attributeValues[0];
+              console.log("First value of the first spindle:", firstValue);
 
-            for (let z = 0; z < 43100; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
-          if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") != undefined) {
-              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") < min) {
-                min = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]")
 
-              }
-              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") > max) {
-                max = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]")
-              }
+              d3.select("#svg" + selectedOption + "_" + j).remove();
+
+              for (let z = 0; z < 43100; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
+              
+                if (attributeValues[z] != undefined) {
+                if (attributeValues[z] < min) {
+                  min = attributeValues[z]
+
+                }
+                if (attributeValues[z] > max) {
+                  max = attributeValues[z]
+                }
               
 
             }
@@ -239,22 +274,28 @@
 
             for (let j = 0; j < selectedSpindles.length; j++) { //Per ogni spindle facente parte di quell'attributo...
 
-              
-              data = JSON.parse(localStorage.getItem("storageData" + j))
+              current_spindle = selectedSpindles[j][0]
+              const attributeArray = spindleArrays[current_spindle][selectedOption];
+              const attributeString = eval("attributeArray." + selectedOption);
+              const attributeValues = JSON.parse(attributeString);
+
+              const firstValue = attributeValues[0];
+              console.log("First value of the first spindle:", firstValue);
+             
               dataset.length = 0 //annulliamo il dataset ogni volta sennò diventa un misto 
-              for (let z = 0; z < 43100; z++) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
+              for (let z = 0; z < 43100; z+=10) { //Per ogni valore di quello spindle di quell'attributo devo vedere qual è il min o il max per poter scalare bene il grafico
 
-              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") != undefined){
-                if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") < min) {
-                  min = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]")
+              if (attributeValues[z] != undefined){
+                if (attributeValues[z] < min) {
+                  min = attributeValues[z]
 
                 }
-                if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]") > max) {
-                  max = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]")
+                if (attributeValues[z] > max) {
+                  max = attributeValues[z]
                 }
 
-                dataset.push([z + 1, eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]"), selectedSpindles[j][1]]);
-                console.log(z + 1, eval('globalData[' + j + ']' + '[0].' + tmp + "[" + z + "]"), selectedSpindles[j][1])
+                dataset.push([z + 1, attributeValues[z], selectedSpindles[j][1]]);
+                console.log(z + 1, attributeValues[z], selectedSpindles[j][1])
               }
             }
 
@@ -284,8 +325,8 @@
                 .attr("r", 3)
                 .attr("transform", "translate(" + 100 + "," + 100 + ")")
                 .style("fill", colors[colorSelector])
-                .attr("id", function (d, i) { return "dot" + tmp })
-                .on("mouseover", function (d, i) { return displayTooltip(d, i, tmp, event) })
+                .attr("id", function (d, i) { return "dot" + selectedOption })
+                .on("mouseover", function (d, i) { return displayTooltip(d, i, selectedOption, event) })
                 .on("mouseout", function (d, i) { return hideTooltip() })
 
               var line = d3.line()
@@ -301,7 +342,7 @@
                 .style("fill", "none")
                 .style("stroke", colors[colorSelector])
                 .style("stroke-width", "2")
-                .attr("id", function (d, i) { return "path" + tmp });
+                .attr("id", function (d, i) { return "path" + selectedOption });
 
               if (colorSelector < colors.length) colorSelector += 1
               else colorSelector = 0
@@ -334,10 +375,12 @@
         if ((document.getElementById(nodes[i].id) != null) && (nodes[i].id.includes("label") == false )) {
 
           var selectedOption = nodes[i].id
-          console.log(selectedOption)
+         
 
-        for (let j = 0; j < id_and_sn.length; j++) {
-          console.log(id_and_sn.length)
+        for (let j = 0; j < sn_and_date.length; j++) {
+
+          current_spindle = sn_and_date[j][0]
+          
           count += 1
           document.getElementById("svg-div").innerHTML += "<div class='grid-container' id='grid-container" + count + "'>"
 
@@ -365,17 +408,24 @@
             var min = 100000
             var max = 0
 
-            for (let i = 0; i < 43100; i++) {
+            const attributeArray = spindleArrays[current_spindle][selectedOption];
+            const attributeString = eval("attributeArray." + selectedOption);
+            const attributeValues = JSON.parse(attributeString);
+
+            const firstValue = attributeValues[0];
+            console.log("First value of the first spindle:", firstValue);
+
+            for (let i = 0; i < 43100; i += 10) {
 
             
-            if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]") != undefined) {
-              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]") < min) {
-                min = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]")
+            if (attributeValues[i] != undefined) {
+              if (attributeValues[i] < min) {
+                min = attributeValues[i]
               }
-              if (eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]") > max) {
-                max = eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]")
+              if (attributeValues[i] > max) {
+                max = attributeValues[i]
               }
-              dataset.push([i + 1, eval('globalData[' + j + ']' + '[0].' + tmp + "[" + i + "]")]);
+              dataset.push([i + 1, attributeValues[i]]);
               
             }
           }
@@ -459,7 +509,7 @@
               .attr('text-anchor', 'middle')
               .style('font-family', 'Helvetica')
               .style('font-size', 16)
-              .text(id_and_sn[j][1]);
+              .text(sn_and_date[j][1]);
 
 
 
@@ -508,7 +558,7 @@
        
     
 
-    var id_and_sn = JSON.parse(localStorage.getItem("selectedSpindles"));
+    var sn_and_date = JSON.parse(localStorage.getItem("selectedSpindles"));
     //var aggregato = 0
     var count = 0
     
@@ -530,9 +580,9 @@
     
     //Per ogni spindle devo aggiungere un grafichetto
 
-    for(let i = 0; i < id_and_sn.length; i++){
+    for(let i = 0; i < sn_and_date.length; i++){
         
-        
+    current_spindle = sn_and_date[i][0]   
         
         document.getElementById("grid-container" + count).innerHTML += "<svg width='800' height='510' id ='svg" + selectedOption + "_" + i +"'></svg>"
         
@@ -554,17 +604,29 @@
             var min = 100000
             var max = 0
 
-            for(let j = 0; j < 43100; j++){
+            console.log("spindleArrays:", spindleArrays);
+            console.log("current_spindle:", current_spindle);
+            console.log("selectedOption:", selectedOption);
+
+            //accrocco funzionante
+            const attributeArray = spindleArrays[current_spindle][selectedOption];
+            const attributeString = eval("attributeArray." + selectedOption);
+            const attributeValues = JSON.parse(attributeString);
+
+            const firstValue = attributeValues[0];
+            console.log("First value of the first spindle:", firstValue);
+            
+            for(let j = 0; j < 43100; j+=10){
 
       
-          if (eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]") != undefined) {
-            if(eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]") < min){
-                min = eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]")
+          if (attributeValues[j] != undefined) {
+            if (attributeValues[j] < min){
+                min = attributeValues[j]
             }
-            if(eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]") > max){
-              max = eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]")
+            if (attributeValues[j] > max){
+              max = attributeValues[j]
             }    
-          dataset.push([j+1, eval('globalData[' + i + ']' + '[0].' + selectedOption + "[" + j + "]")]);
+          dataset.push([j+1, attributeValues[j]]);
 
           }
         }
@@ -648,7 +710,7 @@
                     .attr('text-anchor', 'middle')
                     .style('font-family', 'Helvetica')
                     .style('font-size', 16)
-                    .text(id_and_sn[i][1]);
+                    .text(sn_and_date[i][0]);
 
                 
 
