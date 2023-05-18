@@ -301,8 +301,8 @@
 
       if(aggregato != 1){
 
-        var erriquez = eval("globalData[" + selectedIndex + "]" + "." + selectedGroup)
-        var my_data = JSON.parse(erriquez)
+        var tmp_data = eval("globalData[" + selectedIndex + "]" + "." + selectedGroup)
+        var my_data = JSON.parse(tmp_data)
 
       }
       
@@ -418,8 +418,8 @@
                 if (selectedGroup == "VibANT_Sync") selectedIndex = 8
                 if (selectedGroup == "Step") selectedIndex = 9
 
-                var erriquez = eval("globalData[" + selectedIndex + "]" + "." + selectedGroup)
-                var my_data = JSON.parse(erriquez)
+                var tmp_data = eval("globalData[" + selectedIndex + "]" + "." + selectedGroup)
+                var my_data = JSON.parse(tmp_data)
 
 
                 if(valori.includes("Tba") || valori.includes("Tamb") || valori.includes("Tdut2") || valori.includes("Tdut3") ){
@@ -599,8 +599,8 @@
                   if (selectedGroup == "VibANT_Sync") selectedIndex = 8
                   if (selectedGroup == "Step") selectedIndex = 9
 
-                  var erriquez = eval("globalData[" + selectedIndex + "]" + "." + selectedGroup)
-                  var my_data = JSON.parse(erriquez)
+                  var tmp_data = eval("globalData[" + selectedIndex + "]" + "." + selectedGroup)
+                  var my_data = JSON.parse(tmp_data)
 
                   if(selectedGroup == "Tdut2"){
                     min = 250
@@ -648,8 +648,8 @@
                     if (selectedGroup == "VibANT_Sync") selectedIndex = 8
                     if (selectedGroup == "Step") selectedIndex = 9
 
-                    var erriquez = eval("globalData[" + selectedIndex + "]" + "." + selectedGroup)
-                    var my_data = JSON.parse(erriquez)
+                    var tmp_data = eval("globalData[" + selectedIndex + "]" + "." + selectedGroup)
+                    var my_data = JSON.parse(tmp_data)
 
                     for (let i = 0; i < 43100; i += 10) {
 
