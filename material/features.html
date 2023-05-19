@@ -31,13 +31,12 @@
     <div id="coordinates"></div>
     <div id ="svg-div">
       
-      <div id = "loading">Loading...</div>
+      <div id = "loader"></div>
     <svg width='500' height='400' id='svg_last_tba'></svg>
     <div id="tooltip"></div>
     </div>
 	<script>
     function modifyElement(selectedOption) {
-
 
 
             d3.select("#svg_last_tba").remove()
@@ -47,14 +46,6 @@
 
           }
 
-
-
-
-         
-
-        
-
-      
 
         function sleep(time) {
             return new Promise((resolve) => setTimeout(resolve, time));
@@ -103,27 +94,28 @@
 
         
 
+       let completedRequests = 0;
+
         for (let i = 0; i < sn_and_date.length; i++) {
+          d3.json('http://arca.diag.uniroma1.it:8082/data/breakin/' + sn_and_date[i][0] + '/features_values?columns=Tba&feature=lastValue', function (data) {
+            console.log(data["Last Tba"]);
+            datasetLastTba.push([i + 1, data["Last Tba"], sn_and_date[i][0]]);
 
-            d3.json('http://arca.diag.uniroma1.it:8082/data/breakin/'+ sn_and_date[i][0] + '/features_values?columns=Tba&feature=lastValue', function (data) {
+            completedRequests++;
 
-              console.log(data["Last Tba"])
-              datasetLastTba.push([i + 1, data["Last Tba"], sn_and_date[i][0]])
-        
-            })
+            if (completedRequests === sn_and_date.length) {
+              // Tutte le richieste sono state completate
+              console.log(datasetLastTba[0]);
+             
+            }
+          });
+        }
 
-            if(i + 1 == sn_and_date.length) document.getElementById("loading").innerHTML = ""
+         var min = 100000, max = 0, count = 0, countVarianza = 0, media = 0, varianza = 0, varianzaSopra = 0, varianzaSotto = 0, average_tba_array = [], upper_variance_array = [], lower_variance_array = [], sleeper = 1
+         
+         sleep(1000 * sleeper).then(() => { //devo farlo per forza perché l'api è lenta a prendere i dati
 
-          }
-
-          var min = 100000, max = 0, count = 0, countVarianza = 0, media = 0, varianza = 0, varianzaSopra = 0, varianzaSotto = 0, average_tba_array = [], upper_variance_array = [], lower_variance_array = []
-
-          //calcolo robehs
-
-
-          sleep(1000).then(() => { //devo farlo per forza perché l'api è lenta a prendere i dati
-
-
+          
           for (let i = 0; i < datasetLastTba.length; i++){
             console.log(datasetLastTba[i][1])
             
@@ -131,7 +123,7 @@
 
             if(datasetLastTba[i][1] < min) min = datasetLastTba[i][1]
 
-            count  = count + datasetLastTba[i][1] 
+            count += parseFloat(datasetLastTba[i][1])
 
           }
           console.log(count)
@@ -176,7 +168,7 @@
             if(min < 0) min = 0
             if(max < varianzaSopra) max = varianzaSopra + 5
 
-            
+            document.getElementById("loader").remove()
             
         })
             function displayTooltip(d, i, event){
