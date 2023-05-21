@@ -116,21 +116,13 @@ function setDate(day){
             document.getElementById("calendar-original").hidden = true
     
         }
-        else if (document.getElementById("day-start").innerHTML == "Seleziona data"){
-            document.getElementById("day-start").innerHTML = day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML
-            localStorage.setItem("day-start", JSON.stringify(day))
-            localStorage.setItem("month-start", JSON.stringify(document.getElementById("month-picker").innerHTML))
-            localStorage.setItem("year-start", JSON.stringify(document.getElementById("year").innerHTML))
-            //if(document.getElementById("cambia_data_fine")!= null) document.getElementById("cambia_data_fine").disabled = false
-            document.getElementById("calendar-original").hidden = true
-        }
     }
 
     
     
     if(document.getElementById("day-end").innerHTML.length <15){
 
-        if((flag == 1) && (document.getElementById("day-end").innerHTML != "Seleziona data")){
+        if((flag == 1)){
 
             //document.getElementById("day-end").innerHTML = "Data fine: "
             document.getElementById("day-end").innerHTML += day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML
@@ -140,17 +132,11 @@ function setDate(day){
             localStorage.setItem("month-end", JSON.stringify(document.getElementById("month-picker").innerHTML))
             localStorage.setItem("year-end", JSON.stringify(document.getElementById("year").innerHTML))
             document.getElementById("calendar-original").hidden = true
+            document.getElementById("availableSpindles").innerHTML = "<div id = 'loader' style = 'margin-top: 60px;'></div>"
             //if(document.getElementById("cambia_data_inizio")!= null) document.getElementById("cambia_data_inizio").disabled = false
 
     }
-    else if (document.getElementById("day-end").innerHTML == "Seleziona data"){
-        document.getElementById("day-end").innerHTML = day + " " + document.getElementById("month-picker").innerHTML + " " + document.getElementById("year").innerHTML
-        localStorage.setItem("day-end", JSON.stringify(day))
-        localStorage.setItem("month-end", JSON.stringify(document.getElementById("month-picker").innerHTML))
-        localStorage.setItem("year-end", JSON.stringify(document.getElementById("year").innerHTML))
-        //if(document.getElementById("cambia_data_fine")!= null) document.getElementById("cambia_data_fine").disabled = false
-        document.getElementById("calendar-original").hidden = true
-    }
+    
 
     flag = 1
     //console.log(flag)
