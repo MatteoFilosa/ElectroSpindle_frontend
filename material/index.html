@@ -51,7 +51,7 @@ Insert Spindle SN <input type = "text" id ="request" maxlength="10" required pla
 <!--<input type="checkbox" id ="sovrapponi" onchange = "checkElements()"> Sovrapponi grafici-->
 <!--<input type="checkbox" id ="separati" onchange = "separati()"> Separati -->
 <br> <br>
-Breakins available from 10/01/2022 to 21/09/2022
+
 
 <br> <br>
 
@@ -59,12 +59,11 @@ Breakins available from 10/01/2022 to 21/09/2022
 
   <button class = "button-green" onclick = "displayCalendar()" id = "PickDate">Pick date</button>
 
-  <div id = "day-start">  </div>
+  <div id = "day-start"> <h5>From</h5></div>
 
-  <br>
-  <br>
 
-<div id = "day-end">  </div>
+
+<div id = "day-end"> <h5>To</h5> </div>
 
 </div>
 
@@ -129,6 +128,8 @@ Breakins available from 10/01/2022 to 21/09/2022
   <span id = "breakinSpan">
     Breakin date
   </span>
+
+<div id = "loader"></div>
 
 </div>
 
@@ -300,10 +301,10 @@ function resetFilters(){
   for (i = 0; i < sn_and_date.length; i++) {              
 
           
-                var to_write = "<span id = 'spindlesSpan'>" + sn_and_date[i][1]  + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>" + "<span id = 'spindlesSpan'>" + sn_and_date[i][2] + "</span>"
+                var to_write = "<span id = 'spindlesSpan'>" + sn_and_date[i][0]  + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>" + "<span id = 'spindlesSpan'>" + sn_and_date[i][1] + "</span>"
                 console.log(to_write)
    
-                    document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'> <input type = 'checkbox' class = 'checkbox-spindles' id = '"+ sn_and_date[i][1] +"'onclick = saveSpindle("+ sn_and_date[i][1] +")>"+ "<label for='" + sn_and_date[i][1] + "'>" + to_write + "</label></div>"  
+                    document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'> <input type = 'checkbox' class = 'checkbox-spindles' id = '"+ sn_and_date[i][0] +"'onclick = saveSpindle("+ sn_and_date[i][0] +")>"+ "<label for='" + sn_and_date[i][0] + "'>" + to_write + "</label></div>"  
  
 }
 }
@@ -386,17 +387,17 @@ function resetFilters(){
             }
         }        
 
-        d3.json("http://arca.diag.uniroma1.it:8082/data/breakin?pagination=256&fromItem=0", function(data) {
+          var tmp_id, tmp_sn
+          var sn_and_date = []
+          var datasetDataInizio = []
+          var datasetDataFine = []
+        d3.json("http://arca.diag.uniroma1.it:8082/data/breakin?pagination=20&fromItem=0", function(data) {
 
 
         
-        var tmp_id, tmp_sn
-
-        var sn_and_date = []
-        var datasetDataInizio = []
-        var datasetDataFine = []
+        
     
-
+            document.getElementById("loader").remove()
             for(let i = 0; i< data.results.length; i++){
 
                 tmp_date = data.results[i]["Date_start"]
@@ -419,15 +420,47 @@ function resetFilters(){
             localStorage.setItem("sn_and_date", JSON.stringify(sn_and_date))
             datasetDataInizio.sort(sortFunction)
             datasetDataFine.sort(sortFunction)
-            //Sorting anche in base all'ora
-            //datasetDataInizio.sort(compareSecondColumn)
-            //datasetDataFine.sort(compareSecondColumn)
-
-
-        //console.log(datasetDataInizio, datasetDataFine)
-        
-
+            document.getElementById("availableSpindles").innerHTML += "<div id = 'loader'></div>"
+ 
         })
+
+        d3.json("http://arca.diag.uniroma1.it:8082/data/breakin?pagination=256&fromItem=20", function (data) {
+
+
+            document.getElementById("loader").remove()
+            var tmp_id, tmp_sn
+
+            var sn_and_date = []
+            var datasetDataInizio = []
+            var datasetDataFine = []
+
+
+            for (let i = 0; i < data.results.length; i++) {
+
+              tmp_date = data.results[i]["Date_start"]
+              tmp_sn = data.results[i]["Serial Number"]
+
+              tmp_date = tmp_date.slice(0, 9)
+
+
+              datasetDataInizio.push(tmp_date);
+              datasetDataFine.push(tmp_date);
+
+              sn_and_date.push([tmp_sn, tmp_date])
+              var to_write = "<span id = 'spindlesSpan'>" + data.results[i]["Serial Number"] + "</span>" + "<span id = 'spindlesSpan'>" + "ES951" + "</span>" + "<span id = 'spindlesSpan'>" + tmp_date + "</span>"
+              document.getElementById("availableSpindles").innerHTML += "<div id = 'spindleRow'><input type = 'checkbox' class = 'checkbox-spindles' + id = '" + data.results[i]["Serial Number"] + "' + onclick = saveSpindle(" + data.results[i]["Serial Number"] + ")>" + "<label for='" + data.results[i]["Serial Number"] + "'>" + to_write + "</label></div>"
+
+
+            }
+
+
+            localStorage.setItem("sn_and_date", JSON.stringify(sn_and_date))
+            datasetDataInizio.sort(sortFunction)
+            datasetDataFine.sort(sortFunction)
+            
+
+          })
+
         //per ora un solo modello
         var modelli = ["ES951"]
 
@@ -439,11 +472,13 @@ function resetFilters(){
         .text(function (d) { return d; }) // text showed in the menu
         .attr("value", function (d) { return d; }) // corresponding value returned by the button
     
-
+        
         
         
     
         d3.select("#calendar-original").on("click", function(d){
+
+          
 
           var sn_and_date = JSON.parse(localStorage.getItem("sn_and_date"));
           var id_to_save = []
@@ -568,6 +603,7 @@ function resetFilters(){
             }
 
             localStorage.setItem("filterHelper", JSON.stringify(sn_to_save))
+            document.getElementById("loader").remove()
           
             })
 
